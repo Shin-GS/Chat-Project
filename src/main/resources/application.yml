@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: chat
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/CHAT?serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: root
+    password: qwer!0842
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: mysql
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate:
+      orm.jdbc.bind: trace
+      SQL: DEBUG
