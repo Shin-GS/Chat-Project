@@ -17,5 +17,10 @@ public class UserCredentials {
 
     @Column(nullable = false)
     private String hashed_password;
-}
 
+    public static UserCredentials of(User user, String hashed_password) {
+        return UserCredentials.builder()
+                .user(user)
+                .hashed_password(hashed_password).build();
+    }
+}

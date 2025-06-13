@@ -24,4 +24,15 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserCredentials userCredentials;
+
+    public static User of(String name) {
+        return User.builder()
+                .name(name)
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .build();
+    }
+
+    public void setCredentials(UserCredentials credentials) {
+        this.userCredentials = credentials;
+    }
 }
