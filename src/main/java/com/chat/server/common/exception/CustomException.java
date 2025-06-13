@@ -1,4 +1,4 @@
-package com.chat.server.common;
+package com.chat.server.common.exception;
 
 import com.chat.server.common.code.Code;
 import lombok.Getter;

@@ -1,14 +1,12 @@
 package com.chat.server.service.auth;
 
-import com.chat.server.common.CustomException;
 import com.chat.server.common.code.ErrorCode;
-import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.exception.CustomException;
 import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.User;
 import com.chat.server.domain.repository.UserRepository;
 import com.chat.server.model.request.CreateUserRequest;
 import com.chat.server.model.request.LoginRequest;
-import com.chat.server.model.response.CreateUserResponse;
 import com.chat.server.model.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,7 @@ public class AuthService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CreateUserResponse createUser(CreateUserRequest request) {
+    public void createUser(CreateUserRequest request) {
         if (userRepository.existsByName(request.name())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
@@ -38,8 +36,6 @@ public class AuthService {
                 throw new CustomException(ErrorCode.USER_SAVE_FAILED);
             }
 
-            return new CreateUserResponse(createdUser.getName());
-
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_SAVE_FAILED);
         }
@@ -49,12 +45,16 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByName(request.name())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        String requestHashedPassword = EncryptUtil.getHashingValue(request.password());
-        if (ObjectUtils.isEmpty(user.getUserCredentials())
-                || !user.getUserCredentials().getHashedPassword().equals(requestHashedPassword)) {
+        if (isValidCredentials(user, request.password())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        return new LoginResponse(SuccessCode.Success, "token");
+        return new LoginResponse("token");
+    }
+
+    private static boolean isValidCredentials(User user, String password) {
+        String hashedPassword = EncryptUtil.getHashingValue(password);
+        return ObjectUtils.isEmpty(user.getUserCredentials())
+                || !user.getUserCredentials().getHashedPassword().equals(hashedPassword);
     }
 }
