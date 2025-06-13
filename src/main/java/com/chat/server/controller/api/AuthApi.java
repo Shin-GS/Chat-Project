@@ -1,7 +1,9 @@
 package com.chat.server.controller.api;
 
 import com.chat.server.model.request.CreateUserRequest;
+import com.chat.server.model.request.LoginRequest;
 import com.chat.server.model.response.CreateUserResponse;
+import com.chat.server.model.response.LoginResponse;
 import com.chat.server.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +21,10 @@ public class AuthApi {
     @PostMapping("/create-user")
     public CreateUserResponse createUser(@RequestBody @Valid CreateUserRequest request) {
         return authService.createUser(request);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody @Valid LoginRequest request) {
+        return authService.login(request);
     }
 }

@@ -10,6 +10,8 @@ public enum ErrorCode implements Code {
 
     USER_ALREADY_EXISTS(400, "User already exists"),
     USER_SAVE_FAILED(400, "User save failed"),
+    USER_NOT_EXISTS(400, "User not exists"),
+    INVALID_PASSWORD(400, "Invalid password"),
     ;
 
     private final Integer code;
