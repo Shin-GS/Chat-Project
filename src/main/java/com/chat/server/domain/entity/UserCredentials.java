@@ -16,11 +16,11 @@ public class UserCredentials {
     private User user;
 
     @Column(nullable = false)
-    private String hashed_password;
+    private String hashedPassword;
 
-    public static UserCredentials of(User user, String hashed_password) {
+    public static UserCredentials of(User user, String hashedPassword) {
         return UserCredentials.builder()
                 .user(user)
-                .hashed_password(hashed_password).build();
+                .hashedPassword(hashedPassword).build();
     }
 }

@@ -5,7 +5,6 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.User;
-import com.chat.server.domain.entity.UserCredentials;
 import com.chat.server.domain.repository.UserRepository;
 import com.chat.server.model.request.CreateUserRequest;
 import com.chat.server.model.request.LoginRequest;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,43 +24,36 @@ public class AuthService {
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
-        Optional<User> optionalUser = userRepository.findByName(request.name());
-        if (optionalUser.isPresent()) {
-            log.error("USER_ALREADY_EXISTS: {}", request.name());
+        if (userRepository.existsByName(request.name())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         try {
-            User user = User.of(request.name());
-            user.setCredentials(UserCredentials.of(user, EncryptUtil.getHashingValue(request.password())));
+            User createdUser = userRepository.save(User.of(
+                    request.name(),
+                    EncryptUtil.getHashingValue(request.password())
+            ));
 
-            User savedUser = userRepository.save(user);
-            if (ObjectUtils.isEmpty(savedUser)) {
+            if (ObjectUtils.isEmpty(createdUser)) {
                 throw new CustomException(ErrorCode.USER_SAVE_FAILED);
             }
 
-            return new CreateUserResponse(savedUser.getName());
+            return new CreateUserResponse(createdUser.getName());
 
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_SAVE_FAILED);
         }
     }
 
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        Optional<User> optionalUser = userRepository.findByName(request.name());
-        if (optionalUser.isPresent()) {
-            log.error("USER_NOT_EXISTS: {}", request.name());
-            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
+        User user = userRepository.findByName(request.name())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        String requestHashedPassword = EncryptUtil.getHashingValue(request.password());
+        if (ObjectUtils.isEmpty(user.getUserCredentials())
+                || !user.getUserCredentials().getHashedPassword().equals(requestHashedPassword)) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-
-        optionalUser.map(user -> {
-                    String hashingValue = EncryptUtil.getHashingValue(request.password());
-                    if (!hashingValue.equals(user.getUserCredentials().getHashed_password())) {
-                        throw new CustomException(ErrorCode.INVALID_PASSWORD);
-                    }
-                    return user;
-                })
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_PASSWORD));
 
         return new LoginResponse(SuccessCode.Success, "token");
     }
