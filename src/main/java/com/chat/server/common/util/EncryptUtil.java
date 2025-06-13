@@ -1,4 +1,4 @@
-package com.chat.server.security;
+package com.chat.server.common.util;
 
 import org.springframework.stereotype.Service;
 
@@ -8,8 +8,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Service
-public class Hasher {
-    public String getHashingValue(String password) {
+public class EncryptUtil {
+    private EncryptUtil() {
+    }
+
+    public static String getHashingValue(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));

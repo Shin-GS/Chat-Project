@@ -3,6 +3,7 @@ package com.chat.server.service.auth;
 import com.chat.server.common.CustomException;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.User;
 import com.chat.server.domain.entity.UserCredentials;
 import com.chat.server.domain.repository.UserRepository;
@@ -10,7 +11,6 @@ import com.chat.server.model.request.CreateUserRequest;
 import com.chat.server.model.request.LoginRequest;
 import com.chat.server.model.response.CreateUserResponse;
 import com.chat.server.model.response.LoginResponse;
-import com.chat.server.security.Hasher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
-    private final Hasher hasher;
 
     @Transactional
     public CreateUserResponse createUser(CreateUserRequest request) {
@@ -36,7 +35,7 @@ public class AuthService {
 
         try {
             User user = User.of(request.name());
-            user.setCredentials(UserCredentials.of(user, hasher.getHashingValue(request.password())));
+            user.setCredentials(UserCredentials.of(user, EncryptUtil.getHashingValue(request.password())));
 
             User savedUser = userRepository.save(user);
             if (ObjectUtils.isEmpty(savedUser)) {
@@ -58,7 +57,7 @@ public class AuthService {
         }
 
         optionalUser.map(user -> {
-                    String hashingValue = hasher.getHashingValue(request.password());
+                    String hashingValue = EncryptUtil.getHashingValue(request.password());
                     if (!hashingValue.equals(user.getUserCredentials().getHashed_password())) {
                         throw new CustomException(ErrorCode.INVALID_PASSWORD);
                     }
