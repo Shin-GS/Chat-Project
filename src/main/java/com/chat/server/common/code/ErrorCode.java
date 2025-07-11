@@ -13,6 +13,7 @@ public enum ErrorCode implements Code {
     USER_ALREADY_EXISTS(400, "User already exists"),
     USER_SAVE_FAILED(400, "User save failed"),
 
+    TOKEN_EMPTY(400, "Token empty"),
     TOKEN_INVALID(400, "Token invalid"),
     TOKEN_EXPIRED(400, "Token expired"),
     TOKEN_NOT_EXPIRED(400, "Token not expired"),

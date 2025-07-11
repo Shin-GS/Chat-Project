@@ -29,7 +29,7 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiresAt = now.plus(jwtProperties.getTokenTime(), ChronoUnit.MINUTES);
         return JWT.create()
-                .withClaim(Constants.JWT_TOKEN_TYPE, Constants.JWT_TOKEN_TYPE_ACCESS_TOKEN)
+                .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_ACCESS_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)
                 .withClaim(Constants.JWT_USER_NAME, username)
                 .withIssuedAt(Date.from(now))
@@ -42,7 +42,7 @@ public class JwtProvider {
         Instant now = Instant.now();
         Instant expiresAt = now.plus(jwtProperties.getRefreshTokenTime(), ChronoUnit.MINUTES);
         return JWT.create()
-                .withClaim(Constants.JWT_TOKEN_TYPE, Constants.JWT_TOKEN_TYPE_REFRESH_TOKEN)
+                .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_REFRESH_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)
                 .withClaim(Constants.JWT_USER_NAME, username)
                 .withIssuedAt(Date.from(now))
