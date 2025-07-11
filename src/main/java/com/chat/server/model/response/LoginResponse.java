@@ -1,4 +1,5 @@
 package com.chat.server.model.response;
 
-public record LoginResponse(String token) {
+public record LoginResponse(String token,
+                            String refreshToken) {
 }
