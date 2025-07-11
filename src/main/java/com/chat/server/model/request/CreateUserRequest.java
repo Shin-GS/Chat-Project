@@ -1,5 +1,8 @@
 package com.chat.server.model.request;
 
-public record CreateUserRequest(String name,
-                                String password) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record CreateUserRequest(@NotBlank @NotNull String name,
+                                @NotBlank @NotNull String password) {
 }
