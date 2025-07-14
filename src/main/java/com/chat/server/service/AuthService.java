@@ -1,4 +1,4 @@
-package com.chat.server.service.auth;
+package com.chat.server.service;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;

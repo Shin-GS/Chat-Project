@@ -1,4 +1,4 @@
-package com.chat.server.socket.handler.payload;
+package com.chat.server.model.payload;
 
 public record MessagePayload(String to,
                              String from,

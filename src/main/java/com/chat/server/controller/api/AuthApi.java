@@ -7,7 +7,7 @@ import com.chat.server.model.request.CreateUserRequest;
 import com.chat.server.model.request.LoginRequest;
 import com.chat.server.model.response.LoginResponse;
 import com.chat.server.security.TokenResolver;
-import com.chat.server.service.auth.AuthService;
+import com.chat.server.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
