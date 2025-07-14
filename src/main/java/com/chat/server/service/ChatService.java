@@ -1,22 +1,7 @@
 package com.chat.server.service;
 
-import com.chat.server.domain.entity.Chat;
-import com.chat.server.domain.repository.ChatRepository;
 import com.chat.server.model.payload.MessagePayload;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
-public class ChatService {
-    private final ChatRepository chatRepository;
-
-    @Transactional
-    public void saveChatMessage(MessagePayload messagePayload) {
-        Chat newChat = Chat.of(messagePayload.from(),
-                messagePayload.to(),
-                messagePayload.message());
-        chatRepository.save(newChat);
-    }
+public interface ChatService {
+    void saveChatMessage(MessagePayload messagePayload);
 }

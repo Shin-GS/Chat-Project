@@ -21,7 +21,6 @@ public class WssControllerV1 {
                                           MessagePayload messagePayload) {
         log.info("Message received -> From: {}, to: {}, msg: {}", from, messagePayload.to(), messagePayload.message());
         chatService.saveChatMessage(messagePayload);
-
         return messagePayload;
     }
 }
