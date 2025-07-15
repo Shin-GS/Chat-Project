@@ -32,6 +32,6 @@ public class UserApi {
     public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword) {
         String token = tokenResolver.resolveAccessToken();
         String username = authService.getUsernameFromToken(token);
-        return Response.of(SuccessCode.Success, userService.findSimilarNamesExcludingExactMatch(keyword, username));
+        return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, username));
     }
 }

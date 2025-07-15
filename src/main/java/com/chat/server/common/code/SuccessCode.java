@@ -6,7 +6,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SuccessCode implements Code {
-    Success(200, "Success"),
+    SUC(200, "Success"),
+
+    USER_CREATED(201, "User registration successful"),
+    USER_LOGGED_IN(200, "Login successful"),
+    USER_INFO_RETRIEVED(200, "User information retrieved successfully"),
+
+    CHATS_RETRIEVED(200, "Chat messages retrieved successfully"),
     ;
 
     private final Integer code;

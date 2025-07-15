@@ -32,6 +32,6 @@ public class ChatApi {
                                                          @RequestParam String secondUsername,
                                                          @RequestParam(name = "size", defaultValue = "10") int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return Response.of(SuccessCode.Success, chatService.findRecentChats(firstUsername, secondUsername, pageable));
+        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findRecentChats(firstUsername, secondUsername, pageable));
     }
 }
