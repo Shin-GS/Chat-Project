@@ -1,6 +1,6 @@
 package com.chat.server.controller.wss;
 
-import com.chat.server.model.payload.MessagePayload;
+import com.chat.server.service.payload.MessagePayload;
 import com.chat.server.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class WssControllerV1 {
     public MessagePayload receivedMessage(@DestinationVariable String from,
                                           MessagePayload messagePayload) {
         log.info("Message received -> From: {}, to: {}, msg: {}", from, messagePayload.to(), messagePayload.message());
-        chatService.saveChatMessage(messagePayload);
+        chatService.saveChat(messagePayload);
         return messagePayload;
     }
 }

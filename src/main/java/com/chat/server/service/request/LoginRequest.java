@@ -1,4 +1,4 @@
-package com.chat.server.model.request;
+package com.chat.server.service.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
