@@ -3,7 +3,8 @@ package com.chat.server.controller.api;
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.constant.Constants;
-import com.chat.server.security.TokenResolver;
+import com.chat.server.security.JwtMember;
+import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthApi {
     private final AuthService authService;
-    private final TokenResolver tokenResolver;
 
     @Operation(summary = "회원가입")
     @PostMapping("/sign-in")
@@ -39,16 +39,14 @@ public class AuthApi {
     @Operation(summary = "사용자 번호 조회",
             security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
     @GetMapping("/me/id")
-    public Response<Long> getUserId() {
-        String token = tokenResolver.resolveAccessToken();
-        return Response.of(SuccessCode.USER_INFO_RETRIEVED, authService.getUserIdFromToken(token));
+    public Response<Long> getUserId(@JwtMember JwtMemberInfo memberInfo) {
+        return Response.of(SuccessCode.USER_INFO_RETRIEVED, memberInfo.id());
     }
 
     @Operation(summary = "사용자 이름 조회",
             security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
     @GetMapping("/me/name")
-    public Response<String> getUserName() {
-        String token = tokenResolver.resolveAccessToken();
-        return Response.of(SuccessCode.USER_INFO_RETRIEVED, authService.getUsernameFromToken(token));
+    public Response<String> getUserName(@JwtMember JwtMemberInfo memberInfo) {
+        return Response.of(SuccessCode.USER_INFO_RETRIEVED, memberInfo.username());
     }
 }

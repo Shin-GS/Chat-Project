@@ -3,8 +3,8 @@ package com.chat.server.controller.api;
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.constant.Constants;
-import com.chat.server.security.TokenResolver;
-import com.chat.server.service.AuthService;
+import com.chat.server.security.JwtMember;
+import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,16 +22,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserApi {
-    private final TokenResolver tokenResolver;
-    private final AuthService authService;
     private final UserService userService;
 
     @Operation(summary = "비슷한 이름 조회",
             security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
     @GetMapping("/find/names/{keyword}")
-    public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword) {
-        String token = tokenResolver.resolveAccessToken();
-        String username = authService.getUsernameFromToken(token);
-        return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, username));
+    public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword,
+                                                       @JwtMember JwtMemberInfo memberInfo) {
+        return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.username()));
     }
 }
