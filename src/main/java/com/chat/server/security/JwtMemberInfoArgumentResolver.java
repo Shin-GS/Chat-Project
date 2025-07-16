@@ -3,6 +3,9 @@ package com.chat.server.security;
 import com.chat.server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -10,6 +13,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class JwtMemberInfoArgumentResolver implements HandlerMethodArgumentResolver {
     private final TokenResolver tokenResolver;
@@ -21,13 +25,11 @@ public class JwtMemberInfoArgumentResolver implements HandlerMethodArgumentResol
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter,
+    public Object resolveArgument(@NonNull MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
+                                  @NonNull NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) {
         String token = tokenResolver.resolveAccessToken();
-        Long userId = authService.getUserIdFromToken(token);
-        String username = authService.getUsernameFromToken(token);
-        return new JwtMemberInfo(userId, username);
+        return token == null ? null : authService.getMemberInfo(token);
     }
 }

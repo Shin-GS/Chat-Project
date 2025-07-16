@@ -6,6 +6,7 @@ import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.User;
 import com.chat.server.domain.entity.UserCredentials;
 import com.chat.server.domain.repository.UserRepository;
+import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;
 import com.chat.server.service.response.LoginResponse;
@@ -59,11 +60,8 @@ public class AuthServiceImpl implements AuthService {
         return userCredentials != null && encryptUtil.matches(rawPassword, userCredentials.getHashedPassword());
     }
 
-    public Long getUserIdFromToken(String token) {
-        return jwtProvider.getUserIdFromToken(token);
-    }
-
-    public String getUsernameFromToken(String token) {
-        return jwtProvider.getUsernameFromToken(token);
+    @Override
+    public JwtMemberInfo getMemberInfo(String token) {
+        return jwtProvider.getMemberInfo(token);
     }
 }

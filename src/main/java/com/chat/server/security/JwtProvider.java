@@ -97,16 +97,20 @@ public class JwtProvider {
         return verifyAndDecodeToken(token, jwtProperties.getRefreshSecretKey());
     }
 
-    // 검증 서명 후 사용자 ID 조회
-    public Long getUserIdFromToken(String token) {
-        DecodedJWT decodedJWT = decodeAccessToken(token);
-        return decodedJWT.getClaim(Constants.JWT_USER_ID).asLong();
-    }
+    // 검증 서명 후 사용자 정보 조회
+    public JwtMemberInfo getMemberInfo(String token) {
+        if (token == null) {
+            return null;
+        }
 
-    // 검증 서명 후 사용자 이름 조회
-    public String getUsernameFromToken(String token) {
-        DecodedJWT decodedJWT = decodeAccessToken(token);
-        return decodedJWT.getClaim(Constants.JWT_USER_NAME).asString();
+        DecodedJWT decodedJWT = verifyAndDecodeToken(token, jwtProperties.getSecretKey());
+        if (decodedJWT == null) {
+            return null;
+        }
+
+        Long memberId = decodedJWT.getClaim(Constants.JWT_USER_ID).asLong();
+        String username = decodedJWT.getClaim(Constants.JWT_USER_NAME).asString();
+        return JwtMemberInfo.of(memberId, username);
     }
 
     // 서명 검증을 포함한 디코딩. 유효하지 않거나 만료된 경우 예외 발생.
