@@ -1,29 +1,35 @@
 package com.chat.server.controller.hx;
 
+import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.security.JwtMember;
+import com.chat.server.security.JwtMemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/hx")
 @RequiredArgsConstructor
 public class MenuHxController {
-//    private final RefreshInfoFetcher refreshInfoFetcher;
-//
-//    @GetMapping("/menu")
-//    public List<ModelAndView> menu(@SessionMemberId Long memberId) {
-//        if (ObjectUtils.isEmpty(memberId)) {SessionMember
-//            return new ModelAndViewBuilder()
-//                    .addFragment("templates/components/menu.html",
-//                            "components/menu :: guest-menu")
-//                    .build();
-//        }
-//
-//        RefreshInfoResponse refresh = refreshInfoFetcher.refresh(memberId);
-//        return new ModelAndViewBuilder()
-//                .addFragment("templates/components/menu.html",
-//                        "components/menu :: user-menu",
-//                        Map.of("info", refresh))
-//                .build();
-//    }
+    @GetMapping("/menu")
+    public List<ModelAndView> menu(@JwtMember JwtMemberInfo memberInfo) {
+        if (ObjectUtils.isEmpty(memberInfo)) {
+            return new ModelAndViewBuilder()
+                    .addFragment("templates/components/menu.html",
+                            "components/menu :: guest-menu")
+                    .build();
+        }
+
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/menu.html",
+                        "components/menu :: user-menu",
+                        Map.of("member", memberInfo))
+                .build();
+    }
 }
