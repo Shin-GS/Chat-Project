@@ -1,0 +1,14 @@
+<div th:fragment="chat">
+    <div class="flex flex-col h-full">
+        <div class="flex-1 overflow-y-auto space-y-4">
+            <!-- 채팅 메시지 영역 -->
+            <div class="p-2 bg-white rounded shadow">안녕하세요! 👋</div>
+            <div class="p-2 bg-blue-100 rounded self-end shadow">안녕하세요! 반갑습니다.</div>
+        </div>
+        <form class="mt-4 flex items-center gap-2">
+            <input type="text" placeholder="메시지를 입력하세요..."
+                   class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">전송</button>
+        </form>
+    </div>
+</div>
