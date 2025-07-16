@@ -50,8 +50,8 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        String token = jwtProvider.createToken(user.getId(), user.getName());
-        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getName());
+        String token = jwtProvider.createToken(user.getId(), user.getName(), user.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getName(), user.getRole());
         return new LoginResponse(token, refreshToken);
     }
 

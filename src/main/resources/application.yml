@@ -20,6 +20,15 @@ token:
   token-time: 15 # minutes
   refresh-token-time: 43200 # 30 days in minutes
 
+security:
+  restricted-paths:
+    static-path:
+    api-path:
+      - /api/auth/me/**
+      - /api/chats/**
+      - /api/users/**
+    hx-api-path:
+
 springdoc:
   api-docs:
     path: /api-docs

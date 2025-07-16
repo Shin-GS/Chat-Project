@@ -10,6 +10,7 @@ public class Constants {
     public static final String TOKEN_TYPE_REFRESH_TOKEN = "refreshToken";
     public static final String JWT_USER_ID = "userId";
     public static final String JWT_USER_NAME = "userName";
+    public static final String JWT_USER_ROLE = "userRole";
 
     // Authorization
     public static final String BEARER_PREFIX = "Bearer ";

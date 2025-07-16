@@ -1,34 +1,37 @@
 package com.chat.server.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
-    private static final String[] PERMIT_ALL_PATHS = {
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/api/auth/**",
-            "/css/**",
-            "/script/**",
-            "/hx/menu"
-    };
+    private final RestrictedPaths restrictedPaths;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PERMIT_ALL_PATHS).permitAll()
+                        .requestMatchers(toArray(restrictedPaths.getStaticPath())).authenticated()
+                        .requestMatchers(toArray(restrictedPaths.getApiPath())).authenticated()
+                        .requestMatchers(toArray(restrictedPaths.getHxApiPath())).authenticated()
                         .anyRequest().permitAll()
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .build();
+    }
+
+    private String[] toArray(List<String> paths) {
+        return paths == null ? new String[0] : paths.toArray(new String[0]);
     }
 }

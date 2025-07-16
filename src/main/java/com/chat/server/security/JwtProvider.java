@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
+import com.chat.server.common.constant.MemberRole;
 import com.chat.server.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.Date;
 public class JwtProvider {
     private final JwtProperties jwtProperties;
 
-    public String createToken(Long userId, String username) {
+    public String createToken(Long userId, String username, MemberRole role) {
         checkUserInfo(userId, username);
         Instant now = Instant.now();
         Instant expiresAt = now.plus(jwtProperties.getTokenTime(), ChronoUnit.MINUTES);
@@ -32,12 +33,13 @@ public class JwtProvider {
                 .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_ACCESS_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)
                 .withClaim(Constants.JWT_USER_NAME, username)
+                .withClaim(Constants.JWT_USER_ROLE, role.name())
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(expiresAt))
                 .sign(Algorithm.HMAC256(jwtProperties.getSecretKey()));
     }
 
-    public String createRefreshToken(Long userId, String username) {
+    public String createRefreshToken(Long userId, String username, MemberRole role) {
         checkUserInfo(userId, username);
         Instant now = Instant.now();
         Instant expiresAt = now.plus(jwtProperties.getRefreshTokenTime(), ChronoUnit.MINUTES);
@@ -45,6 +47,7 @@ public class JwtProvider {
                 .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_REFRESH_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)
                 .withClaim(Constants.JWT_USER_NAME, username)
+                .withClaim(Constants.JWT_USER_ROLE, role.name())
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(expiresAt))
                 .sign(Algorithm.HMAC256(jwtProperties.getRefreshSecretKey()));
@@ -110,7 +113,8 @@ public class JwtProvider {
 
         Long memberId = decodedJWT.getClaim(Constants.JWT_USER_ID).asLong();
         String username = decodedJWT.getClaim(Constants.JWT_USER_NAME).asString();
-        return JwtMemberInfo.of(memberId, username);
+        String userRole = decodedJWT.getClaim(Constants.JWT_USER_ROLE).asString();
+        return JwtMemberInfo.of(memberId, username, MemberRole.from(userRole));
     }
 
     // 서명 검증을 포함한 디코딩. 유효하지 않거나 만료된 경우 예외 발생.

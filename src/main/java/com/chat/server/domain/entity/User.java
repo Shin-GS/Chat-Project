@@ -1,5 +1,6 @@
 package com.chat.server.domain.entity;
 
+import com.chat.server.common.constant.MemberRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,10 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
+
     @Column
     private Timestamp createdAt;
 
@@ -32,6 +37,7 @@ public class User {
         User user = new User();
         user.name = name;
         user.userCredentials = UserCredentials.of(user, hashedPassword);
+        user.role = MemberRole.USER;
         user.createdAt = new Timestamp(System.currentTimeMillis());
         return user;
     }
