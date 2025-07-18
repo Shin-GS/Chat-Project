@@ -27,13 +27,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     public void createUser(CreateUserRequest request) {
-        if (userRepository.existsByName(request.name())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         try {
             userRepository.save(User.of(
-                    request.name(),
+                    request.username(),
                     encryptUtil.encode(request.password())
             ));
 
@@ -44,14 +44,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByName(request.name())
+        User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         if (!isValidCredentials(user, request.password())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        String token = jwtProvider.createToken(user.getId(), user.getName(), user.getRole());
-        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getName(), user.getRole());
+        String token = jwtProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getUsername(), user.getRole());
         return new LoginResponse(token, refreshToken);
     }
 

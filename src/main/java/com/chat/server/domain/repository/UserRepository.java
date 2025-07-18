@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByName(String name);
+    Optional<User> findByUsername(String username);
 
-    boolean existsByName(String name);
+    boolean existsByUsername(String username);
 
-    @Query("SELECT user.name FROM User AS user WHERE LOCATE(LOWER(:pattern), LOWER(user.name)) > 0 AND user.name != :username")
+    @Query("SELECT user.username FROM User AS user WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0 AND user.username != :username")
     List<String> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern, @Param("username") String username);
 } 

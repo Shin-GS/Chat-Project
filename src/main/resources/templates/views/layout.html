@@ -17,6 +17,9 @@
         <div hidden="hidden" hx-get="/hx/menu" hx-trigger="load" hx-target="#nav-menu" hx-swap="outerHTML"></div>
         <ul id="nav-menu" class="flex space-x-4 text-lg"></ul>
     </nav>
+
+    <div id="modal-container"></div>
+    <div id="toast-container"></div>
 </header>
 
 <main class="container mx-auto p-6">
@@ -26,5 +29,19 @@
 <footer th:fragment="footer" class="bg-gray-800 text-white text-center p-6">
     <p>© 2025 Spring Chat. All rights reserved.</p>
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('htmx:afterRequest', (event) => {
+            const toast = document.querySelector('#toast-success') || document.querySelector('#toast-error');
+            if (toast) {
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+    });
+</script>
 </body>
 </html>

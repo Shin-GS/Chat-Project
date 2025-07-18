@@ -11,13 +11,13 @@ public enum MemberRole {
 
     private final String description;
 
-    public static MemberRole from(String name) {
-        if (name == null) {
+    public static MemberRole from(String roleName) {
+        if (roleName == null) {
             return null;
         }
 
         try {
-            return MemberRole.valueOf(name);
+            return MemberRole.valueOf(roleName);
 
         } catch (Exception e) {
             return null;

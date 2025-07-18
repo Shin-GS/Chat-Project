@@ -15,9 +15,13 @@
         </a>
     </li>
     <li>
-        <a th:href="@{/login}" data-icon="🔑" class="flex items-center gap-2 text-lg hover:text-blue-500">
+        <button type="button"
+                hx-get="/hx/auth/login"
+                hx-target="#modal-container"
+                hx-swap="innerHTML"
+                class="flex items-center gap-2 text-lg hover:text-blue-500">
             로그인
-        </a>
+        </button>
     </li>
 </ul>
 
