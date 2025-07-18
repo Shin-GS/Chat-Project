@@ -1,6 +1,6 @@
 package com.chat.server.controller.hx;
 
-import com.chat.server.common.template.ModelAndViewBuilder;
+import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.security.JwtMember;
 import com.chat.server.security.JwtMemberInfo;
 import lombok.RequiredArgsConstructor;

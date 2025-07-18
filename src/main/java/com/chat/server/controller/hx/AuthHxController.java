@@ -1,6 +1,6 @@
 package com.chat.server.controller.hx;
 
-import com.chat.server.common.template.ModelAndViewBuilder;
+import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.LoginRequest;
 import com.chat.server.service.response.LoginResponse;
