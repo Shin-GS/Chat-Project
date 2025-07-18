@@ -1,4 +1,4 @@
-package com.chat.server.common;
+package com.chat.server.common.template;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ModelAndView;

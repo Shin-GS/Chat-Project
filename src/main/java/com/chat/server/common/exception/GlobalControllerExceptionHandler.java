@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
-@Order(3)
+@Order(2)
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
     @ExceptionHandler(Exception.class)
