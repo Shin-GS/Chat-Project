@@ -1,7 +1,7 @@
 package com.chat.server.common;
 
+import com.chat.server.common.code.Code;
 import com.chat.server.common.code.ErrorCode;
-import com.chat.server.common.code.SuccessCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,11 +21,11 @@ public class Response<T> {
         this.data = data;
     }
 
-    public static Response<Object> of(SuccessCode code) {
+    public static Response<Object> of(Code code) {
         return new Response<>(code.getCode(), code.getMessage(), null);
     }
 
-    public static <T> Response<T> of(SuccessCode code,
+    public static <T> Response<T> of(Code code,
                                      T data) {
         return new Response<>(code.getCode(), code.getMessage(), data);
     }
