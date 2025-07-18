@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
-@Order(2)
+@Order(3)
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Response<ErrorCode>> handleException(Exception e) {
+    public ResponseEntity<Response<ErrorCode>> handleException(Exception e) {
         log.error("handle error: ", e);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(Response.of(ErrorCode.INTERNAL_SERVER_ERROR), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                Response.of(ErrorCode.INTERNAL_SERVER_ERROR),
+                headers,
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }
