@@ -29,6 +29,8 @@ function registerHtmxTokenHeaders() {
         if (xhr.getResponseHeader("HX-Token-Invalid") === "true") {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            accessToken = null;
+            refreshToken = null;
             // window.location.reload();
         }
     });

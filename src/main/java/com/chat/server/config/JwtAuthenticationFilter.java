@@ -54,9 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setContentType("text/html;charset=UTF-8");
                 String toastHtml = """
                         <div id="toast-container" hx-swap-oob="true">
-                            <div id="toast-error"
-                                 class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg 
-                                        transition-opacity duration-300 text-white bg-red-500">
+                            <div class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-white bg-red-500">
                                 <p>%s</p>
                             </div>
                         </div>
