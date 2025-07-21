@@ -35,7 +35,7 @@ public class GlobalApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Object handleException(HttpServletRequest request,
                                   Exception e) {
-        log.error("handle error: ", e);
+        log.error("handle exception: ", e);
         if (isHxRequest(request)) {
             return toastFragmentView(e.getMessage());
         }

@@ -10,7 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.MemberRole;
-import com.chat.server.common.exception.CustomException;
+import com.chat.server.common.exception.CustomTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -75,18 +75,18 @@ public class JwtProvider {
                     decodedJWT.getClaim(Constants.JWT_USER_ID).asLong(),
                     JwtUtils.maskSubject(decodedJWT.getClaim(Constants.JWT_USER_NAME).asString())
             );
-            throw new CustomException(ErrorCode.TOKEN_NOT_EXPIRED);
+            throw new CustomTokenException(ErrorCode.TOKEN_NOT_EXPIRED);
 
         } catch (AlgorithmMismatchException | SignatureVerificationException | InvalidClaimException e) {
             log.error("Access token verification failed due to algorithm/signature/claim issue", e);
-            throw new CustomException(ErrorCode.TOKEN_INVALID);
+            throw new CustomTokenException(ErrorCode.TOKEN_INVALID);
 
         } catch (TokenExpiredException e) {
             return JWT.decode(token); // Token is correctly expired
 
         } catch (Exception e) {
             log.error("Unexpected error occurred while verifying access token", e);
-            throw new CustomException(ErrorCode.TOKEN_INVALID);
+            throw new CustomTokenException(ErrorCode.TOKEN_INVALID);
         }
     }
 
@@ -126,15 +126,15 @@ public class JwtProvider {
 
         } catch (AlgorithmMismatchException | SignatureVerificationException | InvalidClaimException e) {
             log.error("Token verification failed due to algorithm/signature/claim issue", e);
-            throw new CustomException(ErrorCode.TOKEN_INVALID);
+            throw new CustomTokenException(ErrorCode.TOKEN_INVALID);
 
         } catch (TokenExpiredException e) {
             log.error("Token is expired", e);
-            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+            throw new CustomTokenException(ErrorCode.TOKEN_EXPIRED);
 
         } catch (Exception e) {
             log.error("Unexpected error occurred while verifying token", e);
-            throw new CustomException(ErrorCode.TOKEN_INVALID);
+            throw new CustomTokenException(ErrorCode.TOKEN_INVALID);
         }
     }
 

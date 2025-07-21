@@ -17,6 +17,7 @@ public class Constants {
     public static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_AUTHORIZATION_REFRESH = "Authorization-Refresh";
+    public static final String HEADER_AUTHORIZATION_INVALID = "HX-Token-Invalid";
 
     // Swagger
     public static final String SWAGGER_ACCESS_TOKEN = "accessToken";
