@@ -15,8 +15,7 @@
 
         <form class="space-y-4"
               hx-post="/hx/auth/login"
-              hx-target="#modal-container"
-              hx-swap="outerHTML"
+              hx-swap="none"
               hx-on::after-request="handleLoginSuccess(event)">
             <div>
                 <label for="username" class="block text-sm font-medium">아이디</label>
@@ -37,18 +36,4 @@
         </form>
     </div>
 </div>
-
-<script>
-    function handleLoginSuccess(evt) {
-        if (evt.detail.xhr.status === 200) {
-            const response = JSON.parse(evt.detail.xhr.responseText);
-            const token = response.accessToken;
-            if (token) {
-                htmx.ajaxHeader("Authorization", "Bearer " + token);
-                document.getElementById("modal-container").innerHTML = "";
-                window.location.reload(); // 또는 페이지 일부 갱신
-            }
-        }
-    }
-</script>
 </html>
