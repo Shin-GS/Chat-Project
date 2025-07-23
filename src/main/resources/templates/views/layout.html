@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">Chat</title>
     <link href="/css/globals.css" rel="stylesheet"/>
+    <script src="/script/auth-token.js"></script>
     <script src="/script/htmx.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -19,8 +20,6 @@
             });
         });
     </script>
-
-    <script src="/script/auth-token.js"></script>
 </head>
 <body class="bg-gray-100 font-sans">
 <header th:fragment="header">
