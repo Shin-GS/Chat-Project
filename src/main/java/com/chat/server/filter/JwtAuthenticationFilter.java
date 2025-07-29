@@ -1,7 +1,7 @@
-package com.chat.server.config;
+package com.chat.server.filter;
 
-import com.chat.server.common.constant.Constants;
 import com.chat.server.common.exception.CustomTokenException;
+import com.chat.server.common.util.ResponseUtil;
 import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.security.TokenResolver;
 import com.chat.server.service.AuthService;
@@ -25,6 +25,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenResolver tokenResolver;
     private final AuthService authService;
+    private final ResponseUtil responseUtil;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -48,24 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (CustomTokenException e) {
-            if ("true".equals(request.getHeader("HX-Request"))) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.setHeader(Constants.HEADER_AUTHORIZATION_INVALID, "true");
-                response.setContentType("text/html;charset=UTF-8");
-                String toastHtml = """
-                        <div id="toast-container" hx-swap-oob="true">
-                            <div class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-white bg-red-500">
-                                <p>%s</p>
-                            </div>
-                        </div>
-                        """.formatted(e.getMessage());
-                response.getWriter().write(toastHtml);
-
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
-            }
+            responseUtil.unAuthorizationResponse(request, response, e);
         }
     }
 }

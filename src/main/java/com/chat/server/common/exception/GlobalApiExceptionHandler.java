@@ -2,6 +2,7 @@ package com.chat.server.common.exception;
 
 import com.chat.server.common.Response;
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +22,12 @@ public class GlobalApiExceptionHandler {
     public Object handleCustomException(HttpServletRequest request,
                                         CustomException e) {
         log.error("handle CustomException: ", e);
-        if (isHxRequest(request)) {
+        if (RequestUtil.isHxRequest(request)) {
             return toastFragmentView(e.getMessage());
         }
 
         if (e.getCode() instanceof ErrorCode errorCode) {
-            return new ResponseEntity<>(Response.of(errorCode), HttpStatus.INTERNAL_SERVER_ERROR);
+            return Response.of(errorCode);
         }
 
         return new ResponseEntity<>(Response.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,15 +37,11 @@ public class GlobalApiExceptionHandler {
     public Object handleException(HttpServletRequest request,
                                   Exception e) {
         log.error("handle exception: ", e);
-        if (isHxRequest(request)) {
+        if (RequestUtil.isHxRequest(request)) {
             return toastFragmentView(e.getMessage());
         }
 
         return new ResponseEntity<>(Response.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    private boolean isHxRequest(HttpServletRequest request) {
-        return request != null && "true".equals(request.getHeader("HX-Request"));
     }
 
     private ModelAndView toastFragmentView(String message) {

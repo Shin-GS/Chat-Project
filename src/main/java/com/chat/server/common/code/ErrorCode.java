@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ErrorCode implements Code {
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
 
+    UNAUTHORIZED(401, "Unauthorized"),
     USER_NOT_EXISTS(400, "User not exists"),
     INVALID_PASSWORD(400, "Invalid password"),
     USER_ALREADY_EXISTS(400, "User already exists"),

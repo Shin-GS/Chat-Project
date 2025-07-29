@@ -1,5 +1,7 @@
 package com.chat.server.config;
 
+import com.chat.server.filter.JwtAuthenticationFilter;
+import com.chat.server.filter.UnauthorizedEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final RestrictedPaths restrictedPaths;
+    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
@@ -28,6 +31,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(unauthorizedEntryPoint))
                 .build();
     }
 
