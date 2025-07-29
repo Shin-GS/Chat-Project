@@ -31,7 +31,7 @@ function registerHtmxTokenHeaders() {
             localStorage.removeItem("refreshToken");
             accessToken = null;
             refreshToken = null;
-            // window.location.reload();
+            window.location.reload();
         }
     });
 }
