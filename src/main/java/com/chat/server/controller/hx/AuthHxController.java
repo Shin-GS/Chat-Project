@@ -38,13 +38,16 @@ public class AuthHxController {
     public List<ModelAndView> login(@ModelAttribute @Valid LoginRequest request,
                                     HttpServletResponse response) {
         LoginResponse loginResponse = authService.login(request);
-
         response.setHeader(Constants.HEADER_AUTHORIZATION, "Bearer " + loginResponse.token());
         response.setHeader(Constants.HEADER_AUTHORIZATION_REFRESH, "Bearer " + loginResponse.refreshToken());
+
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/toast.html",
                         "components/toast :: message",
                         Map.of("type", "success", "message", "login success"))
+                .addFragment("templates/components/menu.html",
+                        "components/menu :: user-menu",
+                        Map.of("member", authService.getMemberInfo(loginResponse.token())))
                 .build();
     }
 }
