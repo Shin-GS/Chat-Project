@@ -18,6 +18,9 @@ public enum ErrorCode implements Code {
     TOKEN_INVALID(400, "Token invalid"),
     TOKEN_EXPIRED(400, "Token expired"),
     TOKEN_NOT_EXPIRED(400, "Token not expired"),
+
+    CHAT_REQUEST_INVALID(400, "chat request invalid"),
+    CHAT_FRIEND_ALREADY_EXISTS(400, "chat friend already exists"),
     ;
 
     private final Integer code;

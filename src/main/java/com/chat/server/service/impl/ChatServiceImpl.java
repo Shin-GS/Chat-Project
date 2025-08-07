@@ -1,6 +1,10 @@
 package com.chat.server.service.impl;
 
+import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.Chat;
+import com.chat.server.domain.entity.ChatFriend;
+import com.chat.server.domain.repository.ChatFriendRepository;
 import com.chat.server.domain.repository.ChatRepository;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.payload.MessagePayload;
@@ -15,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
+    private final ChatFriendRepository chatFriendRepository;
 
     @Override
     @Transactional
@@ -31,5 +36,19 @@ public class ChatServiceImpl implements ChatService {
         return chatRepository.findRecentChatsBetweenUsernames(firstUsername, secondUsername, pageable).stream()
                 .map(MessagePayload::of)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void addFriend(Long userId, Long friendId) {
+        if (userId == null || friendId == null) {
+            throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
+        }
+
+        if (chatFriendRepository.existsByUserIdAndFriendId(userId, friendId)) {
+            throw new CustomException(ErrorCode.CHAT_FRIEND_ALREADY_EXISTS);
+        }
+
+        chatFriendRepository.save(ChatFriend.of(userId, friendId));
     }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+<ul th:fragment="friend-list"
+    id="search-friend-list"
+    hx-swap-oob="true">
+    <!--/*@thymesVar id="searchUsers" type="java.util.List<com.chat.server.service.response.UserInfoResponse>"*/-->
+    <li th:if="${#lists.isEmpty(searchUsers)}">not exists</li>
+    <li th:each="searchUser : ${searchUsers}">
+        <form hx-post="/hx/chats/add-friends"
+              hx-swap="none">
+            <input type="hidden" name="friendId" th:value="${searchUser.id()}"/>
+            <button type="submit"
+                    class="bg-blue-100 hover:bg-blue-200 text-blue-900 font-semibold px-3 py-1 rounded">
+                <span th:text="${searchUser.name()}">Add</span>
+            </button>
+        </form>
+    </li>
+</ul>
+</body>
+</html>

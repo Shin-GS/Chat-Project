@@ -1,5 +1,6 @@
 package com.chat.server.domain.repository;
 
+import com.chat.server.domain.dto.UserDto;
 import com.chat.server.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT user.username FROM User AS user WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0 AND user.username != :username")
-    List<String> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern, @Param("username") String username);
+    @Query("""
+            SELECT new com.chat.server.domain.dto.UserDto(user.id, user.username)
+            FROM User AS user
+            WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0 AND user.username != :username
+            """)
+    List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern, @Param("username") String username);
 } 

@@ -5,6 +5,7 @@ import com.chat.server.common.code.SuccessCode;
 import com.chat.server.security.JwtMember;
 import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.UserService;
+import com.chat.server.service.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,10 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @Operation(summary = "본인 제외한 비슷한 이름 조회")
+    @Operation(summary = "본인 제외한 비슷한 회원 조회")
     @GetMapping("/find/names/{keyword}")
-    public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword,
-                                                       @JwtMember JwtMemberInfo memberInfo) {
+    public Response<List<UserInfoResponse>> findSimilarUsernames(@PathVariable("keyword") String keyword,
+                                                                 @JwtMember JwtMemberInfo memberInfo) {
         return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.username()));
     }
 }
