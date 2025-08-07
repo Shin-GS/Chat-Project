@@ -35,28 +35,9 @@
                     </section>
                 </div>
             </div>
+
             <!-- Chat Panel -->
-            <div class="flex-1 p-4">
-                <div>
-                    <div class="chat-topbar">
-                        <h2 id="chat-title" th:text="${roomTitle}">채팅방</h2>
-                    </div>
-
-                    <div class="chat-list"
-                         id="chat-message-list"
-                         style="height: 400px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 1rem;">
-                    </div>
-
-                    <div class="chat-bottombar">
-                        <label for="chat-input"></label>
-                        <input type="text"
-                               id="chat-input"
-                               placeholder="메시지를 입력하세요..."
-                               style="width: 80%;"/>
-                        <button onclick="sendMessage()">전송</button>
-                    </div>
-                </div>
-            </div>
+            <div id="chat-panel"></div>
         </div>
     </section>
 </main>

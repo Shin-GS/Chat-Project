@@ -1,5 +1,7 @@
 package com.chat.server.service.impl;
 
+import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.repository.UserRepository;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.UserInfoResponse;
@@ -25,5 +27,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findSimilarNamesExcludingExactMatch(pattern, userId).stream()
                 .map(UserInfoResponse::of)
                 .toList();
+    }
+
+    @Override
+    public UserInfoResponse findUserInfo(Long userId) {
+        return userRepository.findById(userId)
+                .map(UserInfoResponse::of)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
     }
 }

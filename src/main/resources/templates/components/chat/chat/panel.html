@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+<div th:fragment="chat-panel"
+     class="flex-1 p-4"
+     id="chat-panel"
+     hx-swap-oob="true">
+    <div>
+        <div class="chat-topbar">
+            <!--/*@thymesVar id="friendUser" type="com.chat.server.service.response.UserInfoResponse"*/-->
+            <h2 id="chat-title" th:text="${friendUser.name()}">채팅방</h2>
+        </div>
+
+        <div id="chat-message-list"></div>
+        <div class="chat-bottombar">
+            <label for="chat-input">
+                <input type="text"
+                       id="chat-input"
+                       placeholder="메시지를 입력하세요..."
+                       style="width: 80%;"/>
+            </label>
+            <button onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
