@@ -1,15 +1,18 @@
 package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.security.JwtMember;
+import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.ChatService;
 import com.chat.server.service.UserService;
+import com.chat.server.service.payload.MessagePayload;
 import com.chat.server.service.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/hx/chats")
 public class ChatHxController {
     private final UserService userService;
+    private final ChatService chatService;
 
     @Operation(summary = "채팅 패널")
     @GetMapping("/{friendUserId}/panel")
@@ -30,6 +34,20 @@ public class ChatHxController {
                 .addFragment("templates/components/chat/chat/panel.html",
                         "components/chat/chat/panel :: chat-panel",
                         Map.of("friendUser", friendUserInfo))
+                .build();
+    }
+
+    @Operation(summary = "최근 메시지 조회")
+    @GetMapping("/{friendUserId}/recent")
+    public List<ModelAndView> recentMessage(@PathVariable("friendUserId") Long friendUserId,
+                                            @JwtMember JwtMemberInfo memberInfo,
+                                            @RequestParam(name = "size", defaultValue = "10") int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<MessagePayload> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/chat/chat/list.html",
+                        "components/chat/chat/list :: chat-message-list",
+                        Map.of("messages", messages))
                 .build();
     }
 }

@@ -11,6 +11,8 @@ public interface ChatService {
 
     List<MessagePayload> findRecentChats(String firstUsername, String secondUsername, Pageable pageable);
 
+    List<MessagePayload> findRecentChats(Long userId, Long friendUserId, Pageable pageable);
+
     List<UserInfoResponse> findFriends(Long userId);
 
     void addFriend(Long userId, Long friendUserId);

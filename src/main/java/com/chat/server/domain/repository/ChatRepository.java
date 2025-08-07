@@ -22,4 +22,16 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             @Param("secondUsername") String secondUsername,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT c FROM Chat c
+            WHERE (c.senderUserId = :firstUserId AND c.receiverUserId = :secondUserId)
+               OR (c.senderUserId = :secondUserId AND c.receiverUserId = :firstUserId)
+            ORDER BY c.tId DESC
+            """)
+    List<Chat> findRecentChatsBetweenUserIds(
+            @Param("firstUserId") Long firstUserId,
+            @Param("secondUserId") Long secondUserId,
+            Pageable pageable
+    );
 }

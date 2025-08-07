@@ -6,11 +6,14 @@
      id="chat-panel"
      hx-swap-oob="true">
     <div>
+        <!--/*@thymesVar id="friendUser" type="com.chat.server.service.response.UserInfoResponse"*/-->
         <div class="chat-topbar">
-            <!--/*@thymesVar id="friendUser" type="com.chat.server.service.response.UserInfoResponse"*/-->
             <h2 id="chat-title" th:text="${friendUser.name()}">채팅방</h2>
         </div>
-
+        <div hidden="hidden"
+             th:attr="hx-get='/hx/chats/' + ${friendUser.id()} + '/recent'"
+             hx-trigger="load"
+             hx-swap="none"></div>
         <div id="chat-message-list"></div>
         <div class="chat-bottombar">
             <label for="chat-input">

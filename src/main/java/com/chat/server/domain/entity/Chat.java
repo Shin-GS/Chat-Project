@@ -20,10 +20,16 @@ public class Chat {
     private Long tId;
 
     @Column
+    private Long senderUserId;
+
+    @Column
     private String sender;
 
     @Column
     private String receiver;
+
+    @Column
+    private Long receiverUserId;
 
     @Column
     private String message;

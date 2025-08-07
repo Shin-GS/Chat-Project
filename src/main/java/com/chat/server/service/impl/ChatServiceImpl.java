@@ -40,6 +40,13 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public List<MessagePayload> findRecentChats(Long userId, Long friendUserId, Pageable pageable) {
+        return chatRepository.findRecentChatsBetweenUserIds(userId, friendUserId, pageable).stream()
+                .map(MessagePayload::of)
+                .toList();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<UserInfoResponse> findFriends(Long userId) {
         if (userId == null) {
