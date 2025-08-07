@@ -9,7 +9,7 @@
     <li th:each="friend : ${friends}">
         <form hx-get="/hx/chats/modal"
               hx-swap="none">
-            <input type="hidden" name="friendId" th:value="${friend.id()}"/>
+            <input type="hidden" name="friendUserId" th:value="${friend.id()}"/>
             <button type="submit"
                     class="bg-blue-100 hover:bg-blue-200 text-blue-900 font-semibold px-3 py-1 rounded">
                 <span th:text="${friend.name()}">Add</span>

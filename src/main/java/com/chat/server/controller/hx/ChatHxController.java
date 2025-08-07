@@ -34,9 +34,9 @@ public class ChatHxController {
 
     @Operation(summary = "친구 추가")
     @PostMapping("/add-friends")
-    public List<ModelAndView> addFriends(@RequestParam("friendId") Long friendId,
+    public List<ModelAndView> addFriends(@RequestParam("friendUserId") Long friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
-        chatService.addFriend(memberInfo.id(), friendId);
+        chatService.addFriend(memberInfo.id(), friendUserId);
         List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/toast.html",

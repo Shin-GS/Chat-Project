@@ -17,9 +17,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     @Query("""
-            SELECT new com.chat.server.domain.dto.UserDto(user.id, user.username)
-            FROM User AS user
-            WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0 AND user.username != :username
+            SELECT new com.chat.server.domain.dto.UserDto(
+                    user.id,
+                    user.username,
+                    CASE WHEN chatFriend.fId IS NOT NULL THEN true ELSE false END
+                )
+                FROM User user
+                LEFT JOIN ChatFriend chatFriend ON chatFriend.friendUserId = user.id AND chatFriend.userId = :userId
+                WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0
+                      AND user.id != :userId
+                ORDER BY user.username
             """)
-    List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern, @Param("username") String username);
+    List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,
+                                                      @Param("userId") Long userId);
 } 

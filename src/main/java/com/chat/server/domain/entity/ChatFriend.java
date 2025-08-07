@@ -21,13 +21,13 @@ public class ChatFriend {
     private Long userId;
 
     @Column
-    private Long friendId;
+    private Long friendUserId;
 
     public static ChatFriend of(Long userId,
-                                Long friendId) {
+                                Long friendUserId) {
         ChatFriend chatFriend = new ChatFriend();
         chatFriend.userId = userId;
-        chatFriend.friendId = friendId;
+        chatFriend.friendUserId = friendUserId;
         return chatFriend;
     }
 }

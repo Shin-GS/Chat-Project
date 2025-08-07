@@ -11,14 +11,16 @@ import java.util.List;
 
 @Repository
 public interface ChatFriendRepository extends JpaRepository<ChatFriend, Long> {
-    List<ChatFriend> findAllByUserId(Long userId);
-
-    boolean existsByUserIdAndFriendId(Long userId, Long friendId);
+    boolean existsByUserIdAndFriendUserId(Long userId, Long friendUserId);
 
     @Query("""
-            SELECT new com.chat.server.domain.dto.UserDto(user.id, user.username)
+            SELECT new com.chat.server.domain.dto.UserDto(
+                        user.id,
+                        user.username,
+                       CASE WHEN (chatFriend.fId IS NOT NULL) THEN true ELSE false END
+            )
             FROM ChatFriend chatFriend
-            JOIN User user ON chatFriend.friendId = user.id
+            JOIN User user ON chatFriend.friendUserId = user.id
             WHERE chatFriend.userId = :userId
             ORDER BY user.username
             """)

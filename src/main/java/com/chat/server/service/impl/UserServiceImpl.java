@@ -17,12 +17,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserInfoResponse> findSimilarNamesExcludingExactMatch(String pattern, String username) {
-        if (pattern == null || username == null) {
+    public List<UserInfoResponse> findSimilarNamesExcludingExactMatch(String pattern, Long userId) {
+        if (pattern == null || userId == null) {
             return new ArrayList<>();
         }
 
-        return userRepository.findSimilarNamesExcludingExactMatch(pattern, username).stream()
+        return userRepository.findSimilarNamesExcludingExactMatch(pattern, userId).stream()
                 .map(UserInfoResponse::of)
                 .toList();
     }

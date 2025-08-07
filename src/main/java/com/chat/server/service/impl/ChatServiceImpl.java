@@ -53,15 +53,15 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public void addFriend(Long userId, Long friendId) {
-        if (userId == null || friendId == null || userId.equals(friendId)) {
+    public void addFriend(Long userId, Long friendUserId) {
+        if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
 
-        if (chatFriendRepository.existsByUserIdAndFriendId(userId, friendId)) {
+        if (chatFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_FRIEND_ALREADY_EXISTS);
         }
 
-        chatFriendRepository.save(ChatFriend.of(userId, friendId));
+        chatFriendRepository.save(ChatFriend.of(userId, friendUserId));
     }
 }

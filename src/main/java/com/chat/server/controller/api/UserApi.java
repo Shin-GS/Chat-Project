@@ -27,6 +27,6 @@ public class UserApi {
     @GetMapping("/find/names/{keyword}")
     public Response<List<UserInfoResponse>> findSimilarUsernames(@PathVariable("keyword") String keyword,
                                                                  @JwtMember JwtMemberInfo memberInfo) {
-        return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.username()));
+        return Response.of(SuccessCode.USER_INFO_RETRIEVED, userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.id()));
     }
 }

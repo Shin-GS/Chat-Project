@@ -35,7 +35,7 @@ public class UserHxController {
     @GetMapping("/find/names")
     public List<ModelAndView> findSimilarUsernames(@RequestParam("keyword") String keyword,
                                                    @JwtMember JwtMemberInfo memberInfo) {
-        List<UserInfoResponse> searchUsers = userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.username());
+        List<UserInfoResponse> searchUsers = userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/search/friend/result.html",
                         "components/chat/search/friend/result :: friend-list",

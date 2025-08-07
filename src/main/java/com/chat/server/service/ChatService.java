@@ -13,5 +13,5 @@ public interface ChatService {
 
     List<UserInfoResponse> findFriends(Long userId);
 
-    void addFriend(Long userId, Long friendId);
+    void addFriend(Long userId, Long friendUserId);
 }
