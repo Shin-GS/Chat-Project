@@ -2,12 +2,10 @@ package com.chat.server.controller.api;
 
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.Constants;
 import com.chat.server.security.JwtMember;
 import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +22,7 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @Operation(summary = "비슷한 이름 조회",
-            security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
+    @Operation(summary = "비슷한 이름 조회")
     @GetMapping("/find/names/{keyword}")
     public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword,
                                                        @JwtMember JwtMemberInfo memberInfo) {

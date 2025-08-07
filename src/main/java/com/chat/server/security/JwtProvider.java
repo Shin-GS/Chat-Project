@@ -28,7 +28,7 @@ public class JwtProvider {
     public String createToken(Long userId, String username, MemberRole role) {
         checkUserInfo(userId, username);
         Instant now = Instant.now();
-        Instant expiresAt = now.plus(jwtProperties.getTokenTime(), ChronoUnit.MINUTES);
+        Instant expiresAt = now.plus(jwtProperties.getTokenTime(), ChronoUnit.SECONDS);
         return JWT.create()
                 .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_ACCESS_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)
@@ -42,7 +42,7 @@ public class JwtProvider {
     public String createRefreshToken(Long userId, String username, MemberRole role) {
         checkUserInfo(userId, username);
         Instant now = Instant.now();
-        Instant expiresAt = now.plus(jwtProperties.getRefreshTokenTime(), ChronoUnit.MINUTES);
+        Instant expiresAt = now.plus(jwtProperties.getRefreshTokenTime(), ChronoUnit.SECONDS);
         return JWT.create()
                 .withClaim(Constants.JWT_TOKEN_TYPE, Constants.TOKEN_TYPE_REFRESH_TOKEN)
                 .withClaim(Constants.JWT_USER_ID, userId)

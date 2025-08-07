@@ -17,12 +17,13 @@ spring:
 token:
   secret-key: "Yt@3kL#9zP!qR1uS^dM7vWxE@zB5hNpT"
   refresh-secret-key: "N6xZ!kM#p3QvR8@uC1LzBw$sFtR#yTq2"
-  token-time: 1 # minutes
-  refresh-token-time: 43200 # 30 days in minutes
+  token-time: 25200 # seconds
+  refresh-token-time: 756000 # seconds
 
 security:
   restricted-paths:
     static-path:
+      - /chat
     api-path:
       - /api/auth/me/**
       - /api/chats/**

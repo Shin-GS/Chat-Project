@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">Chat</title>
     <link href="/css/globals.css" rel="stylesheet"/>
-    <script src="/script/auth-token.js"></script>
     <script src="/script/htmx.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.body.addEventListener('htmx:afterRequest', () => {
+            document.body.addEventListener('htmx:afterRequest', (event) => {
                 const toast = document.querySelector('#toast-success') || document.querySelector('#toast-error');
                 if (toast) {
                     setTimeout(() => {
                         toast.classList.add('opacity-0');
                         setTimeout(() => toast.remove(), 300);
                     }, 3000);
+                }
+
+                const reloadHeader = event.detail?.xhr?.getResponseHeader("HX-RELOAD");
+                if (reloadHeader === "true") {
+                    window.location.reload();
                 }
             });
         });

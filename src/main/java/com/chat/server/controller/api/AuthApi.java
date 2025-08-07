@@ -2,16 +2,14 @@ package com.chat.server.controller.api;
 
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.Constants;
 import com.chat.server.security.JwtMember;
 import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;
-import com.chat.server.service.response.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,19 +30,19 @@ public class AuthApi {
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public Response<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-        return Response.of(SuccessCode.USER_LOGGED_IN, authService.login(request));
+    public Response<Object> login(@RequestBody @Valid LoginRequest request,
+                                  HttpServletResponse response) {
+        authService.login(request, response);
+        return Response.of(SuccessCode.USER_LOGGED_IN);
     }
 
-    @Operation(summary = "사용자 번호 조회",
-            security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
+    @Operation(summary = "사용자 번호 조회")
     @GetMapping("/me/id")
     public Response<Long> getUserId(@JwtMember JwtMemberInfo memberInfo) {
         return Response.of(SuccessCode.USER_INFO_RETRIEVED, memberInfo.id());
     }
 
-    @Operation(summary = "사용자 이름 조회",
-            security = @SecurityRequirement(name = Constants.SWAGGER_ACCESS_TOKEN))
+    @Operation(summary = "사용자 이름 조회")
     @GetMapping("/me/name")
     public Response<String> getUserName(@JwtMember JwtMemberInfo memberInfo) {
         return Response.of(SuccessCode.USER_INFO_RETRIEVED, memberInfo.username());

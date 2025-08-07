@@ -4,7 +4,6 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.LoginRequest;
-import com.chat.server.service.response.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -37,17 +36,24 @@ public class AuthHxController {
     @PostMapping("/login")
     public List<ModelAndView> login(@ModelAttribute @Valid LoginRequest request,
                                     HttpServletResponse response) {
-        LoginResponse loginResponse = authService.login(request);
-        response.setHeader(Constants.HEADER_AUTHORIZATION, "Bearer " + loginResponse.token());
-        response.setHeader(Constants.HEADER_AUTHORIZATION_REFRESH, "Bearer " + loginResponse.refreshToken());
-
+        authService.login(request, response);
+        response.setHeader(Constants.HX_RELOAD, "true");
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/toast.html",
                         "components/toast :: message",
                         Map.of("type", "success", "message", "login success"))
-                .addFragment("templates/components/menu.html",
-                        "components/menu :: user-menu",
-                        Map.of("member", authService.getMemberInfo(loginResponse.token())))
+                .build();
+    }
+
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    public List<ModelAndView> logout(HttpServletResponse response) {
+        authService.logout(response);
+        response.setHeader(Constants.HX_RELOAD, "true");
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/toast.html",
+                        "components/toast :: message",
+                        Map.of("type", "success", "message", "logout success"))
                 .build();
     }
 }

@@ -12,16 +12,12 @@ public class Constants {
     public static final String JWT_USER_NAME = "userName";
     public static final String JWT_USER_ROLE = "userRole";
 
-    // Authorization
-    public static final String BEARER_PREFIX = "Bearer ";
-    public static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
-    public static final String HEADER_AUTHORIZATION = "Authorization";
-    public static final String HEADER_AUTHORIZATION_REFRESH = "Authorization-Refresh";
-    public static final String HEADER_AUTHORIZATION_INVALID = "HX-Token-Invalid";
+    // Hx
+    public static final String HX_RELOAD = "HX-RELOAD";
 
-    // Swagger
-    public static final String SWAGGER_ACCESS_TOKEN = "accessToken";
-    public static final String SWAGGER_REFRESH_TOKEN = "refreshToken";
+    // Authorization
+    public static final String COOKIE_AUTHORIZATION = "Authorization";
+    public static final String COOKIE_AUTHORIZATION_REFRESH = "Authorization-Refresh";
 
     // Response
     public static final String UNAUTHORIZED_RESPONSE_HTML = """

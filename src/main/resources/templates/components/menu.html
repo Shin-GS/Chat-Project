@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:hx-on="http://www.w3.org/1999/xhtml"
       lang="ko">
 <ul th:fragment="guest-menu"
     class="nav-menu flex items-center gap-6">
@@ -17,8 +16,7 @@
     <li>
         <button type="button"
                 hx-get="/hx/auth/login"
-                hx-target="#modal-container"
-                hx-swap="innerHTML"
+                hx-swap="none"
                 class="flex items-center gap-2 text-lg hover:text-blue-500">
             로그인
         </button>
@@ -41,10 +39,8 @@
         <ul class="user-submenu absolute hidden bg-white shadow-lg rounded-md overflow-hidden group-hover:block right-0 w-48">
             <li><a th:href="@{/settings}" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">설정</a></li>
             <li><a href="#"
-                   hx-post="/api/auth/logout"
-                   hx-trigger="click"
+                   hx-post="/hx/auth/logout"
                    hx-swap="none"
-                   hx-on::after-request="window.location.reload()"
                    class="block px-4 py-2 hover:bg-blue-500 hover:text-white">
                 로그아웃
             </a></li>
