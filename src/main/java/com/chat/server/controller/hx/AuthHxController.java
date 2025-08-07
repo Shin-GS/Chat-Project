@@ -24,8 +24,9 @@ import java.util.Map;
 public class AuthHxController {
     private final AuthService authService;
 
-    @GetMapping("/login")
-    public List<ModelAndView> login() {
+    @Operation(summary = "로그인 모달")
+    @GetMapping("/login/modal")
+    public List<ModelAndView> loginModal() {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/auth/login.html",
                         "components/auth/login :: login")

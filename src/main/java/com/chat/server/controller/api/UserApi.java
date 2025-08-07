@@ -22,7 +22,7 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @Operation(summary = "비슷한 이름 조회")
+    @Operation(summary = "본인 제외한 비슷한 이름 조회")
     @GetMapping("/find/names/{keyword}")
     public Response<List<String>> findSimilarUsernames(@PathVariable("keyword") String keyword,
                                                        @JwtMember JwtMemberInfo memberInfo) {

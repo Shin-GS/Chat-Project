@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       lang="ko">
+<body>
 <ul th:fragment="guest-menu"
     class="nav-menu flex items-center gap-6">
     <li>
         <button type="button"
-                hx-get="/hx/auth/login"
+                hx-get="/hx/auth/login/modal"
                 hx-swap="none"
                 class="flex items-center gap-2 text-lg hover:text-blue-500">
             로그인
@@ -37,4 +38,5 @@
         </ul>
     </li>
 </ul>
+</body>
 </html>

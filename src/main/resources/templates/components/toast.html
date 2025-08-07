@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       lang="ko">
+<body>
 <div th:fragment="message"
      id="toast-container"
      hx-swap-oob="true">
@@ -13,4 +14,5 @@
         <p th:text="${message}"></p>
     </div>
 </div>
+</body>
 </html>

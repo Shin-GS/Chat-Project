@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+<ul th:fragment="friend-list"
+    id="search-friend-list"
+    hx-swap-oob="true">
+    <!--/*@thymesVar id="names" type="List<String>"*/-->
+    <li th:if="${#lists.isEmpty(names)}">not exists</li>
+    <li th:each="name : ${names}">
+        <button hx-post="/api/v1/chat/add-friend"
+                hx-vals='{"name": [[${name}]]}'
+                hx-swap="none">
+            <span th:text="${name}">Add</span>
+        </button>
+    </li>
+</ul>
+</body>
+</html>
