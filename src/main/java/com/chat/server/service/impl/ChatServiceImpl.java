@@ -4,10 +4,13 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.Chat;
 import com.chat.server.domain.entity.ChatFriend;
+import com.chat.server.domain.entity.User;
 import com.chat.server.domain.repository.ChatFriendRepository;
 import com.chat.server.domain.repository.ChatRepository;
+import com.chat.server.domain.repository.UserRepository;
 import com.chat.server.service.ChatService;
-import com.chat.server.service.payload.MessagePayload;
+import com.chat.server.service.request.ChatMessageRequest;
+import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,28 +24,31 @@ import java.util.List;
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final ChatFriendRepository chatFriendRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public void saveChat(MessagePayload messagePayload) {
-        Chat newChat = Chat.of(messagePayload.from(),
-                messagePayload.to(),
-                messagePayload.message());
-        chatRepository.save(newChat);
+    public ChatMessageResponse saveChat(Long userId, ChatMessageRequest messageRequest) {
+        User sender = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        User receiver = userRepository.findById(messageRequest.userId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        Chat chatMessage = chatRepository.save(Chat.of(sender, receiver, messageRequest.message()));
+        return ChatMessageResponse.of(chatMessage);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MessagePayload> findRecentChats(String firstUsername, String secondUsername, Pageable pageable) {
+    public List<ChatMessageResponse> findRecentChats(String firstUsername, String secondUsername, Pageable pageable) {
         return chatRepository.findRecentChatsBetweenUsernames(firstUsername, secondUsername, pageable).stream()
-                .map(MessagePayload::of)
+                .map(ChatMessageResponse::of)
                 .toList();
     }
 
     @Override
-    public List<MessagePayload> findRecentChats(Long userId, Long friendUserId, Pageable pageable) {
+    public List<ChatMessageResponse> findRecentChats(Long userId, Long friendUserId, Pageable pageable) {
         return chatRepository.findRecentChatsBetweenUserIds(userId, friendUserId, pageable).stream()
-                .map(MessagePayload::of)
+                .map(ChatMessageResponse::of)
                 .toList();
     }
 

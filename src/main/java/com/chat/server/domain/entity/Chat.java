@@ -37,12 +37,14 @@ public class Chat {
     @Column
     private Timestamp createdAt;
 
-    public static Chat of(String sender,
-                          String receiver,
+    public static Chat of(User sender,
+                          User receiver,
                           String message) {
         Chat chat = new Chat();
-        chat.sender = sender;
-        chat.receiver = receiver;
+        chat.senderUserId = sender.getId();
+        chat.sender = sender.getUsername();
+        chat.receiverUserId = receiver.getId();
+        chat.receiver = receiver.getUsername();
         chat.message = message;
         chat.createdAt = new Timestamp(System.currentTimeMillis());
         return chat;

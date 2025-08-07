@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{views/layout :: head}">
+<head>
+    <th:block th:insert="~{views/layout :: head}" />
+
     <title>Home</title>
 </head>
 <body class="story-view-page flex flex-col min-h-screen bg-white text-gray-900">

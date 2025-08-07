@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <body>
+<!--/*@thymesVar id="friendUser" type="com.chat.server.service.response.UserInfoResponse"*/-->
 <div th:fragment="chat-panel"
      class="flex-1 p-4"
      id="chat-panel"
-     hx-swap-oob="true">
+     hx-swap-oob="true"
+     th:attr="data-friend-id=${friendUser.id()}">
     <div>
         <!--/*@thymesVar id="friendUser" type="com.chat.server.service.response.UserInfoResponse"*/-->
         <div class="chat-topbar">

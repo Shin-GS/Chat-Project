@@ -1,17 +1,18 @@
 package com.chat.server.service;
 
-import com.chat.server.service.payload.MessagePayload;
+import com.chat.server.service.request.ChatMessageRequest;
+import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.response.UserInfoResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ChatService {
-    void saveChat(MessagePayload messagePayload);
+    ChatMessageResponse saveChat(Long userId, ChatMessageRequest messageRequest);
 
-    List<MessagePayload> findRecentChats(String firstUsername, String secondUsername, Pageable pageable);
+    List<ChatMessageResponse> findRecentChats(String firstUsername, String secondUsername, Pageable pageable);
 
-    List<MessagePayload> findRecentChats(Long userId, Long friendUserId, Pageable pageable);
+    List<ChatMessageResponse> findRecentChats(Long userId, Long friendUserId, Pageable pageable);
 
     List<UserInfoResponse> findFriends(Long userId);
 

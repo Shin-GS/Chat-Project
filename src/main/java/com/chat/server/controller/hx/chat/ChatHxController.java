@@ -5,7 +5,7 @@ import com.chat.server.security.JwtMember;
 import com.chat.server.security.JwtMemberInfo;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.UserService;
-import com.chat.server.service.payload.MessagePayload;
+import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,10 +40,10 @@ public class ChatHxController {
     @Operation(summary = "최근 메시지 조회")
     @GetMapping("/{friendUserId}/recent")
     public List<ModelAndView> recentMessage(@PathVariable("friendUserId") Long friendUserId,
-                                            @JwtMember JwtMemberInfo memberInfo,
-                                            @RequestParam(name = "size", defaultValue = "10") int limit) {
+                                            @RequestParam(name = "size", defaultValue = "10") int limit,
+                                            @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<MessagePayload> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
+        List<ChatMessageResponse> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/chat/list.html",
                         "components/chat/chat/list :: chat-message-list",

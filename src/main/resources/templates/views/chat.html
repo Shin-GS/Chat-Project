@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{views/layout :: head}">
-    <title>Chat Room</title>
+<head>
+    <th:block th:insert="~{views/layout :: head}" />
 
+    <title>Chat Room</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/script/chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.addEventListener("htmx:oobAfterSwap", function (evt) {
+                if (evt.target.id === "chat-panel") {
+                    const friendId = evt.target.getAttribute("data-friend-id");
+                    connectWebSocket(friendId);
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <header th:replace="~{views/layout :: header}"></header>
