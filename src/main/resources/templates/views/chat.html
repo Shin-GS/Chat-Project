@@ -27,6 +27,12 @@
                             🔍 친구 검색
                         </button>
                     </aside>
+
+                    <section>
+                        <h2 class="text-md font-semibold mb-2 text-gray-700">내 친구 목록</h2>
+                        <div hidden="hidden" hx-get="/hx/chats/friends" hx-trigger="load" hx-swap="none"></div>
+                        <ul id="friend-list" class="space-y-2 text-sm text-gray-800"></ul>
+                    </section>
                 </div>
             </div>
             <!-- Chat Panel -->

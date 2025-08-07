@@ -8,6 +8,7 @@ import com.chat.server.domain.repository.ChatFriendRepository;
 import com.chat.server.domain.repository.ChatRepository;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.payload.MessagePayload;
+import com.chat.server.service.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,21 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<UserInfoResponse> findFriends(Long userId) {
+        if (userId == null) {
+            throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
+        }
+
+        return chatFriendRepository.findAllByUserIdOrderByName(userId).stream()
+                .map(UserInfoResponse::of)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void addFriend(Long userId, Long friendId) {
-        if (userId == null || friendId == null) {
+        if (userId == null || friendId == null || userId.equals(friendId)) {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
 
