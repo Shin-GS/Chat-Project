@@ -4,16 +4,6 @@
 <ul th:fragment="guest-menu"
     class="nav-menu flex items-center gap-6">
     <li>
-        <a th:href="@{/categories}" data-icon="📂" class="flex items-center gap-2 text-lg hover:text-blue-500">
-            카테고리
-        </a>
-    </li>
-    <li>
-        <a th:href="@{/creators/popular}" data-icon="⭐" class="flex items-center gap-2 text-lg hover:text-blue-500">
-            인기 크리에이터
-        </a>
-    </li>
-    <li>
         <button type="button"
                 hx-get="/hx/auth/login"
                 hx-swap="none"
@@ -26,7 +16,7 @@
 <ul th:fragment="user-menu"
     class="nav-menu flex items-center gap-6">
     <li>
-        <a th:href="@{/categories}" data-icon="📂" class="flex items-center gap-2 text-lg hover:text-blue-500">
+        <a th:href="@{/chat}" data-icon="📂" class="flex items-center gap-2 text-lg hover:text-blue-500">
             채팅
         </a>
     </li>
@@ -37,7 +27,7 @@
             <span th:text="${member.username()}" class="text-lg font-medium"></span>
         </div>
         <ul class="user-submenu absolute hidden bg-white shadow-lg rounded-md overflow-hidden group-hover:block right-0 w-48">
-            <li><a th:href="@{/settings}" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">설정</a></li>
+            <li><a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">설정</a></li>
             <li><a href="#"
                    hx-post="/hx/auth/logout"
                    hx-swap="none"
