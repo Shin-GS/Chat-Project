@@ -64,4 +64,18 @@ public class ChatServiceImpl implements ChatService {
 
         chatFriendRepository.save(ChatFriend.of(userId, friendUserId));
     }
+
+    @Override
+    @Transactional
+    public void removeFriend(Long userId, Long friendUserId) {
+        if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
+            throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
+        }
+
+        if (!chatFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
+            throw new CustomException(ErrorCode.CHAT_FRIEND_NOT_EXISTS);
+        }
+
+        chatFriendRepository.deleteByUserIdAndFriendUserId(userId, friendUserId);
+    }
 }

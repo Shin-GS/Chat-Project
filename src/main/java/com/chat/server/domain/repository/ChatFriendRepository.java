@@ -25,4 +25,6 @@ public interface ChatFriendRepository extends JpaRepository<ChatFriend, Long> {
             ORDER BY user.username
             """)
     List<UserDto> findAllByUserIdOrderByName(@Param("userId") Long userId);
+
+    void deleteByUserIdAndFriendUserId(Long userId, Long friendUserId);
 }

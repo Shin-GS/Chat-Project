@@ -21,6 +21,7 @@ public enum ErrorCode implements Code {
 
     CHAT_REQUEST_INVALID(400, "chat request invalid"),
     CHAT_FRIEND_ALREADY_EXISTS(400, "chat friend already exists"),
+    CHAT_FRIEND_NOT_EXISTS(400, "chat friend not exists"),
     ;
 
     private final Integer code;

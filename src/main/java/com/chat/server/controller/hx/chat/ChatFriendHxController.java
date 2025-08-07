@@ -1,4 +1,4 @@
-package com.chat.server.controller.hx;
+package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.security.JwtMember;
@@ -17,12 +17,12 @@ import java.util.Map;
 @Tag(name = "Chat")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/hx/chats")
-public class ChatHxController {
+@RequestMapping("/hx/chats/friends")
+public class ChatFriendHxController {
     private final ChatService chatService;
 
     @Operation(summary = "친구 목록 조회")
-    @GetMapping("/friends")
+    @GetMapping
     public List<ModelAndView> findFriends(@JwtMember JwtMemberInfo memberInfo) {
         List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
@@ -33,7 +33,7 @@ public class ChatHxController {
     }
 
     @Operation(summary = "친구 추가")
-    @PostMapping("/add-friends")
+    @PostMapping
     public List<ModelAndView> addFriends(@RequestParam("friendUserId") Long friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
         chatService.addFriend(memberInfo.id(), friendUserId);
@@ -45,6 +45,31 @@ public class ChatHxController {
                 .addFragment("templates/components/chat/friend/list.html",
                         "components/chat/friend/list :: friend-list",
                         Map.of("friends", friends))
+                .addFragment("templates/components/modalClose.html",
+                        "components/modalClose :: close",
+                        "targetId",
+                        "search-friend-list")
+                .build();
+    }
+
+    @Operation(summary = "친구 삭제")
+    @DeleteMapping
+    public List<ModelAndView> removeFriends(@RequestParam("friendUserId") Long friendUserId,
+                                            @JwtMember JwtMemberInfo memberInfo) {
+        chatService.removeFriend(memberInfo.id(), friendUserId);
+        List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/toast.html",
+                        "components/toast :: message",
+                        Map.of("type", "success", "message", "request success"))
+                .addFragment("templates/components/chat/friend/list.html",
+                        "components/chat/friend/list :: friend-list",
+                        Map.of("friends", friends))
+                .addFragment("templates/components/modalClose.html",
+                        "components/modalClose :: close",
+                        "targetId",
+                        "search-friend-list")
                 .build();
     }
 }
+

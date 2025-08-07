@@ -8,7 +8,7 @@
     <li th:if="${#lists.isEmpty(searchUsers)}">not exists</li>
     <li th:each="searchUser : ${searchUsers}">
         <form th:if="${!searchUser.friend()}"
-              hx-post="/hx/chats/add-friends"
+              hx-post="/hx/chats/friends"
               hx-swap="none">
             <input type="hidden" name="friendUserId" th:value="${searchUser.id()}"/>
             <button type="submit"
