@@ -25,13 +25,14 @@ import java.util.List;
 public class ChatApi {
     private final ChatService chatService;
 
-    @Operation(summary = "최근 채팅 메시지 조회")
-    @GetMapping("/recent")
-    public Response<List<ChatMessageResponse>> getRecentChats(@RequestParam String firstUsername,
+    @Operation(summary = "chatId 이전 이전 메시지 리스트 조회")
+    @GetMapping("/before")
+    public Response<List<ChatMessageResponse>> getBeforeChats(@RequestParam String firstUsername,
                                                               @RequestParam String secondUsername,
+                                                              @RequestParam(name = "chatId") Long chatId,
                                                               @RequestParam(name = "size", defaultValue = "10") int limit,
                                                               @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findRecentChats(memberInfo.id(), firstUsername, secondUsername, pageable));
+        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findBeforeChats(memberInfo.id(), firstUsername, secondUsername, chatId, pageable));
     }
 }

@@ -1,0 +1,11 @@
+<!--/*@thymesVar id="hasMore" type="boolean"*/-->
+<!--/*@thymesVar id="friendUserId" type="Long"*/-->
+<!--/*@thymesVar id="firstChatId" type="Long"*/-->
+<div th:if="${hasMore}"
+     hx-trigger="revealed"
+     th:attr="hx-get='/hx/chats/' + ${friendUserId} + '/before?chatId=' + ${firstChatId}"
+     hx-target="#chat-message-list"
+     hx-swap="afterbegin"
+     style="height: 1px; position: relative; top: -5px;"></div>
+
+<p th:replace="~{components/chat/chat/list}"></p>

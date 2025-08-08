@@ -35,7 +35,7 @@ public class WssControllerV1 {
         ChatMessageResponse senderResponse = chatService.saveChat(senderId, message);
         messagingTemplate.convertAndSend("/sub/chat/" + senderId, renderChatMessageFragment(senderResponse));
 
-        ChatMessageResponse receiverResponse = ChatMessageResponse.of(senderResponse.from(), senderResponse.to(), senderResponse.message());
+        ChatMessageResponse receiverResponse = ChatMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());
         messagingTemplate.convertAndSend("/sub/chat/" + receiverId, renderChatMessageFragment(receiverResponse));
     }
 

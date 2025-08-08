@@ -13,11 +13,12 @@
             <h2 id="chat-title" th:text="${friendUser.name}">채팅방</h2>
         </div>
         <div hidden="hidden"
-             th:attr="hx-get='/hx/chats/' + ${friendUser.id} + '/recent'"
+             th:attr="hx-get='/hx/chats/' + ${friendUser.id} + '/before'"
              hx-trigger="load"
              hx-target="#chat-message-list"
              hx-swap="afterbegin"></div>
-        <div id="chat-message-list"></div>
+        <div id="chat-message-list"
+             style="height: 400px; overflow-y: auto; border: 1px solid #ccc;"></div>
         <div class="chat-bottombar">
             <label for="chat-input">
                 <input type="text"

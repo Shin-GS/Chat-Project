@@ -1,6 +1,6 @@
 <!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.response.ChatMessageResponse>"*/-->
 <p th:each="message : ${messages}"
-   th:classappend="${message.mine} ? 'chat-right' : 'chat-left'">
+   th:style="'text-align:' + (${message.mine} ? 'right' : 'left')">
     <strong th:text="${message.from}">보낸사람</strong>:
     <span th:text="${message.message}">내용</span>
 </p>

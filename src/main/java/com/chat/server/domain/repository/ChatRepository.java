@@ -12,26 +12,40 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Query("""
-            SELECT c FROM Chat c
-            WHERE (c.sender = :firstUsername AND c.receiver = :secondUsername)
-               OR (c.sender = :secondUsername AND c.receiver = :firstUsername)
+            SELECT
+               c
+            FROM Chat c
+            WHERE
+               (
+                    (c.sender = :firstUsername AND c.receiver = :secondUsername)
+                    OR (c.sender = :secondUsername AND c.receiver = :firstUsername)
+               )
+               AND (:chatId IS NULL OR c.tId < :chatId)
             ORDER BY c.tId desc
             """)
-    List<Chat> findRecentChatsBetweenUsernames(
+    List<Chat> findBeforeChatsBetweenUsernames(
             @Param("firstUsername") String firstUsername,
             @Param("secondUsername") String secondUsername,
+            @Param("chatId") Long chatId,
             Pageable pageable
     );
 
     @Query("""
-            SELECT c FROM Chat c
-            WHERE (c.senderUserId = :firstUserId AND c.receiverUserId = :secondUserId)
-               OR (c.senderUserId = :secondUserId AND c.receiverUserId = :firstUserId)
+            SELECT
+               c
+            FROM Chat c
+            WHERE
+               (
+                    (c.senderUserId = :firstUserId AND c.receiverUserId = :secondUserId)
+                    OR (c.senderUserId = :secondUserId AND c.receiverUserId = :firstUserId)
+               )
+               AND (:chatId IS NULL OR c.tId < :chatId)
             ORDER BY c.tId desc
             """)
-    List<Chat> findRecentChatsBetweenUserIds(
+    List<Chat> findBeforeChatsBetweenUserIds(
             @Param("firstUserId") Long firstUserId,
             @Param("secondUserId") Long secondUserId,
+            @Param("chatId") Long chatId,
             Pageable pageable
     );
 }

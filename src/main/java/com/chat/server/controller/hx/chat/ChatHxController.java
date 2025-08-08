@@ -39,17 +39,24 @@ public class ChatHxController {
                 .build();
     }
 
-    @Operation(summary = "최근 메시지 조회")
-    @GetMapping("/{friendUserId}/recent")
-    public List<ModelAndView> recentMessage(@PathVariable("friendUserId") Long friendUserId,
-                                            @RequestParam(name = "size", defaultValue = "10") int limit,
-                                            @JwtMember JwtMemberInfo memberInfo) {
+    @Operation(summary = "chatId 이전 이전 메시지 리스트 조회")
+    @GetMapping("/{friendUserId}/before")
+    public List<ModelAndView> beforeMessages(@PathVariable("friendUserId") Long friendUserId,
+                                             @RequestParam(name = "size", defaultValue = "10") int limit,
+                                             @RequestParam(name = "chatId", required = false) Long chatId,
+                                             @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<ChatMessageResponse> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
+        List<ChatMessageResponse> messages = chatService.findBeforeChats(memberInfo.id(), friendUserId, chatId, pageable);
+        boolean hasMore = !messages.isEmpty();
+        Long firstChatId = messages.isEmpty() ? 0L : messages.stream().findFirst().map(ChatMessageResponse::id).orElse(0L);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/chat/chat/list.html",
-                        "components/chat/chat/list",
-                        Map.of("messages", messages))
+                .addFragment("templates/components/chat/chat/before.html",
+                        "components/chat/chat/before",
+                        Map.of("hasMore", hasMore,
+                                "friendUserId", friendUserId,
+                                "firstChatId", firstChatId,
+                                "messages", messages)
+                )
                 .build();
     }
 }

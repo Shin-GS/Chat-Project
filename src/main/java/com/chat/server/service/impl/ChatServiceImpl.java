@@ -29,7 +29,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public ChatMessageResponse saveChat(Long userId, ChatMessageRequest messageRequest) {
+    public ChatMessageResponse saveChat(Long userId,
+                                        ChatMessageRequest messageRequest) {
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         User receiver = userRepository.findById(messageRequest.userId())
@@ -40,8 +41,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ChatMessageResponse> findRecentChats(Long userId, String firstUsername, String secondUsername, Pageable pageable) {
-        return chatRepository.findRecentChatsBetweenUsernames(firstUsername, secondUsername, pageable).stream()
+    public List<ChatMessageResponse> findBeforeChats(Long userId,
+                                                     String firstUsername,
+                                                     String secondUsername,
+                                                     Long chatId,
+                                                     Pageable pageable) {
+        return chatRepository.findBeforeChatsBetweenUsernames(firstUsername, secondUsername, chatId, pageable).stream()
                 .sorted(Comparator.comparing(Chat::getTId))
                 .map(chat -> ChatMessageResponse.of(chat, userId))
                 .toList();
@@ -49,8 +54,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ChatMessageResponse> findRecentChats(Long userId, Long friendUserId, Pageable pageable) {
-        return chatRepository.findRecentChatsBetweenUserIds(userId, friendUserId, pageable).stream()
+    public List<ChatMessageResponse> findBeforeChats(Long userId,
+                                                     Long friendUserId,
+                                                     Long chatId,
+                                                     Pageable pageable) {
+        return chatRepository.findBeforeChatsBetweenUserIds(userId, friendUserId, chatId, pageable).stream()
                 .sorted(Comparator.comparing(Chat::getTId))
                 .map(chat -> ChatMessageResponse.of(chat, userId))
                 .toList();
@@ -70,7 +78,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public void addFriend(Long userId, Long friendUserId) {
+    public void addFriend(Long userId,
+                          Long friendUserId) {
         if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
@@ -84,7 +93,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public void removeFriend(Long userId, Long friendUserId) {
+    public void removeFriend(Long userId,
+                             Long friendUserId) {
         if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
