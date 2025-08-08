@@ -1,6 +1,6 @@
 package com.chat.server.filter.socket;
 
-import com.chat.server.security.TokenResolver;
+import com.chat.server.service.security.TokenResolver;
 import com.chat.server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;

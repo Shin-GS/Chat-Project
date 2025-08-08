@@ -1,6 +1,6 @@
 package com.chat.server.config;
 
-import com.chat.server.security.JwtMemberInfoArgumentResolver;
+import com.chat.server.service.security.JwtMemberInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

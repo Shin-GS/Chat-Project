@@ -1,6 +1,6 @@
 package com.chat.server.filter.socket;
 
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;

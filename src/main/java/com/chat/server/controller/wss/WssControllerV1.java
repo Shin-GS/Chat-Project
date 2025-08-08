@@ -1,6 +1,6 @@
 package com.chat.server.controller.wss;
 
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.request.ChatMessageRequest;
 import com.chat.server.service.response.ChatMessageResponse;

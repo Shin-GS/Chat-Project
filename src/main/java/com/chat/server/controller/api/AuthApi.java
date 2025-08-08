@@ -2,8 +2,8 @@ package com.chat.server.controller.api;
 
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.security.JwtMember;
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;

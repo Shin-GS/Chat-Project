@@ -1,4 +1,4 @@
-package com.chat.server.security;
+package com.chat.server.service.security;
 
 import com.chat.server.common.constant.MemberRole;
 import io.swagger.v3.oas.annotations.Hidden;

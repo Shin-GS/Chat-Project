@@ -1,4 +1,4 @@
-package com.chat.server.security;
+package com.chat.server.service.security;
 
 import com.chat.server.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;

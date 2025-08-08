@@ -1,8 +1,8 @@
 package com.chat.server.controller.hx;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.security.JwtMember;
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,8 +1,8 @@
 package com.chat.server.controller.hx;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.security.JwtMember;
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;

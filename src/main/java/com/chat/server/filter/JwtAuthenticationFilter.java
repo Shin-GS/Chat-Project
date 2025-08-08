@@ -2,8 +2,8 @@ package com.chat.server.filter;
 
 import com.chat.server.common.exception.CustomTokenException;
 import com.chat.server.common.util.ResponseUtil;
-import com.chat.server.security.JwtMemberInfo;
-import com.chat.server.security.TokenResolver;
+import com.chat.server.service.security.JwtMemberInfo;
+import com.chat.server.service.security.TokenResolver;
 import com.chat.server.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

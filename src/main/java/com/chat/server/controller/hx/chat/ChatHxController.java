@@ -1,8 +1,8 @@
 package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.security.JwtMember;
-import com.chat.server.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.ChatMessageResponse;
