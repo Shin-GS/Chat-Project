@@ -10,8 +10,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -19,15 +22,26 @@ import java.security.Principal;
 public class WssControllerV1 {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SpringTemplateEngine templateEngine;
 
     @MessageMapping("/chat/message")
     public void receivedMessage(ChatMessageRequest message,
                                 Principal principal) {
         JwtMemberInfo memberInfo = (JwtMemberInfo) ((Authentication) principal).getPrincipal();
-        log.info("Message received -> From: {}, to: {}, msg: {}", memberInfo.id(), message.userId(), message.message());
+        Long senderId = memberInfo.id();
+        Long receiverId = message.userId();
+        log.info("Message received -> From: {}, to: {}, msg: {}", senderId, receiverId, message.message());
 
-        ChatMessageResponse chatMessage = chatService.saveChat(memberInfo.id(), message);
-        messagingTemplate.convertAndSend("/sub/chat/" + message.userId(), chatMessage);
-        messagingTemplate.convertAndSend("/sub/chat/" + memberInfo.id(), chatMessage);
+        ChatMessageResponse senderResponse = chatService.saveChat(senderId, message);
+        messagingTemplate.convertAndSend("/sub/chat/" + senderId, renderChatMessageFragment(senderResponse));
+
+        ChatMessageResponse receiverResponse = ChatMessageResponse.of(senderResponse.from(), senderResponse.to(), senderResponse.message());
+        messagingTemplate.convertAndSend("/sub/chat/" + receiverId, renderChatMessageFragment(receiverResponse));
+    }
+
+    private String renderChatMessageFragment(ChatMessageResponse chatMessageResponse) {
+        Context context = new Context();
+        context.setVariable("messages", List.of(chatMessageResponse));
+        return templateEngine.process("components/chat/chat/list", context);
     }
 }

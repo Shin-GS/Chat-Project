@@ -1,12 +1,12 @@
 package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.service.security.JwtMember;
-import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.response.UserInfoResponse;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class ChatHxController {
         List<ChatMessageResponse> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/chat/list.html",
-                        "components/chat/chat/list :: chat-list",
+                        "components/chat/chat/list",
                         Map.of("messages", messages))
                 .build();
     }

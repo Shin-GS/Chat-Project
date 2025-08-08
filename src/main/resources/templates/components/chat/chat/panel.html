@@ -7,15 +7,16 @@
      class="flex-1 p-4"
      id="chat-panel"
      hx-swap-oob="true"
-     th:attr="data-user-id=${user.id()}, data-friend-id=${friendUser.id()}">
+     th:attr="data-user-id=${user.id}, data-friend-id=${friendUser.id}">
     <div>
         <div class="chat-topbar">
-            <h2 id="chat-title" th:text="${friendUser.name()}">채팅방</h2>
+            <h2 id="chat-title" th:text="${friendUser.name}">채팅방</h2>
         </div>
         <div hidden="hidden"
-             th:attr="hx-get='/hx/chats/' + ${friendUser.id()} + '/recent'"
+             th:attr="hx-get='/hx/chats/' + ${friendUser.id} + '/recent'"
              hx-trigger="load"
-             hx-swap="none"></div>
+             hx-target="#chat-message-list"
+             hx-swap="afterbegin"></div>
         <div id="chat-message-list"></div>
         <div class="chat-bottombar">
             <label for="chat-input">

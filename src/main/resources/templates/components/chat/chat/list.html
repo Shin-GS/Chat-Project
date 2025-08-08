@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<body>
-<div th:fragment="chat-list"
-     style="height: 400px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 1rem;"
-     id="chat-message-list"
-     hx-swap-oob="true">
-    <!--/*@thymesVar id="messages" type="java.util.List"*/-->
-    <!--/*@thymesVar id="message" type="com.chat.server.service.response.ChatMessageResponse"*/-->
-    <div th:each="message : ${messages}">
-        <p>
-            <strong th:text="${message.from}">보낸사람</strong>:
-            <span th:text="${message.message}">내용</span>
-        </p>
-    </div>
-</div>
-</body>
-</html>
+<!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.response.ChatMessageResponse>"*/-->
+<p th:each="message : ${messages}"
+   th:classappend="${message.mine} ? 'chat-right' : 'chat-left'">
+    <strong th:text="${message.from}">보낸사람</strong>:
+    <span th:text="${message.message}">내용</span>
+</p>

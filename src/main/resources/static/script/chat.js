@@ -18,11 +18,10 @@ function connectWebSocket(myId, friendId) {
         console.log('Connected: ' + frame);
 
         stompClient.subscribe(`/sub/chat/${myUserId}`, function (message) {
-            const chatMessage = JSON.parse(message.body);
+            const renderedHtml = message.body;
             const container = document.getElementById('chat-message-list');
-            const div = document.createElement('div');
-            div.textContent = `[${chatMessage.from}] ${chatMessage.message}`;
-            container.appendChild(div);
+            container.insertAdjacentHTML('beforeend', renderedHtml);
+            container.scrollTop = container.scrollHeight;
         });
     });
 }
@@ -41,7 +40,7 @@ function sendMessage() {
         userId: chatTargetId
     };
 
-    console.log("Sending message:", message);
-    stompClient.send("/pub/chat/message", {}, JSON.stringify(message)); // must include "/pub"
+    // console.log("Sending message:", message);
+    stompClient.send("/pub/chat/message", {}, JSON.stringify(message));
     input.value = '';
 }

@@ -15,7 +15,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             SELECT c FROM Chat c
             WHERE (c.sender = :firstUsername AND c.receiver = :secondUsername)
                OR (c.sender = :secondUsername AND c.receiver = :firstUsername)
-            ORDER BY c.tId DESC
+            ORDER BY c.tId desc
             """)
     List<Chat> findRecentChatsBetweenUsernames(
             @Param("firstUsername") String firstUsername,
@@ -27,7 +27,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             SELECT c FROM Chat c
             WHERE (c.senderUserId = :firstUserId AND c.receiverUserId = :secondUserId)
                OR (c.senderUserId = :secondUserId AND c.receiverUserId = :firstUserId)
-            ORDER BY c.tId DESC
+            ORDER BY c.tId desc
             """)
     List<Chat> findRecentChatsBetweenUserIds(
             @Param("firstUserId") Long firstUserId,

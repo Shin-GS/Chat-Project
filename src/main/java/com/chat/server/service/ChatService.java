@@ -10,7 +10,7 @@ import java.util.List;
 public interface ChatService {
     ChatMessageResponse saveChat(Long userId, ChatMessageRequest messageRequest);
 
-    List<ChatMessageResponse> findRecentChats(String firstUsername, String secondUsername, Pageable pageable);
+    List<ChatMessageResponse> findRecentChats(Long userId, String firstUsername, String secondUsername, Pageable pageable);
 
     List<ChatMessageResponse> findRecentChats(Long userId, Long friendUserId, Pageable pageable);
 

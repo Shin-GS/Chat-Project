@@ -4,6 +4,8 @@ import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.response.ChatMessageResponse;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,9 @@ public class ChatApi {
     @GetMapping("/recent")
     public Response<List<ChatMessageResponse>> getRecentChats(@RequestParam String firstUsername,
                                                               @RequestParam String secondUsername,
-                                                              @RequestParam(name = "size", defaultValue = "10") int limit) {
+                                                              @RequestParam(name = "size", defaultValue = "10") int limit,
+                                                              @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findRecentChats(firstUsername, secondUsername, pageable));
+        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findRecentChats(memberInfo.id(), firstUsername, secondUsername, pageable));
     }
 }
