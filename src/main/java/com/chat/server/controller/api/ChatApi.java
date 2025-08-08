@@ -30,7 +30,7 @@ public class ChatApi {
     public Response<List<ChatMessageResponse>> getBeforeChats(@RequestParam String firstUsername,
                                                               @RequestParam String secondUsername,
                                                               @RequestParam(name = "chatId") Long chatId,
-                                                              @RequestParam(name = "size", defaultValue = "10") int limit,
+                                                              @RequestParam(name = "size", defaultValue = "15") int limit,
                                                               @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
         return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findBeforeChats(memberInfo.id(), firstUsername, secondUsername, chatId, pageable));

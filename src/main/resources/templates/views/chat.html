@@ -8,17 +8,93 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="/script/chat.js"></script>
     <script>
+        // Utility to get chat message container
+        const getChatContainer = () => document.getElementById("chat-message-list");
+
+        // Observe the scroll loader and trigger HTMX request when it becomes visible
+        const observeScrollLoader = (container) => {
+            const loader = document.querySelector('#chat-scroll-loader');
+            if (!loader || !container || loader._observed) return;
+
+            loader._observed = true; // Prevent duplicate observers
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const getUrl = loader.getAttribute("data-hx-get");
+                        if (getUrl) {
+                            loader.setAttribute("hx-get", getUrl); // Set actual hx-get
+                            htmx.trigger(loader, 'revealed');       // Fire the request manually
+                            observer.unobserve(loader);              // Stop observing this loader
+                        }
+                    }
+                });
+            }, {
+                root: container,
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger even with partial visibility
+            });
+
+            observer.observe(loader);
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.body.addEventListener("htmx:oobAfterSwap", function (evt) {
-                if (evt.target.id === "chat-panel") {
-                    const myId = evt.target.getAttribute("data-user-id");
-                    const friendId = evt.target.getAttribute("data-friend-id");
+            let previousScrollHeight = null;
+
+            // Before sending HX request, save scroll height
+            document.body.addEventListener("htmx:beforeRequest", (event) => {
+                if (event.target.id === "chat-scroll-loader") {
+                    const container = getChatContainer();
+                    if (container) {
+                        previousScrollHeight = container.scrollHeight;
+                    }
+                }
+            });
+
+            document.body.addEventListener("htmx:afterRequest", (event) => {
+                const target = event.target;
+                if (target.id === "chat-scroll-loader") {
+                    target.remove();
+                }
+            });
+
+            // After content swap (e.g., chat list), do scroll adjustments or observe new loaders
+            document.body.addEventListener("htmx:afterSwap", (event) => {
+                const container = getChatContainer();
+
+                // Scroll to bottom on initial load
+                if (event.target.id === "chat-message-list" && document.getElementById("initial-loader")) {
+                    container.scrollTop = container.scrollHeight;
+                    document.getElementById("initial-loader")?.remove();
+                }
+
+                // (Re-)observe scroll loader if needed
+                if ((event.target.id === "chat-scroll-loader" || event.target.id === "chat-message-list") && container) {
+                    observeScrollLoader(container);
+                }
+            });
+
+            // Handle out-of-band swaps (chat panel load or scroll restoration)
+            document.body.addEventListener("htmx:oobAfterSwap", (event) => {
+                if (event.target.id === "chat-panel") {
+                    const myId = event.target.getAttribute("data-user-id");
+                    const friendId = event.target.getAttribute("data-friend-id");
                     connectWebSocket(myId, friendId);
 
-                    const sendButton = evt.target.querySelector('#chat-send-button');
+                    const sendButton = event.target.querySelector('#chat-send-button');
                     if (sendButton) {
                         sendButton.addEventListener("click", sendMessage);
                     }
+                }
+
+                // Restore scroll position after loading previous messages
+                if (event.target.id === "chat-scroll-loader" && previousScrollHeight !== null) {
+                    const container = getChatContainer();
+                    if (container) {
+                        const newScrollHeight = container.scrollHeight;
+                        container.scrollTop += newScrollHeight - previousScrollHeight;
+                    }
+                    previousScrollHeight = null;
+                    event.target.remove(); // Remove used loader
                 }
             });
         });

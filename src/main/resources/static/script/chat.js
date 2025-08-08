@@ -15,7 +15,7 @@ function connectWebSocket(myId, friendId) {
     const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
+        // console.log('Connected: ' + frame);
 
         stompClient.subscribe(`/sub/chat/${myUserId}`, function (message) {
             const renderedHtml = message.body;

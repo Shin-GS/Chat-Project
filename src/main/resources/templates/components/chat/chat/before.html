@@ -1,11 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <!--/*@thymesVar id="hasMore" type="boolean"*/-->
 <!--/*@thymesVar id="friendUserId" type="Long"*/-->
 <!--/*@thymesVar id="firstChatId" type="Long"*/-->
 <div th:if="${hasMore}"
+     id="chat-scroll-loader"
+     th:attr="data-hx-get='/hx/chats/' + ${friendUserId} + '/before?chatId=' + ${firstChatId}"
      hx-trigger="revealed"
-     th:attr="hx-get='/hx/chats/' + ${friendUserId} + '/before?chatId=' + ${firstChatId}"
      hx-target="#chat-message-list"
      hx-swap="afterbegin"
-     style="height: 1px; position: relative; top: -5px;"></div>
+     style="height: 20px; background: transparent;">
+</div>
 
-<p th:replace="~{components/chat/chat/list}"></p>
+<div th:replace="~{components/chat/chat/list}"></div>
+</html>

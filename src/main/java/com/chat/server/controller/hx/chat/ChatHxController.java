@@ -42,7 +42,7 @@ public class ChatHxController {
     @Operation(summary = "chatId 이전 이전 메시지 리스트 조회")
     @GetMapping("/{friendUserId}/before")
     public List<ModelAndView> beforeMessages(@PathVariable("friendUserId") Long friendUserId,
-                                             @RequestParam(name = "size", defaultValue = "10") int limit,
+                                             @RequestParam(name = "size", defaultValue = "15") int limit,
                                              @RequestParam(name = "chatId", required = false) Long chatId,
                                              @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
