@@ -48,7 +48,7 @@ public class ChatHxController {
         List<ChatMessageResponse> messages = chatService.findRecentChats(memberInfo.id(), friendUserId, pageable);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/chat/list.html",
-                        "components/chat/chat/list :: chat-message-list",
+                        "components/chat/chat/list :: chat-list",
                         Map.of("messages", messages))
                 .build();
     }

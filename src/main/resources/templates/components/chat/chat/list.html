@@ -5,9 +5,11 @@
      style="height: 400px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 1rem;"
      id="chat-message-list"
      hx-swap-oob="true">
+    <!--/*@thymesVar id="messages" type="java.util.List"*/-->
+    <!--/*@thymesVar id="message" type="com.chat.server.service.response.ChatMessageResponse"*/-->
     <div th:each="message : ${messages}">
         <p>
-            <strong th:text="${message.fromName}">보낸사람</strong>:
+            <strong th:text="${message.from}">보낸사람</strong>:
             <span th:text="${message.message}">내용</span>
         </p>
     </div>
