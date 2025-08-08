@@ -11,17 +11,15 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class TokenResolver {
-    private final HttpServletRequest request;
-
-    public String resolveAccessToken() {
-        return extractTokenFromCookie(Constants.COOKIE_AUTHORIZATION);
+    public String resolveAccessToken(HttpServletRequest request) {
+        return extractTokenFromCookie(request, Constants.COOKIE_AUTHORIZATION);
     }
 
-    public String resolveRefreshToken() {
-        return extractTokenFromCookie(Constants.COOKIE_AUTHORIZATION_REFRESH);
+    public String resolveRefreshToken(HttpServletRequest request) {
+        return extractTokenFromCookie(request, Constants.COOKIE_AUTHORIZATION_REFRESH);
     }
 
-    private String extractTokenFromCookie(String cookieName) {
+    private String extractTokenFromCookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;

@@ -28,12 +28,14 @@ public class ChatHxController {
 
     @Operation(summary = "채팅 패널")
     @GetMapping("/{friendUserId}/panel")
-    public List<ModelAndView> chatPanel(@PathVariable("friendUserId") Long friendUserId) {
+    public List<ModelAndView> chatPanel(@PathVariable("friendUserId") Long friendUserId,
+                                        @JwtMember JwtMemberInfo memberInfo) {
+        UserInfoResponse userInfo = UserInfoResponse.of(memberInfo);
         UserInfoResponse friendUserInfo = userService.findUserInfo(friendUserId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/chat/panel.html",
                         "components/chat/chat/panel :: chat-panel",
-                        Map.of("friendUser", friendUserInfo))
+                        Map.of("user", userInfo, "friendUser", friendUserInfo))
                 .build();
     }
 

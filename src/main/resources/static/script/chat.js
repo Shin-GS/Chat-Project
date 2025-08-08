@@ -1,6 +1,6 @@
 let stompClient = null;
-let myUserId = null; // 내 userId
-let chatTargetId = null; // 현재 대화 중인 상대 userId
+let myUserId = null;
+let chatTargetId = null;
 
 function connectWebSocket(myId, friendId) {
     if (stompClient !== null) {
@@ -12,7 +12,7 @@ function connectWebSocket(myId, friendId) {
     myUserId = myId;
     chatTargetId = friendId;
 
-    const socket = new SockJS('/ws');
+    const socket = new SockJS('/ws-stomp');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
@@ -30,7 +30,9 @@ function connectWebSocket(myId, friendId) {
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value?.trim();
-    if (!text || !stompClient || !chatTargetId) {
+
+    if (!text || !stompClient || !stompClient.connected || !chatTargetId) {
+        console.warn("Unable to send message. Missing input or connection.");
         return;
     }
 
@@ -39,6 +41,7 @@ function sendMessage() {
         userId: chatTargetId
     };
 
-    stompClient.send("/chat/message", {}, JSON.stringify(message));
+    console.log("Sending message:", message);
+    stompClient.send("/pub/chat/message", {}, JSON.stringify(message)); // must include "/pub"
     input.value = '';
 }

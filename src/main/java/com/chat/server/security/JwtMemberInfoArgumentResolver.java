@@ -1,6 +1,7 @@
 package com.chat.server.security;
 
 import com.chat.server.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
@@ -29,7 +30,8 @@ public class JwtMemberInfoArgumentResolver implements HandlerMethodArgumentResol
                                   ModelAndViewContainer mavContainer,
                                   @NonNull NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) {
-        String token = tokenResolver.resolveAccessToken();
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        String token = tokenResolver.resolveAccessToken(request);
         return token == null ? null : authService.getMemberInfo(token);
     }
 }

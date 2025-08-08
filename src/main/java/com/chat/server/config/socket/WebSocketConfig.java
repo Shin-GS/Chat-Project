@@ -1,6 +1,10 @@
 package com.chat.server.config.socket;
 
+import com.chat.server.filter.socket.JwtChannelInterceptor;
+import com.chat.server.filter.socket.JwtHandshakeInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -8,7 +12,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WssConfig implements WebSocketMessageBrokerConfigurer {
+@RequiredArgsConstructor
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final JwtChannelInterceptor jwtChannelInterceptor;
+    private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/sub");
@@ -16,8 +24,15 @@ public class WssConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(jwtChannelInterceptor);
+    }
+
+    @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
-                .setAllowedOrigins("*");
+                .addInterceptors(jwtHandshakeInterceptor)
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 }

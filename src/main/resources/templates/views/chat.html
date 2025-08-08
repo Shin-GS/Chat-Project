@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <th:block th:insert="~{views/layout :: head}" />
+    <th:block th:insert="~{views/layout :: head}"/>
 
     <title>Chat Room</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
@@ -11,8 +11,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.body.addEventListener("htmx:oobAfterSwap", function (evt) {
                 if (evt.target.id === "chat-panel") {
+                    const myId = evt.target.getAttribute("data-user-id");
                     const friendId = evt.target.getAttribute("data-friend-id");
-                    connectWebSocket(friendId);
+                    connectWebSocket(myId, friendId);
+
+                    const sendButton = evt.target.querySelector('#chat-send-button');
+                    if (sendButton) {
+                        sendButton.addEventListener("click", sendMessage);
+                    }
                 }
             });
         });
