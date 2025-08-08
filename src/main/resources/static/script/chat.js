@@ -12,7 +12,7 @@ function connectWebSocket(myId, friendId) {
     myUserId = myId;
     chatTargetId = friendId;
 
-    const socket = new SockJS('/ws-stomp');
+    const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
