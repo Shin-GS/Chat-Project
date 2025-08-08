@@ -1,4 +1,4 @@
-package com.chat.server.config;
+package com.chat.server.config.security;
 
 import lombok.Getter;
 import lombok.Setter;

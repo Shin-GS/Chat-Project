@@ -1,4 +1,4 @@
-package com.chat.server.config;
+package com.chat.server.config.domain;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

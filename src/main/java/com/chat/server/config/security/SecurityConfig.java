@@ -1,4 +1,4 @@
-package com.chat.server.config;
+package com.chat.server.config.security;
 
 import com.chat.server.filter.JwtAuthenticationFilter;
 import com.chat.server.filter.UnauthorizedEntryPoint;
