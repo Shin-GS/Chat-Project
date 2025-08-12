@@ -2,7 +2,7 @@ package com.chat.server.service.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.repository.UserRepository;
+import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;

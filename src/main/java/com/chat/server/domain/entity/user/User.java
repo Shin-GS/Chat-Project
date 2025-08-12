@@ -20,7 +20,7 @@ public class User extends BaseTimeEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_NO")
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(name = "ACCOUNT_ID", length = Constants.USER_ID_MAX_LENGTH, nullable = false, unique = true)

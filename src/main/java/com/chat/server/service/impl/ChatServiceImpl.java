@@ -2,12 +2,12 @@ package com.chat.server.service.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.entity.chat.Chat;
-import com.chat.server.domain.entity.chat.ChatFriend;
+import com.chat.server.domain.entity.chat.ChatMessage;
+import com.chat.server.domain.entity.user.UserFriend;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.ChatFriendRepository;
-import com.chat.server.domain.repository.ChatRepository;
-import com.chat.server.domain.repository.UserRepository;
+import com.chat.server.domain.repository.user.UserFriendRepository;
+import com.chat.server.domain.repository.chat.ChatMessageRepository;
+import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.ChatService;
 import com.chat.server.service.request.ChatMessageRequest;
 import com.chat.server.service.response.ChatMessageResponse;
@@ -23,8 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
-    private final ChatRepository chatRepository;
-    private final ChatFriendRepository chatFriendRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final UserFriendRepository userFriendRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -35,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         User receiver = userRepository.findById(messageRequest.userId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        Chat chatMessage = chatRepository.save(Chat.of(sender, receiver, messageRequest.message()));
+        ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.of(sender, receiver, messageRequest.message()));
         return ChatMessageResponse.of(chatMessage, userId);
     }
 
@@ -46,8 +46,8 @@ public class ChatServiceImpl implements ChatService {
                                                      String secondUsername,
                                                      Long chatId,
                                                      Pageable pageable) {
-        return chatRepository.findBeforeChatsBetweenUsernames(firstUsername, secondUsername, chatId, pageable).stream()
-                .sorted(Comparator.comparing(Chat::getTId))
+        return chatMessageRepository.findBeforeChatsBetweenUsernames(firstUsername, secondUsername, chatId, pageable).stream()
+                .sorted(Comparator.comparing(ChatMessage::getId))
                 .map(chat -> ChatMessageResponse.of(chat, userId))
                 .toList();
     }
@@ -58,8 +58,8 @@ public class ChatServiceImpl implements ChatService {
                                                      Long friendUserId,
                                                      Long chatId,
                                                      Pageable pageable) {
-        return chatRepository.findBeforeChatsBetweenUserIds(userId, friendUserId, chatId, pageable).stream()
-                .sorted(Comparator.comparing(Chat::getTId))
+        return chatMessageRepository.findBeforeChatsBetweenUserIds(userId, friendUserId, chatId, pageable).stream()
+                .sorted(Comparator.comparing(ChatMessage::getId))
                 .map(chat -> ChatMessageResponse.of(chat, userId))
                 .toList();
     }
@@ -71,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
 
-        return chatFriendRepository.findAllByUserIdOrderByName(userId).stream()
+        return userFriendRepository.findAllByUserIdOrderByName(userId).stream()
                 .map(UserInfoResponse::of)
                 .toList();
     }
@@ -84,11 +84,11 @@ public class ChatServiceImpl implements ChatService {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
 
-        if (chatFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
+        if (userFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_FRIEND_ALREADY_EXISTS);
         }
 
-        chatFriendRepository.save(ChatFriend.of(userId, friendUserId));
+        userFriendRepository.save(UserFriend.of(userId, friendUserId));
     }
 
     @Override
@@ -99,10 +99,10 @@ public class ChatServiceImpl implements ChatService {
             throw new CustomException(ErrorCode.CHAT_REQUEST_INVALID);
         }
 
-        if (!chatFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
+        if (!userFriendRepository.existsByUserIdAndFriendUserId(userId, friendUserId)) {
             throw new CustomException(ErrorCode.CHAT_FRIEND_NOT_EXISTS);
         }
 
-        chatFriendRepository.deleteByUserIdAndFriendUserId(userId, friendUserId);
+        userFriendRepository.deleteByUserIdAndFriendUserId(userId, friendUserId);
     }
 }

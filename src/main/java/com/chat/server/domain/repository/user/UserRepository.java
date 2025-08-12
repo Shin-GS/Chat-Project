@@ -1,4 +1,4 @@
-package com.chat.server.domain.repository;
+package com.chat.server.domain.repository.user;
 
 import com.chat.server.domain.dto.UserDto;
 import com.chat.server.domain.entity.user.User;
@@ -20,10 +20,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT new com.chat.server.domain.dto.UserDto(
                     user.id,
                     user.username,
-                    CASE WHEN chatFriend.fId IS NOT NULL THEN true ELSE false END
+                    CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
                 )
                 FROM User user
-                LEFT JOIN ChatFriend chatFriend ON chatFriend.friendUserId = user.id AND chatFriend.userId = :userId
+                LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = user.id AND userFriend.userId = :userId
                 WHERE LOCATE(LOWER(:pattern), LOWER(user.username)) > 0
                       AND user.id != :userId
                 ORDER BY user.username

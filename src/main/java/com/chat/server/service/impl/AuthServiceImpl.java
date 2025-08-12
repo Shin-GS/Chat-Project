@@ -5,7 +5,7 @@ import com.chat.server.common.constant.Constants;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.UserRepository;
+import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;
