@@ -1,6 +1,6 @@
 package com.chat.server.service.response;
 
-import com.chat.server.domain.entity.Chat;
+import com.chat.server.domain.entity.chat.Chat;
 
 public record ChatMessageResponse(Long id,
                                   String from,

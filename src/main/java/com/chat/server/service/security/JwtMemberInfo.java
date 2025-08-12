@@ -1,15 +1,17 @@
 package com.chat.server.service.security;
 
-import com.chat.server.common.constant.MemberRole;
+import com.chat.server.common.constant.UserRole;
 import io.swagger.v3.oas.annotations.Hidden;
 
 @Hidden
 public record JwtMemberInfo(Long id,
+                            String accountId,
                             String username,
-                            MemberRole role) {
+                            UserRole role) {
     public static JwtMemberInfo of(Long id,
+                                   String accountId,
                                    String username,
-                                   MemberRole role) {
-        return new JwtMemberInfo(id, username, role);
+                                   UserRole role) {
+        return new JwtMemberInfo(id, accountId, username, role);
     }
 }

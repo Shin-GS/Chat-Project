@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
+    Optional<User> findByAccountId(String accountId);
 
-    boolean existsByUsername(String username);
+    boolean existsByAccountId(String accountId);
 
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
@@ -29,5 +29,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 ORDER BY user.username
             """)
     List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,
-                                                      @Param("userId") Long userId);
+                                                      @Param("accountId") Long userId);
 } 

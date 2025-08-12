@@ -1,4 +1,4 @@
-package com.chat.server.domain.entity;
+package com.chat.server.domain.entity.chat;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "chat_friend")
+@Table(name = "CHAT_FRIEND")
 public class ChatFriend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "f_id")
-    private Long fId;
+    @Column(name = "CHAT_FRIEND_ID", columnDefinition = "BIGINT")
+    private Long chatFriendId;
 
-    @Column
+    @Column(name = "USER_ID", columnDefinition = "BIGINT")
     private Long userId;
 
-    @Column
+    @Column(name = "FRIEND_USER_ID", columnDefinition = "BIGINT")
     private Long friendUserId;
 
     public static ChatFriend of(Long userId,
@@ -31,4 +31,3 @@ public class ChatFriend {
         return chatFriend;
     }
 }
-

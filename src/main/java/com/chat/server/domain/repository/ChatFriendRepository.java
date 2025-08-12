@@ -1,7 +1,7 @@
 package com.chat.server.domain.repository;
 
 import com.chat.server.domain.dto.UserDto;
-import com.chat.server.domain.entity.ChatFriend;
+import com.chat.server.domain.entity.chat.ChatFriend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,7 +24,7 @@ public interface ChatFriendRepository extends JpaRepository<ChatFriend, Long> {
             WHERE chatFriend.userId = :userId
             ORDER BY user.username
             """)
-    List<UserDto> findAllByUserIdOrderByName(@Param("userId") Long userId);
+    List<UserDto> findAllByUserIdOrderByName(@Param("accountId") Long userId);
 
     void deleteByUserIdAndFriendUserId(Long userId, Long friendUserId);
 }

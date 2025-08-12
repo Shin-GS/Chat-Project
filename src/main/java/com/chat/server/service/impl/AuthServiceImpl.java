@@ -5,14 +5,13 @@ import com.chat.server.common.constant.Constants;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.entity.user.UserCredentials;
 import com.chat.server.domain.repository.UserRepository;
-import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.security.JwtProperties;
-import com.chat.server.service.security.JwtProvider;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.CreateUserRequest;
 import com.chat.server.service.request.LoginRequest;
+import com.chat.server.service.security.JwtMemberInfo;
+import com.chat.server.service.security.JwtProperties;
+import com.chat.server.service.security.JwtProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +31,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     public void createUser(CreateUserRequest request) {
-        if (userRepository.existsByUsername(request.username())) {
+        if (userRepository.existsByAccountId(request.accountId())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         try {
-            userRepository.save(User.of(
-                    request.username(),
-                    encryptUtil.encode(request.password())
-            ));
+            userRepository.save(User.ofUser(
+                    request.accountId(),
+                    encryptUtil.encode(request.password()),
+                    request.username())
+            );
 
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_SAVE_FAILED);
@@ -50,21 +50,24 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public void login(LoginRequest request,
                       HttpServletResponse response) {
-        User user = userRepository.findByUsername(request.username())
+        User user = userRepository.findByAccountId(request.accountId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         if (!isValidCredentials(user, request.password())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        String token = jwtProvider.createToken(user.getId(), user.getUsername(), user.getRole());
-        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getUsername(), user.getRole());
-        response.addHeader(HttpHeaders.SET_COOKIE, createTokenCookie(Constants.COOKIE_AUTHORIZATION, token, jwtProperties.getTokenTime()).toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, createTokenCookie(Constants.COOKIE_AUTHORIZATION_REFRESH, refreshToken, jwtProperties.getRefreshTokenTime()).toString());
+        String token = jwtProvider.createToken(user.getId(), user.getAccountId(), user.getUsername(), user.getRole());
+        response.addHeader(HttpHeaders.SET_COOKIE,
+                createTokenCookie(Constants.COOKIE_AUTHORIZATION, token, jwtProperties.getTokenTime()).toString());
+
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getAccountId(), user.getUsername(), user.getRole());
+        response.addHeader(HttpHeaders.SET_COOKIE,
+                createTokenCookie(Constants.COOKIE_AUTHORIZATION_REFRESH, refreshToken, jwtProperties.getRefreshTokenTime()).toString());
     }
 
     private boolean isValidCredentials(User user, String rawPassword) {
-        UserCredentials userCredentials = user.getUserCredentials();
-        return userCredentials != null && encryptUtil.matches(rawPassword, userCredentials.getHashedPassword());
+        String hashedPassword = user.getHashedPassword();
+        return hashedPassword != null && encryptUtil.matches(rawPassword, hashedPassword);
     }
 
     @Override

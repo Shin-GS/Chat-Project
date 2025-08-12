@@ -4,11 +4,17 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Constants {
+    // USER
+    public static final int USER_ID_MAX_LENGTH = 255;
+    public static final int USER_NAME_MAX_LENGTH = 128;
+    public static final int USER_HASHED_PASSWORD_MAX_LENGTH = 512;
+
     // JWT
     public static final String JWT_TOKEN_TYPE = "tokenType";
     public static final String TOKEN_TYPE_ACCESS_TOKEN = "accessToken";
     public static final String TOKEN_TYPE_REFRESH_TOKEN = "refreshToken";
-    public static final String JWT_USER_ID = "userId";
+    public static final String JWT_USER_ID = "id";
+    public static final String JWT_USER_ACCOUNT_ID = "accountId";
     public static final String JWT_USER_NAME = "userName";
     public static final String JWT_USER_ROLE = "userRole";
 

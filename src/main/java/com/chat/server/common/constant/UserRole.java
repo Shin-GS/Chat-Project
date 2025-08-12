@@ -5,19 +5,19 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum MemberRole {
+public enum UserRole {
     USER("일반회원"),
     ADMIN("운영자");
 
     private final String description;
 
-    public static MemberRole from(String roleName) {
+    public static UserRole from(String roleName) {
         if (roleName == null) {
             return null;
         }
 
         try {
-            return MemberRole.valueOf(roleName);
+            return UserRole.valueOf(roleName);
 
         } catch (Exception e) {
             return null;

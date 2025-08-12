@@ -1,6 +1,6 @@
 package com.chat.server.domain.repository;
 
-import com.chat.server.domain.entity.Chat;
+import com.chat.server.domain.entity.chat.Chat;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
