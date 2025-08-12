@@ -17,14 +17,29 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
             SELECT new com.chat.server.domain.dto.UserDto(
                         user.id,
                         user.username,
-                       CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
+                        CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
             )
             FROM UserFriend userFriend
             JOIN User user ON userFriend.friendUserId = user.id
             WHERE userFriend.userId = :userId
             ORDER BY user.username
             """)
-    List<UserDto> findAllByUserIdOrderByName(@Param("accountId") Long userId);
+    List<UserDto> findAllByUserIdOrderByName(@Param("userId") Long userId);
+
+    @Query("""
+            SELECT new com.chat.server.domain.dto.UserDto(
+                    user.id,
+                    user.username,
+                    CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
+                )
+            FROM User user
+            LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = user.id AND userFriend.userId = :userId
+            WHERE user.id <> :userId
+                AND LOWER(user.username) LIKE CONCAT('%', LOWER(:pattern), '%')
+                ORDER BY LOWER(user.username)
+            """)
+    List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,
+                                                      @Param("userId") Long userId);
 
     void deleteByUserIdAndFriendUserId(Long userId, Long friendUserId);
 }

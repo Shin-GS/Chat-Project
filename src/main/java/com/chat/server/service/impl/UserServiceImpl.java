@@ -2,6 +2,7 @@ package com.chat.server.service.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.domain.repository.user.UserFriendRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.UserInfoResponse;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserFriendRepository userFriendRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
             return new ArrayList<>();
         }
 
-        return userRepository.findSimilarNamesExcludingExactMatch(pattern, userId).stream()
+        return userFriendRepository.findSimilarNamesExcludingExactMatch(pattern, userId).stream()
                 .map(UserInfoResponse::of)
                 .toList();
     }

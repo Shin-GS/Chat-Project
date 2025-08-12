@@ -4,6 +4,7 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.service.AuthService;
 import com.chat.server.service.request.LoginRequest;
+import com.chat.server.service.request.SignupRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -23,6 +24,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthHxController {
     private final AuthService authService;
+
+    @Operation(summary = "회원가입 모달")
+    @GetMapping("/signup/modal")
+    public List<ModelAndView> signupModal() {
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/auth/signup.html",
+                        "components/auth/signup :: signup")
+                .build();
+    }
+
+    @Operation(summary = "회원가입")
+    @PostMapping("/signup")
+    public List<ModelAndView> login(@ModelAttribute @Valid SignupRequest request) {
+        authService.createUser(request);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/toast.html",
+                        "components/toast :: message",
+                        Map.of("type", "success", "message", "signup success"))
+                .build();
+    }
 
     @Operation(summary = "로그인 모달")
     @GetMapping("/login/modal")

@@ -5,7 +5,7 @@ import com.chat.server.common.code.SuccessCode;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.AuthService;
-import com.chat.server.service.request.CreateUserRequest;
+import com.chat.server.service.request.SignupRequest;
 import com.chat.server.service.request.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ public class AuthApi {
 
     @Operation(summary = "회원가입")
     @PostMapping("/sign-in")
-    public Response<Object> createUser(@RequestBody @Valid CreateUserRequest request) {
+    public Response<Object> createUser(@RequestBody @Valid SignupRequest request) {
         authService.createUser(request);
         return Response.of(SuccessCode.USER_CREATED);
     }

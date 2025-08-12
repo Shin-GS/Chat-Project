@@ -7,7 +7,7 @@ import com.chat.server.common.util.EncryptUtil;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.AuthService;
-import com.chat.server.service.request.CreateUserRequest;
+import com.chat.server.service.request.SignupRequest;
 import com.chat.server.service.request.LoginRequest;
 import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.security.JwtProperties;
@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProperties jwtProperties;
 
     @Transactional
-    public void createUser(CreateUserRequest request) {
+    public void createUser(SignupRequest request) {
         if (userRepository.existsByAccountId(request.accountId())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
