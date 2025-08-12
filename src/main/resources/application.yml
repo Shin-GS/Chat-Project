@@ -1,18 +1,22 @@
 spring:
   application:
     name: chat
+  jpa:
+    show-sql: true
+    database: mysql
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/CHAT?serverTimezone=Asia/Seoul&characterEncoding=utf8
     username: root
     password: qwer!0842
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database: mysql
-    open-in-view: false
+app:
+  audit:
+    zone: Asia/Seoul # UTC 또는 Asia/Seoul
+    temporal-type: local # instant | offset | local
 
 token:
   secret-key: "Yt@3kL#9zP!qR1uS^dM7vWxE@zB5hNpT"

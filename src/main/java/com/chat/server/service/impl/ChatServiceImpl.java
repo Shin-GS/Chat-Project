@@ -4,7 +4,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.Chat;
 import com.chat.server.domain.entity.ChatFriend;
-import com.chat.server.domain.entity.User;
+import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.ChatFriendRepository;
 import com.chat.server.domain.repository.ChatRepository;
 import com.chat.server.domain.repository.UserRepository;

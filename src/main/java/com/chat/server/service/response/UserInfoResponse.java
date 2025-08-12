@@ -1,7 +1,7 @@
 package com.chat.server.service.response;
 
 import com.chat.server.domain.dto.UserDto;
-import com.chat.server.domain.entity.User;
+import com.chat.server.domain.entity.user.User;
 import com.chat.server.service.security.JwtMemberInfo;
 
 public record UserInfoResponse(Long id,

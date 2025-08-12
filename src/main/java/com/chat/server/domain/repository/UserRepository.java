@@ -1,7 +1,7 @@
 package com.chat.server.domain.repository;
 
 import com.chat.server.domain.dto.UserDto;
-import com.chat.server.domain.entity.User;
+import com.chat.server.domain.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

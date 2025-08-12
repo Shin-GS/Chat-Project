@@ -1,5 +1,6 @@
-package com.chat.server.domain.entity;
+package com.chat.server.domain.entity.user;
 
+import com.chat.server.domain.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "user_credentials")
-public class UserCredentials {
+public class UserCredentials extends BaseTimeEntity {
     @Id
     @OneToOne
     @JoinColumn(name = "user_id")

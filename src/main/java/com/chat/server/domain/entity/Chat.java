@@ -1,5 +1,6 @@
 package com.chat.server.domain.entity;
 
+import com.chat.server.domain.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
