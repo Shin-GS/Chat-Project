@@ -16,6 +16,7 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
                         user.id,
+                        user.accountId,
                         user.username,
                         CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
             )
@@ -29,13 +30,14 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
                     user.id,
+                    user.accountId,
                     user.username,
                     CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
                 )
             FROM User user
             LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = user.id AND userFriend.userId = :userId
             WHERE user.id <> :userId
-                AND LOWER(user.username) LIKE CONCAT('%', LOWER(:pattern), '%')
+                AND (LOWER(user.username) LIKE CONCAT('%', LOWER(:pattern), '%') OR LOWER(user.accountId) LIKE CONCAT('%', LOWER(:pattern), '%'))
                 ORDER BY LOWER(user.username)
             """)
     List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,

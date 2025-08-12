@@ -13,14 +13,14 @@
             <input type="hidden" name="friendUserId" th:value="${searchUser.id}"/>
             <button type="submit"
                     class="bg-blue-100 hover:bg-blue-200 text-blue-900 font-semibold px-3 py-1 rounded">
-                <span th:text="${searchUser.name}">Add</span>
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|">Add</span>
             </button>
         </form>
 
         <div th:if="${searchUser.friend}">
             <button type="button" disabled
                     class="bg-gray-300 text-gray-600 font-semibold px-3 py-1 rounded cursor-not-allowed">
-                <span th:text="${searchUser.name} + ' (친구)'">Friend</span>
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|+ ' (친구)'">Add</span>
             </button>
         </div>
     </li>
