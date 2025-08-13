@@ -37,7 +37,7 @@ public class ChatMessage extends BaseTimeEntity {
     @Column(name = "RECEIVER_USER_NAME", length = Constants.USER_NAME_MAX_LENGTH, nullable = false)
     private String receiverUsername;
 
-    @Column(name = "MESSAGE", length = Constants.CHAT_MESSAGE_MAX_LENGTH, nullable = false)
+    @Column(name = "MESSAGE", length = Constants.CONVERSATION_MESSAGE_MAX_LENGTH, nullable = false)
     private String message;
 
     public static ChatMessage of(User sender,

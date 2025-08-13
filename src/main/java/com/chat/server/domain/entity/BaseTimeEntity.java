@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseTimeEntity {
     @CreatedDate
-    @Column(name = "REG_DTM", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @Column(name = "REG_DTM", nullable = false, updatable = false)
     LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "MOD_DTM", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "MOD_DTM", nullable = false)
     LocalDateTime modifiedAt;
 }

@@ -9,8 +9,10 @@ public class Constants {
     public static final int USER_NAME_MAX_LENGTH = 128;
     public static final int USER_HASHED_PASSWORD_MAX_LENGTH = 512;
 
-    // CHAT
-    public static final int CHAT_MESSAGE_MAX_LENGTH = 4000;
+    // CONVERSATION
+    public static final int CONVERSATION_NAME_MAX_LENGTH = 128;
+    public static final int CONVERSATION_MESSAGE_MAX_LENGTH = 4000;
+    public static final int CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH = 512;
 
     // JWT
     public static final String JWT_TOKEN_TYPE = "tokenType";
