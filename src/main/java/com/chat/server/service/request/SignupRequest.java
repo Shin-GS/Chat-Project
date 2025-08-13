@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record SignupRequest(@NotBlank
-                                @Size(max = Constants.USER_ID_MAX_LENGTH)
-                                String accountId,
+                            @Size(max = Constants.USER_ID_MAX_LENGTH)
+                            String accountId,
 
                             @NotBlank
-                                @Size(max = Constants.USER_HASHED_PASSWORD_MAX_LENGTH)
-                                String password,
+                            @Size(max = Constants.USER_HASHED_PASSWORD_MAX_LENGTH)
+                            String password,
 
                             @NotBlank
-                                @Size(max = Constants.USER_NAME_MAX_LENGTH)
-                                String username) {
+                            @Size(max = Constants.USER_NAME_MAX_LENGTH)
+                            String username) {
 }

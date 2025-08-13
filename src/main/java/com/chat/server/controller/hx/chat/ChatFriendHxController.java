@@ -1,7 +1,7 @@
 package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.service.ChatService;
+import com.chat.server.service.ConversationService;
 import com.chat.server.service.response.UserInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -19,12 +19,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/chats/friends")
 public class ChatFriendHxController {
-    private final ChatService chatService;
+    private final ConversationService conversationService;
 
     @Operation(summary = "친구 목록 조회")
     @GetMapping
     public List<ModelAndView> findFriends(@JwtMember JwtMemberInfo memberInfo) {
-        List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
+        List<UserInfoResponse> friends = conversationService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/chat/friend/list.html",
                         "components/chat/friend/list :: friend-list",
@@ -36,8 +36,8 @@ public class ChatFriendHxController {
     @PostMapping
     public List<ModelAndView> addFriends(@RequestParam("friendUserId") Long friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
-        chatService.addFriend(memberInfo.id(), friendUserId);
-        List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
+        conversationService.addFriend(memberInfo.id(), friendUserId);
+        List<UserInfoResponse> friends = conversationService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/toast.html",
                         "components/toast :: message",
@@ -56,8 +56,8 @@ public class ChatFriendHxController {
     @DeleteMapping
     public List<ModelAndView> removeFriends(@RequestParam("friendUserId") Long friendUserId,
                                             @JwtMember JwtMemberInfo memberInfo) {
-        chatService.removeFriend(memberInfo.id(), friendUserId);
-        List<UserInfoResponse> friends = chatService.findFriends(memberInfo.id());
+        conversationService.removeFriend(memberInfo.id(), friendUserId);
+        List<UserInfoResponse> friends = conversationService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/toast.html",
                         "components/toast :: message",
@@ -72,4 +72,3 @@ public class ChatFriendHxController {
                 .build();
     }
 }
-

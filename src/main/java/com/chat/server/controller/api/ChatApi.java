@@ -2,7 +2,7 @@ package com.chat.server.controller.api;
 
 import com.chat.server.common.Response;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.service.ChatService;
+import com.chat.server.service.ConversationService;
 import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/chats")
 public class ChatApi {
-    private final ChatService chatService;
+    private final ConversationService conversationService;
 
     @Operation(summary = "chatId 이전 이전 메시지 리스트 조회")
     @GetMapping("/before")
@@ -33,6 +33,6 @@ public class ChatApi {
                                                               @RequestParam(name = "size", defaultValue = "15") int limit,
                                                               @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        return Response.of(SuccessCode.CHATS_RETRIEVED, chatService.findBeforeChats(memberInfo.id(), firstUsername, secondUsername, chatId, pageable));
+        return Response.of(SuccessCode.CHATS_RETRIEVED, conversationService.findBeforeChats(memberInfo.id(), firstUsername, secondUsername, chatId, pageable));
     }
 }

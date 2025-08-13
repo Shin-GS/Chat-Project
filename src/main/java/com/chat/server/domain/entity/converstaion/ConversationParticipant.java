@@ -50,16 +50,26 @@ public class ConversationParticipant extends BaseTimeEntity {
     @Column(name = "JOIN_DTM", nullable = false)
     private LocalDateTime joinedAt;
 
-    public static ConversationParticipant of(Conversation conversation,
-                                             User user,
-                                             ConversationUserRole role) {
-        ConversationParticipant p = new ConversationParticipant();
-        p.conversationId = conversation.getId();
-        p.userId = user.getId();
-        p.role = role;
-        p.muted = false;
-        p.joinedAt = LocalDateTime.now();
-        return p;
+    public static ConversationParticipant ofMember(Conversation conversation,
+                                                   User user) {
+        ConversationParticipant participant = new ConversationParticipant();
+        participant.conversationId = conversation.getId();
+        participant.userId = user.getId();
+        participant.role = ConversationUserRole.MEMBER;
+        participant.muted = false;
+        participant.joinedAt = LocalDateTime.now();
+        return participant;
+    }
+
+    public static ConversationParticipant ofSuperAdmin(Conversation conversation,
+                                                       User user) {
+        ConversationParticipant participant = new ConversationParticipant();
+        participant.conversationId = conversation.getId();
+        participant.userId = user.getId();
+        participant.role = ConversationUserRole.SUPER_ADMIN;
+        participant.muted = false;
+        participant.joinedAt = LocalDateTime.now();
+        return participant;
     }
 
     public void changeRole(ConversationUserRole newRole) {

@@ -1,13 +1,15 @@
 package com.chat.server.service;
 
 import com.chat.server.service.request.ChatMessageRequest;
+import com.chat.server.service.request.conversation.ConversationCreateRequest;
 import com.chat.server.service.response.ChatMessageResponse;
+import com.chat.server.service.response.ConversationInfoResponse;
 import com.chat.server.service.response.UserInfoResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface ChatService {
+public interface ConversationService {
     ChatMessageResponse saveChat(Long userId,
                                  ChatMessageRequest messageRequest);
 
@@ -29,4 +31,15 @@ public interface ChatService {
 
     void removeFriend(Long userId,
                       Long friendUserId);
+
+    List<ConversationInfoResponse> findConversations(Long userId);
+
+    void joinConversationGroup(Long userId,
+                               Long conversationId);
+
+    void leaveConversationGroup(Long userId,
+                                Long conversationId);
+
+    void createConversation(Long userId,
+                            ConversationCreateRequest request);
 }

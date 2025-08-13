@@ -1,6 +1,6 @@
 package com.chat.server.controller.wss;
 
-import com.chat.server.service.ChatService;
+import com.chat.server.service.ConversationService;
 import com.chat.server.service.request.ChatMessageRequest;
 import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class WssControllerV1 {
-    private final ChatService chatService;
+    private final ConversationService conversationService;
     private final SimpMessagingTemplate messagingTemplate;
     private final SpringTemplateEngine templateEngine;
 
@@ -32,7 +32,7 @@ public class WssControllerV1 {
         Long receiverId = message.userId();
         log.info("Message received -> From: {}, to: {}, msg: {}", senderId, receiverId, message.message());
 
-        ChatMessageResponse senderResponse = chatService.saveChat(senderId, message);
+        ChatMessageResponse senderResponse = conversationService.saveChat(senderId, message);
         messagingTemplate.convertAndSend("/sub/chat/" + senderId, renderChatMessageFragment(senderResponse));
 
         ChatMessageResponse receiverResponse = ChatMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());

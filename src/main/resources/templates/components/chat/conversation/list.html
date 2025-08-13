@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<ul th:fragment="conversation-list"
+    id="conversation-list"
+    hx-swap-oob="true">
+    <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.response.ConversationInfoResponse>"*/-->
+    <!--/*@thymesVar id="conversation" type="com.chat.server.service.response.ConversationInfoResponse"*/-->
+    <li th:if="${#lists.isEmpty(conversations)}">No conversations yet</li>
+
+    <li th:each="conversation : ${conversations}" class="flex items-center justify-between py-1">
+        <div class="flex flex-col">
+            <button type="button"
+                    th:attr="hx-get='/hx/chats/conversations/' + ${conversation.id} + '/panel'"
+                    hx-swap="none"
+                    class="text-blue-700 hover:underline text-left w-full text-sm font-medium">
+                <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}">
+                    Untitled conversation
+                </span>
+            </button>
+
+            <!-- Type (English label by enum title) -->
+            <span class="text-xs text-gray-500"
+                  th:text="${
+                      conversation.type.name() == 'ONE_TO_ONE' ? '1:1 chat' :
+                      (conversation.type.name() == 'GROUP' ? 'Group chat' : 'Other')
+                  }">Type</span>
+
+            <!-- Last activity -->
+            <span class="text-xs text-gray-400"
+                  th:text="${#temporals.format(conversation.lastActivityAt, 'MMM d, yyyy HH:mm')}">
+                Last activity
+            </span>
+        </div>
+
+        <form hx-delete="/hx/chats/conversations"
+              hx-swap="none"
+              class="ml-2">
+            <input type="hidden" name="conversationId" th:value="${conversation.id}"/>
+            <button type="submit"
+                    class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-2 py-1 rounded text-xs">
+                Leave
+            </button>
+        </form>
+    </li>
+</ul>
+</body>
+</html>

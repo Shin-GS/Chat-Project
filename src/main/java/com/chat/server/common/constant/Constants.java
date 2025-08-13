@@ -10,7 +10,7 @@ public class Constants {
     public static final int USER_HASHED_PASSWORD_MAX_LENGTH = 512;
 
     // CONVERSATION
-    public static final int CONVERSATION_NAME_MAX_LENGTH = 128;
+    public static final int CONVERSATION_TITLE_MAX_LENGTH = 128;
     public static final int CONVERSATION_MESSAGE_MAX_LENGTH = 4000;
     public static final int CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH = 512;
 

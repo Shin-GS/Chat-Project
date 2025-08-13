@@ -1,7 +1,7 @@
 package com.chat.server.controller.hx.chat;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.service.ChatService;
+import com.chat.server.service.ConversationService;
 import com.chat.server.service.UserService;
 import com.chat.server.service.response.ChatMessageResponse;
 import com.chat.server.service.response.UserInfoResponse;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/hx/chats")
 public class ChatHxController {
     private final UserService userService;
-    private final ChatService chatService;
+    private final ConversationService conversationService;
 
     @Operation(summary = "채팅 패널")
     @GetMapping("/{friendUserId}/panel")
@@ -46,7 +46,7 @@ public class ChatHxController {
                                              @RequestParam(name = "chatId", required = false) Long chatId,
                                              @JwtMember JwtMemberInfo memberInfo) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<ChatMessageResponse> messages = chatService.findBeforeChats(memberInfo.id(), friendUserId, chatId, pageable);
+        List<ChatMessageResponse> messages = conversationService.findBeforeChats(memberInfo.id(), friendUserId, chatId, pageable);
         boolean hasMore = !messages.isEmpty();
         Long firstChatId = messages.isEmpty() ? 0L : messages.stream().findFirst().map(ChatMessageResponse::id).orElse(0L);
         return new ModelAndViewBuilder()

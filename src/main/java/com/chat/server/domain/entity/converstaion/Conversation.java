@@ -1,7 +1,9 @@
 package com.chat.server.domain.entity.converstaion;
 
+import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
+import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.user.User;
 import jakarta.persistence.*;
@@ -30,8 +32,8 @@ public class Conversation extends BaseTimeEntity {
     @Column(name = "TYPE", length = 50, nullable = false)
     private ConversationType type;
 
-    @Column(name = "NAME", length = Constants.CONVERSATION_NAME_MAX_LENGTH)
-    private String name;
+    @Column(name = "TITLE", length = Constants.CONVERSATION_TITLE_MAX_LENGTH)
+    private String title;
 
     @Column(name = "CREATED_USER_ID", nullable = false)
     private Long createdUserId;
@@ -39,19 +41,26 @@ public class Conversation extends BaseTimeEntity {
     @Column(name = "LAST_ACTIVITY_DTM", nullable = false)
     private LocalDateTime lastActivityAt;
 
-    public static Conversation ofOneToOne(User user) {
+    // Delete Prevention
+    @PreRemove
+    private void preventDelete() {
+        throw new CustomException(ErrorCode.ENTITY_DELETE_FORBIDDEN);
+    }
+
+    public static Conversation ofOneToOne(User creator) {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.ONE_TO_ONE;
-        conversation.createdUserId = user.getId();
+        conversation.createdUserId = creator.getId();
         conversation.lastActivityAt = LocalDateTime.now();
         return conversation;
     }
 
-    public static Conversation ofGroup(User user, String name) {
+    public static Conversation ofGroup(User creator,
+                                       String name) {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.GROUP;
-        conversation.name = name;
-        conversation.createdUserId = user.getId();
+        conversation.title = name;
+        conversation.createdUserId = creator.getId();
         conversation.lastActivityAt = LocalDateTime.now();
         return conversation;
     }
