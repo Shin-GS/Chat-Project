@@ -12,7 +12,7 @@ public enum SuccessCode implements Code {
     USER_LOGGED_IN(200, "Login successful"),
     USER_INFO_RETRIEVED(200, "User information retrieved successfully"),
 
-    CHATS_RETRIEVED(200, "Chat messages retrieved successfully"),
+    CONVERSATION_MESSAGE_RETRIEVED(200, "Conversation messages retrieved successfully"),
     ;
 
     private final Integer code;

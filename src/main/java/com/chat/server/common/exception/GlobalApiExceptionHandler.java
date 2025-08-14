@@ -45,7 +45,7 @@ public class GlobalApiExceptionHandler {
     }
 
     private ModelAndView toastFragmentView(String message) {
-        ModelAndView mv = new ModelAndView("components/toast :: message");
+        ModelAndView mv = new ModelAndView("components/common/toast :: message");
         mv.addObject("type", "error");
         mv.addObject("message", message);
         return mv;

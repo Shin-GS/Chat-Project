@@ -29,7 +29,7 @@
 <header th:fragment="header">
     <nav class="bg-white border-b px-6 py-4 flex justify-between items-center">
         <div class="text-2xl font-bold text-blue-500">
-            <a th:href="@{/}">Spring Chat</a>
+            <a th:href="@{/}">Spring Conversation</a>
         </div>
 
         <div hidden="hidden" hx-get="/hx/menu" hx-trigger="load" hx-target="#nav-menu" hx-swap="outerHTML"></div>
@@ -45,7 +45,7 @@
 </main>
 
 <footer th:fragment="footer" class="bg-gray-800 text-white text-center p-6">
-    <p>© 2025 Spring Chat. All rights reserved.</p>
+    <p>© 2025 Spring Conversation. All rights reserved.</p>
 </footer>
 
 </body>

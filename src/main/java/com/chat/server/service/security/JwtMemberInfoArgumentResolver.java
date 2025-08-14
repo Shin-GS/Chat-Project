@@ -1,6 +1,6 @@
 package com.chat.server.service.security;
 
-import com.chat.server.service.AuthService;
+import com.chat.server.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

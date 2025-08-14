@@ -1,8 +1,8 @@
 package com.chat.server.controller.wss;
 
-import com.chat.server.service.ConversationService;
-import com.chat.server.service.request.ChatMessageRequest;
-import com.chat.server.service.response.ChatMessageResponse;
+import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.request.ConversationMessageRequest;
+import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import com.chat.server.service.security.JwtMemberInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,23 +25,23 @@ public class WssControllerV1 {
     private final SpringTemplateEngine templateEngine;
 
     @MessageMapping("/chat/message")
-    public void receivedMessage(ChatMessageRequest message,
+    public void receivedMessage(ConversationMessageRequest message,
                                 Principal principal) {
         JwtMemberInfo memberInfo = (JwtMemberInfo) ((Authentication) principal).getPrincipal();
         Long senderId = memberInfo.id();
         Long receiverId = message.userId();
         log.info("Message received -> From: {}, to: {}, msg: {}", senderId, receiverId, message.message());
 
-        ChatMessageResponse senderResponse = conversationService.saveChat(senderId, message);
+        ConversationMessageResponse senderResponse = conversationService.saveMessage(senderId, message);
         messagingTemplate.convertAndSend("/sub/chat/" + senderId, renderChatMessageFragment(senderResponse));
 
-        ChatMessageResponse receiverResponse = ChatMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());
+        ConversationMessageResponse receiverResponse = ConversationMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());
         messagingTemplate.convertAndSend("/sub/chat/" + receiverId, renderChatMessageFragment(receiverResponse));
     }
 
-    private String renderChatMessageFragment(ChatMessageResponse chatMessageResponse) {
+    private String renderChatMessageFragment(ConversationMessageResponse conversationMessageResponse) {
         Context context = new Context();
-        context.setVariable("messages", List.of(chatMessageResponse));
+        context.setVariable("messages", List.of(conversationMessageResponse));
         return templateEngine.process("components/chat/chat/list", context);
     }
 }

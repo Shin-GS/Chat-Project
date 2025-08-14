@@ -3,7 +3,7 @@ package com.chat.server.common.util;
 import com.chat.server.common.Response;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
-import com.chat.server.service.AuthService;
+import com.chat.server.service.auth.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

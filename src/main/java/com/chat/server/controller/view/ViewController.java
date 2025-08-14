@@ -10,8 +10,8 @@ public class ViewController {
         return "views/home";
     }
 
-    @GetMapping("/chat")
-    public String chat() {
-        return "views/chat";
+    @GetMapping("/conversation")
+    public String conversation() {
+        return "views/conversation";
     }
 }

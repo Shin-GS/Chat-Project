@@ -4,7 +4,7 @@ import com.chat.server.common.exception.CustomTokenException;
 import com.chat.server.common.util.ResponseUtil;
 import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.security.TokenResolver;
-import com.chat.server.service.AuthService;
+import com.chat.server.service.auth.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

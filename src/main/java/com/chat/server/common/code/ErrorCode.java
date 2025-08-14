@@ -27,10 +27,10 @@ public enum ErrorCode implements Code {
     TOKEN_NOT_EXPIRED(400, "Token not expired"),
 
     // Conversation
-    CONVERSATION_REQUEST_INVALID(400, "chat request invalid"),
-    CONVERSATION_FRIEND_ALREADY_EXISTS(400, "chat friend already exists"),
-    CONVERSATION_FRIEND_NOT_EXISTS(400, "chat friend not exists"),
-    CONVERSATION_GROUP_NOT_EXISTS(400, "chat group not exists"),
+    CONVERSATION_REQUEST_INVALID(400, "conversation request invalid"),
+    CONVERSATION_FRIEND_ALREADY_EXISTS(400, "conversation friend already exists"),
+    CONVERSATION_FRIEND_NOT_EXISTS(400, "conversation friend not exists"),
+    CONVERSATION_GROUP_NOT_EXISTS(400, "conversation group not exists"),
     CONVERSATION_NOT_GROUP(400, "conversation is not a group"),
     CONVERSATION_ALREADY_JOINED(400, "already joined the conversation"),
     CONVERSATION_NOT_MEMBER(400, "conversation is not a member"),

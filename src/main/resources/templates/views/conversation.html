@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <th:block th:insert="~{views/layout :: head}"/>
+
+    <title>Conversation Room</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/script/conversation.js"></script>
+    <script>
+        // Utility to get conversation message container
+        const getConversationContainer = () => document.getElementById("conversation-message-list");
+
+        // Observe the scroll loader and trigger HTMX request when it becomes visible
+        const observeScrollLoader = (container) => {
+            const loader = document.querySelector('#conversation-scroll-loader');
+            if (!loader || !container || loader._observed) return;
+
+            loader._observed = true; // Prevent duplicate observers
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const getUrl = loader.getAttribute("data-hx-get");
+                        if (getUrl) {
+                            loader.setAttribute("hx-get", getUrl); // Set actual hx-get
+                            htmx.trigger(loader, 'revealed');       // Fire the request manually
+                            observer.unobserve(loader);              // Stop observing this loader
+                        }
+                    }
+                });
+            }, {
+                root: container,
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger even with partial visibility
+            });
+
+            observer.observe(loader);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let previousScrollHeight = null;
+
+            // Before sending HX request, save scroll height
+            document.body.addEventListener("htmx:beforeRequest", (event) => {
+                if (event.target.id === "conversation-scroll-loader") {
+                    const container = getConversationContainer();
+                    if (container) {
+                        previousScrollHeight = container.scrollHeight;
+                    }
+                }
+            });
+
+            document.body.addEventListener("htmx:afterRequest", (event) => {
+                const target = event.target;
+                if (target.id === "conversation-scroll-loader") {
+                    target.remove();
+                }
+            });
+
+            // After content swap (e.g., conversation list), do scroll adjustments or observe new loaders
+            document.body.addEventListener("htmx:afterSwap", (event) => {
+                const container = getConversationContainer();
+
+                // Scroll to bottom on initial load
+                if (event.target.id === "conversation-message-list" && document.getElementById("initial-loader")) {
+                    container.scrollTop = container.scrollHeight;
+                    document.getElementById("initial-loader")?.remove();
+                }
+
+                // (Re-)observe scroll loader if needed
+                if ((event.target.id === "conversation-scroll-loader" || event.target.id === "conversation-message-list") && container) {
+                    observeScrollLoader(container);
+                }
+            });
+
+            // Handle out-of-band swaps (conversation panel load or scroll restoration)
+            document.body.addEventListener("htmx:oobAfterSwap", (event) => {
+                if (event.target.id === "conversation-panel") {
+                    const myId = event.target.getAttribute("data-user-id");
+                    const friendId = event.target.getAttribute("data-friend-id");
+                    connectWebSocket(myId, friendId);
+
+                    const sendButton = event.target.querySelector('#conversation-send-button');
+                    if (sendButton) {
+                        sendButton.addEventListener("click", sendMessage);
+                    }
+                }
+
+                // Restore scroll position after loading previous messages
+                if (event.target.id === "conversation-scroll-loader" && previousScrollHeight !== null) {
+                    const container = getConversationContainer();
+                    if (container) {
+                        const newScrollHeight = container.scrollHeight;
+                        container.scrollTop += newScrollHeight - previousScrollHeight;
+                    }
+                    previousScrollHeight = null;
+                    event.target.remove(); // Remove used loader
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<header th:replace="~{views/layout :: header}"></header>
+
+<main th:fragment="content"
+      class="flex-grow flex flex-col items-center py-8">
+    <div class="flex justify-between max-w-5xl w-full items-center px-6 mb-4">
+        <h1 class="text-3xl font-bold text-gray-800">Welcome to the Conversation Room</h1>
+    </div>
+
+    <section class="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
+        <div class="flex h-full w-full">
+            <!-- Sidebar -->
+            <div class="w-1/3 p-4 border-r">
+                <div>
+                    <aside class="sidebar">
+                        <button type="button"
+                                hx-get="/hx/conversations/friends/search/modal"
+                                hx-swap="none"
+                                class="flex items-center gap-2 text-lg hover:text-blue-500">
+                            🔍 친구 검색
+                        </button>
+                    </aside>
+
+                    <section>
+                        <h2 class="text-md font-semibold mb-2 text-gray-700">내 친구 목록</h2>
+                        <div hidden="hidden" hx-get="/hx/conversations/friends" hx-trigger="load" hx-swap="none"></div>
+                        <ul id="friend-list" class="space-y-2 text-sm text-gray-800"></ul>
+                    </section>
+
+                    <section>
+                        <h2 class="text-md font-semibold mb-2 text-gray-700">채팅방 목록</h2>
+                        <div hidden="hidden" hx-get="/hx/conversations" hx-trigger="load" hx-swap="none"></div>
+                        <ul id="conversation-list" class="space-y-2 text-sm text-gray-800"></ul>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Converstaion Panel -->
+            <div id="conversation-panel"></div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{views/layout :: footer}"></footer>
+</body>
+</html>
