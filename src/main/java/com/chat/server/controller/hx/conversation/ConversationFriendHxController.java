@@ -42,9 +42,9 @@ public class ConversationFriendHxController {
                 .build();
     }
 
-    @Operation(summary = "친구 목록 조회")
+    @Operation(summary = "내 친구 목록 조회")
     @GetMapping
-    public List<ModelAndView> findFriends(@JwtMember JwtMemberInfo memberInfo) {
+    public List<ModelAndView> myFriends(@JwtMember JwtMemberInfo memberInfo) {
         List<UserInfoResponse> friends = conversationFriendService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/list.html",

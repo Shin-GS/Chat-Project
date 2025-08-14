@@ -1,30 +1,29 @@
 package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.ConversationParticipant;
-import com.chat.server.domain.entity.converstaion.ConverstaionMessage;
 import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.conversation.*;
+import com.chat.server.domain.repository.conversation.ConversationMembershipHistoryRepository;
+import com.chat.server.domain.repository.conversation.ConversationOneToOneKeyRepository;
+import com.chat.server.domain.repository.conversation.ConversationParticipantRepository;
+import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationService;
-import com.chat.server.service.conversation.request.ConversationCreateRequest;
-import com.chat.server.service.conversation.request.ConversationMessageRequest;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
-import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.chat.server.common.constant.conversation.ConversationType.GROUP;
@@ -32,36 +31,11 @@ import static com.chat.server.common.constant.conversation.ConversationType.GROU
 @Service
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements ConversationService {
-    private final ConversationMessageRepository conversationMessageRepository;
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
     private final ConversationMembershipHistoryRepository conversationMembershipHistoryRepository;
-
-    @Override
-    @Transactional
-    public ConversationMessageResponse saveMessage(Long userId,
-                                                   ConversationMessageRequest messageRequest) {
-        User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        User receiver = userRepository.findById(messageRequest.userId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        ConverstaionMessage converstaionMessage = conversationMessageRepository.save(ConverstaionMessage.of(sender, receiver, messageRequest.message()));
-        return ConversationMessageResponse.of(converstaionMessage, userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ConversationMessageResponse> findBeforeMessage(Long userId,
-                                                               Long friendUserId,
-                                                               Long messageId,
-                                                               Pageable pageable) {
-        return conversationMessageRepository.findBeforeMessagesBetweenUserIds(userId, friendUserId, messageId, pageable).stream()
-                .sorted(Comparator.comparing(ConverstaionMessage::getId))
-                .map(chat -> ConversationMessageResponse.of(chat, userId))
-                .toList();
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -77,8 +51,19 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void joinConversationGroup(Long userId,
-                                      Long conversationId) {
+    public void joinOneToOne(Long userId,
+                             Long friendUserId) {
+        if (userId == null || friendUserId == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null);
+    }
+
+    @Override
+    @Transactional
+    public void joinGroup(Long userId,
+                          Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -103,8 +88,8 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void leaveConversationGroup(Long userId,
-                                       Long conversationId) {
+    public void leave(Long userId,
+                      Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -129,28 +114,30 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void createConversation(Long userId,
-                                   ConversationCreateRequest request) {
-        if (userId == null || request == null || request.type() == null) {
+    public void create(Long userId,
+                       ConversationType type,
+                       Set<Long> userIds,
+                       String title) {
+        if (userId == null || type == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
         User creator = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        switch (request.type()) {
-            case ONE_TO_ONE -> createOneToOne(creator, request);
-            case GROUP -> createGroup(creator, request);
+        switch (type) {
+            case ONE_TO_ONE -> createOneToOne(creator, userIds);
+            case GROUP -> createGroup(creator, userIds, title);
             default -> throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
     }
 
     private void createOneToOne(User creator,
-                                ConversationCreateRequest request) {
-        if (ObjectUtils.isEmpty(request.userIds())) {
+                                Set<Long> userIds) {
+        if (ObjectUtils.isEmpty(userIds)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        Long targetUserId = request.userIds().stream()
+        Long targetUserId = userIds.stream()
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
@@ -188,32 +175,33 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     private void createGroup(User creator,
-                             ConversationCreateRequest request) {
-        if (ObjectUtils.isEmpty(request.title())) {
+                             Set<Long> userIds,
+                             String title) {
+        if (ObjectUtils.isEmpty(title)) {
             throw new CustomException(ErrorCode.CONVERSATION_NAME_REQUIRED);
         }
 
-        Conversation conversation = conversationRepository.save(Conversation.ofGroup(creator, request.title()));
+        Conversation conversation = conversationRepository.save(Conversation.ofGroup(creator, title));
 
         // creator
         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, creator));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, creator));
 
         // participants
-        if (request.userIds() == null) {
+        if (userIds == null) {
             return;
         }
 
-        List<Long> userIds = request.userIds().stream()
+        List<Long> userIdsExcludeCreator = userIds.stream()
                 .filter(Objects::nonNull)
                 .filter(id -> !id.equals(creator.getId()))
                 .distinct()
                 .toList();
-        if (ObjectUtils.isEmpty(userIds)) {
+        if (ObjectUtils.isEmpty(userIdsExcludeCreator)) {
             return;
         }
 
-        userRepository.findAllById(userIds)
+        userRepository.findAllById(userIdsExcludeCreator)
                 .forEach(user -> {
                     conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
                     conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));

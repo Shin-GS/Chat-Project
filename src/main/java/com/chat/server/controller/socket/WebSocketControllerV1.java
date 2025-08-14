@@ -1,6 +1,6 @@
-package com.chat.server.controller.wss;
+package com.chat.server.controller.socket;
 
-import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.request.ConversationMessageRequest;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -19,8 +19,8 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class WssControllerV1 {
-    private final ConversationService conversationService;
+public class WebSocketControllerV1 {
+    private final ConversationMessageService conversationMessageService;
     private final SimpMessagingTemplate messagingTemplate;
     private final SpringTemplateEngine templateEngine;
 
@@ -32,7 +32,7 @@ public class WssControllerV1 {
         Long receiverId = message.userId();
         log.info("Message received -> From: {}, to: {}, msg: {}", senderId, receiverId, message.message());
 
-        ConversationMessageResponse senderResponse = conversationService.saveMessage(senderId, message);
+        ConversationMessageResponse senderResponse = conversationMessageService.saveMessage(senderId, message);
         messagingTemplate.convertAndSend("/sub/conversations/" + senderId, renderChatMessageFragment(senderResponse));
 
         ConversationMessageResponse receiverResponse = ConversationMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());
