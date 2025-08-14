@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "Friend")
+@Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/friends")

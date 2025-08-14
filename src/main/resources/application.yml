@@ -41,6 +41,7 @@ springdoc:
     path: /swagger
     operationsSorter: method
     tagsSorter: alpha
+    doc-expansion: none
 
 logging:
   level:
