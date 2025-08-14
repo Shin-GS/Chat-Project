@@ -5,23 +5,21 @@ import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.ConversationParticipant;
-import com.chat.server.domain.entity.converstaion.ConverstaionMessage;
 import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.conversation.*;
+import com.chat.server.domain.repository.conversation.ConversationMembershipHistoryRepository;
+import com.chat.server.domain.repository.conversation.ConversationOneToOneKeyRepository;
+import com.chat.server.domain.repository.conversation.ConversationParticipantRepository;
+import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationCreateRequest;
-import com.chat.server.service.conversation.request.ConversationMessageRequest;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
-import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,36 +30,11 @@ import static com.chat.server.common.constant.conversation.ConversationType.GROU
 @Service
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements ConversationService {
-    private final ConversationMessageRepository conversationMessageRepository;
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
     private final ConversationMembershipHistoryRepository conversationMembershipHistoryRepository;
-
-    @Override
-    @Transactional
-    public ConversationMessageResponse saveMessage(Long userId,
-                                                   ConversationMessageRequest messageRequest) {
-        User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        User receiver = userRepository.findById(messageRequest.userId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        ConverstaionMessage converstaionMessage = conversationMessageRepository.save(ConverstaionMessage.of(sender, receiver, messageRequest.message()));
-        return ConversationMessageResponse.of(converstaionMessage, userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ConversationMessageResponse> findBeforeMessage(Long userId,
-                                                               Long friendUserId,
-                                                               Long messageId,
-                                                               Pageable pageable) {
-        return conversationMessageRepository.findBeforeMessagesBetweenUserIds(userId, friendUserId, messageId, pageable).stream()
-                .sorted(Comparator.comparing(ConverstaionMessage::getId))
-                .map(chat -> ConversationMessageResponse.of(chat, userId))
-                .toList();
-    }
 
     @Override
     @Transactional(readOnly = true)
