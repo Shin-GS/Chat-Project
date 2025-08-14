@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,4 +60,16 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
         userFriendRepository.deleteByUserIdAndFriendUserId(userId, friendUserId);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserInfoResponse> findFriendsByKeyword(String keyword,
+                                                       Long userId) {
+        if (keyword == null || userId == null) {
+            return new ArrayList<>();
+        }
+
+        return userFriendRepository.findSimilarNamesExcludingExactMatch(keyword, userId).stream()
+                .map(UserInfoResponse::of)
+                .toList();
+    }
 }

@@ -29,7 +29,7 @@ public class ConversationHxController {
         List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/list.html",
-                        "components/chat/conversation/list :: conversation-list",
+                        "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversations))
                 .build();
     }
@@ -45,7 +45,7 @@ public class ConversationHxController {
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
-                        "components/chat/conversation/list :: conversation-list",
+                        "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversations))
                 .build();
     }
@@ -63,7 +63,7 @@ public class ConversationHxController {
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
-                        "components/chat/conversation/list :: conversation-list",
+                        "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversations))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",
@@ -83,7 +83,7 @@ public class ConversationHxController {
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
-                        "components/chat/conversation/list :: conversation-list",
+                        "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversations))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",

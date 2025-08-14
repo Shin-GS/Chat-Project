@@ -6,9 +6,11 @@
     hx-swap-oob="true">
     <!--/*@thymesVar id="searchUsers" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
     <li th:if="${#lists.isEmpty(searchUsers)}">not exists</li>
+
     <li th:each="searchUser : ${searchUsers}">
+        <!--/*@thymesVar id="searchUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
         <form th:if="${!searchUser.friend}"
-              hx-post="/hx/chats/friends"
+              hx-post="/hx/conversations/friends"
               hx-swap="none">
             <input type="hidden" name="friendUserId" th:value="${searchUser.id}"/>
             <button type="submit"
@@ -20,7 +22,7 @@
         <div th:if="${searchUser.friend}">
             <button type="button" disabled
                     class="bg-gray-300 text-gray-600 font-semibold px-3 py-1 rounded cursor-not-allowed">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|+ ' (친구)'">Add</span>
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|+ ' (친구)'">Friend</span>
             </button>
         </div>
     </li>

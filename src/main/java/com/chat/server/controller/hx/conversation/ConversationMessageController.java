@@ -34,7 +34,7 @@ public class ConversationMessageController {
         UserInfoResponse friendUserInfo = userService.findUserInfo(conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/message/panel.html",
-                        "components/chat/chat/panel :: chat-panel",
+                        "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", userInfo, "friendUser", friendUserInfo))
                 .build();
     }
@@ -51,7 +51,7 @@ public class ConversationMessageController {
         Long firstMessageId = messages.isEmpty() ? 0L : messages.stream().findFirst().map(ConversationMessageResponse::id).orElse(0L);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/message/before.html",
-                        "components/chat/chat/before",
+                        "components/conversation/message/before",
                         Map.of("hasMore", hasMore,
                                 "friendUserId", conversationId,
                                 "firstMessageId", firstMessageId,

@@ -4,7 +4,6 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.user.UserService;
 import com.chat.server.service.user.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/friends")
 public class ConversationFriendHxController {
-    private final UserService userService;
     private final ConversationFriendService conversationFriendService;
 
     @Operation(summary = "친구 검색 모달")
@@ -36,7 +34,7 @@ public class ConversationFriendHxController {
     @GetMapping("/search")
     public List<ModelAndView> findSimilarUsernames(@RequestParam("keyword") String keyword,
                                                    @JwtMember JwtMemberInfo memberInfo) {
-        List<UserInfoResponse> searchUsers = userService.findSimilarNamesExcludingExactMatch(keyword, memberInfo.id());
+        List<UserInfoResponse> searchUsers = conversationFriendService.findFriendsByKeyword(keyword, memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/search/result.html",
                         "components/conversation/friend/search/result :: friend-list",

@@ -11,7 +11,7 @@
     <li th:each="conversation : ${conversations}" class="flex items-center justify-between py-1">
         <div class="flex flex-col">
             <button type="button"
-                    th:attr="hx-get='/hx/chats/conversations/' + ${conversation.id} + '/panel'"
+                    th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/panel'"
                     hx-swap="none"
                     class="text-blue-700 hover:underline text-left w-full text-sm font-medium">
                 <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}">
@@ -33,7 +33,7 @@
             </span>
         </div>
 
-        <form hx-delete="/hx/chats/conversations"
+        <form hx-delete="/hx/conversations"
               hx-swap="none"
               class="ml-2">
             <input type="hidden" name="conversationId" th:value="${conversation.id}"/>

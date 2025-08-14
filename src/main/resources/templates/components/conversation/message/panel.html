@@ -3,9 +3,9 @@
 <body>
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
 <!--/*@thymesVar id="friendUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
-<div th:fragment="chat-panel"
+<div th:fragment="conversation-panel"
      class="flex-1 p-4"
-     id="chat-panel"
+     id="conversation-panel"
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-friend-id=${friendUser.id}">
     <div>
@@ -15,7 +15,7 @@
 
         <div hidden="hidden"
              id="initial-loader"
-             th:attr="hx-get='/hx/chats/' + ${friendUser.id} + '/before'"
+             th:attr="hx-get='/hx/conversations/' + ${friendUser.id} + '/before'"
              hx-trigger="load"
              hx-target="#chat-message-list"
              hx-swap="afterbegin"></div>

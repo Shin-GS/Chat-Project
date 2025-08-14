@@ -24,7 +24,7 @@ public class WssControllerV1 {
     private final SimpMessagingTemplate messagingTemplate;
     private final SpringTemplateEngine templateEngine;
 
-    @MessageMapping("/chat/message")
+    @MessageMapping("/conversations/message")
     public void receivedMessage(ConversationMessageRequest message,
                                 Principal principal) {
         JwtMemberInfo memberInfo = (JwtMemberInfo) ((Authentication) principal).getPrincipal();
@@ -33,15 +33,15 @@ public class WssControllerV1 {
         log.info("Message received -> From: {}, to: {}, msg: {}", senderId, receiverId, message.message());
 
         ConversationMessageResponse senderResponse = conversationService.saveMessage(senderId, message);
-        messagingTemplate.convertAndSend("/sub/chat/" + senderId, renderChatMessageFragment(senderResponse));
+        messagingTemplate.convertAndSend("/sub/conversations/" + senderId, renderChatMessageFragment(senderResponse));
 
         ConversationMessageResponse receiverResponse = ConversationMessageResponse.of(senderResponse.id(), senderResponse.from(), senderResponse.to(), senderResponse.message());
-        messagingTemplate.convertAndSend("/sub/chat/" + receiverId, renderChatMessageFragment(receiverResponse));
+        messagingTemplate.convertAndSend("/sub/conversations/" + receiverId, renderChatMessageFragment(receiverResponse));
     }
 
     private String renderChatMessageFragment(ConversationMessageResponse conversationMessageResponse) {
         Context context = new Context();
         context.setVariable("messages", List.of(conversationMessageResponse));
-        return templateEngine.process("components/chat/chat/list", context);
+        return templateEngine.process("components/conversation/message/list", context);
     }
 }

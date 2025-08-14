@@ -12,4 +12,7 @@ public interface ConversationFriendService {
 
     void removeFriend(Long userId,
                       Long friendUserId);
+
+    List<UserInfoResponse> findFriendsByKeyword(String keyword,
+                                                Long userId);
 }
