@@ -2,16 +2,15 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.conversation.ConversationType;
+import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
+import com.chat.server.domain.entity.converstaion.history.ConversationRoleHistory;
 import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.conversation.ConversationMembershipHistoryRepository;
-import com.chat.server.domain.repository.conversation.ConversationOneToOneKeyRepository;
-import com.chat.server.domain.repository.conversation.ConversationParticipantRepository;
-import com.chat.server.domain.repository.conversation.ConversationRepository;
+import com.chat.server.domain.repository.conversation.*;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
@@ -19,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +36,7 @@ public class ConversationServiceImpl implements ConversationService {
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
     private final ConversationMembershipHistoryRepository conversationMembershipHistoryRepository;
+    private final ConversationRoleHistoryRepository conversationRoleHistoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -82,6 +83,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         // todo 새 멤버가 들어왔습니다.
         conversation.updateActivity();
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER));
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));
     }
@@ -104,6 +106,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         // todo 멤버가 대화방을 나갔습니다.
         conversation.updateActivity();
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofLeave(conversation, user, participant.getRole()));
         conversationParticipantRepository.delete(participant);
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofLeave(conversation, user));
     }
@@ -153,27 +156,29 @@ public class ConversationServiceImpl implements ConversationService {
                     .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getId(), user.getId()))
                     .forEach(user -> {
                         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
+                        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(existingConversation, user, ConversationUserRole.SUPER_ADMIN, creator));
                         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user, creator));
                     });
             existingConversation.updateActivity();
             return;
         }
 
-        Conversation conversation = conversationRepository.save(Conversation.ofOneToOne(creator));
-        conversationOneToOneKeyRepository.save(ConversationOneToOneKey.of(conversation, creator, targetUser));
+        Conversation newConversation = conversationRepository.save(Conversation.ofOneToOne(creator));
+        conversationOneToOneKeyRepository.save(ConversationOneToOneKey.of(newConversation, creator, targetUser));
 
         // creator, participants
         List.of(creator, targetUser)
                 .forEach(user -> {
-                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, user));
-                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
+                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user));
+                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, user, ConversationUserRole.SUPER_ADMIN, creator));
+                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, user, creator));
                 });
     }
 
     private void createGroup(User creator,
                              Set<Long> userIds,
                              String title) {
-        if (ObjectUtils.isEmpty(title)) {
+        if (!StringUtils.hasText(title)) {
             throw new CustomException(ErrorCode.CONVERSATION_NAME_REQUIRED);
         }
 
@@ -181,6 +186,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         // creator
         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, creator));
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, creator, ConversationUserRole.SUPER_ADMIN));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, creator));
 
         // participants
@@ -200,6 +206,7 @@ public class ConversationServiceImpl implements ConversationService {
         userRepository.findAllById(userIdsExcludeCreator)
                 .forEach(user -> {
                     conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
+                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER, creator));
                     conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
                 });
     }

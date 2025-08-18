@@ -33,7 +33,7 @@ public class ConversationRoleHistory extends BaseTimeEntity {
     private Long userId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE_OLD", length = 20, nullable = false)
+    @Column(name = "ROLE_OLD", length = 20)
     private ConversationUserRole roleOld;
 
     @Enumerated(EnumType.STRING)
@@ -46,17 +46,71 @@ public class ConversationRoleHistory extends BaseTimeEntity {
     @Column(name = "CHANGED_AT", nullable = false)
     private LocalDateTime changedAt;
 
-    public static ConversationRoleHistory of(Conversation conversation,
-                                             User user,
-                                             ConversationUserRole oldRole,
-                                             ConversationUserRole newRole,
-                                             User actorUser) {
+    public static ConversationRoleHistory ofNew(Conversation conversation,
+                                                User user,
+                                                ConversationUserRole newRole) {
+        ConversationRoleHistory history = new ConversationRoleHistory();
+        history.conversationId = conversation.getId();
+        history.userId = user.getId();
+        history.roleOld = null;
+        history.roleNew = newRole;
+        history.actorUserId = user.getId();
+        history.changedAt = LocalDateTime.now();
+        return history;
+    }
+
+    public static ConversationRoleHistory ofNew(Conversation conversation,
+                                                User user,
+                                                ConversationUserRole newRole,
+                                                User actor) {
+        ConversationRoleHistory history = new ConversationRoleHistory();
+        history.conversationId = conversation.getId();
+        history.userId = user.getId();
+        history.roleOld = null;
+        history.roleNew = newRole;
+        history.actorUserId = actor.getId();
+        history.changedAt = LocalDateTime.now();
+        return history;
+    }
+
+    public static ConversationRoleHistory ofChange(Conversation conversation,
+                                                   User user,
+                                                   ConversationUserRole oldRole,
+                                                   ConversationUserRole newRole) {
+        ConversationRoleHistory history = new ConversationRoleHistory();
+        history.conversationId = conversation.getId();
+        history.userId = user.getId();
+        history.roleOld = oldRole;
+        history.roleNew = newRole;
+        history.actorUserId = user.getId();
+        history.changedAt = LocalDateTime.now();
+        return history;
+    }
+
+    public static ConversationRoleHistory ofChange(Conversation conversation,
+                                                   User user,
+                                                   ConversationUserRole oldRole,
+                                                   ConversationUserRole newRole,
+                                                   User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
         history.conversationId = conversation.getId();
         history.userId = user.getId();
         history.roleOld = oldRole;
         history.roleNew = newRole;
         history.actorUserId = actorUser.getId();
+        history.changedAt = LocalDateTime.now();
+        return history;
+    }
+
+    public static ConversationRoleHistory ofLeave(Conversation conversation,
+                                                  User user,
+                                                  ConversationUserRole oldRole) {
+        ConversationRoleHistory history = new ConversationRoleHistory();
+        history.conversationId = conversation.getId();
+        history.userId = user.getId();
+        history.roleOld = oldRole;
+        history.roleNew = null;
+        history.actorUserId = user.getId();
         history.changedAt = LocalDateTime.now();
         return history;
     }
