@@ -57,6 +57,18 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
         return history;
     }
 
+    public static ConversationMembershipHistory ofJoin(Conversation conversation,
+                                                       User user,
+                                                       User actor) {
+        ConversationMembershipHistory history = new ConversationMembershipHistory();
+        history.conversationId = conversation.getId();
+        history.userId = user.getId();
+        history.action = ConversationMembershipAction.JOIN;
+        history.actorUserId = actor.getId();
+        history.actionAt = LocalDateTime.now();
+        return history;
+    }
+
     public static ConversationMembershipHistory ofLeave(Conversation conversation,
                                                         User user) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();

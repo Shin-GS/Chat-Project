@@ -4,9 +4,9 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
 import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
-import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationMembershipHistoryRepository;
 import com.chat.server.domain.repository.conversation.ConversationOneToOneKeyRepository;
@@ -153,7 +153,7 @@ public class ConversationServiceImpl implements ConversationService {
                     .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getId(), user.getId()))
                     .forEach(user -> {
                         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
-                        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user));
+                        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user, creator));
                     });
             existingConversation.updateActivity();
             return;
@@ -166,7 +166,7 @@ public class ConversationServiceImpl implements ConversationService {
         List.of(creator, targetUser)
                 .forEach(user -> {
                     conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, user));
-                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));
+                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
                 });
     }
 
@@ -200,7 +200,7 @@ public class ConversationServiceImpl implements ConversationService {
         userRepository.findAllById(userIdsExcludeCreator)
                 .forEach(user -> {
                     conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
-                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));
+                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
                 });
     }
 }
