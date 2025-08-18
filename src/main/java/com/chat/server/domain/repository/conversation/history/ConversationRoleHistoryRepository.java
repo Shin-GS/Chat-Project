@@ -1,4 +1,4 @@
-package com.chat.server.domain.repository.conversation;
+package com.chat.server.domain.repository.conversation.history;
 
 import com.chat.server.domain.entity.converstaion.history.ConversationRoleHistory;
 import org.springframework.data.jpa.repository.JpaRepository;

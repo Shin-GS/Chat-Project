@@ -4,7 +4,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.conversation.*;
+import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.request.ConversationMessageRequest;

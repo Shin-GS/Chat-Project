@@ -11,6 +11,10 @@ import com.chat.server.domain.entity.converstaion.participant.ConversationOneToO
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.*;
+import com.chat.server.domain.repository.conversation.history.ConversationMembershipHistoryRepository;
+import com.chat.server.domain.repository.conversation.history.ConversationRoleHistoryRepository;
+import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
+import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;

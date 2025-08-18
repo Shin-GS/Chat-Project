@@ -1,4 +1,4 @@
-package com.chat.server.domain.repository.conversation;
+package com.chat.server.domain.repository.conversation.message;
 
 import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
 import org.springframework.data.domain.Pageable;

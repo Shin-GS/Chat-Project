@@ -1,4 +1,4 @@
-package com.chat.server.domain.repository.conversation;
+package com.chat.server.domain.repository.conversation.participant;
 
 import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
 import org.springframework.data.jpa.repository.JpaRepository;
