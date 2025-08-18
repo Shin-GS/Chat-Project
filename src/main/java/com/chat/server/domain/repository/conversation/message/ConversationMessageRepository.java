@@ -18,7 +18,7 @@ public interface ConversationMessageRepository extends JpaRepository<Conversatio
             WHERE
                conversationMessage.conversationId = :conversationId
                AND (:messageId IS NULL OR conversationMessage.id < :messageId)
-            ORDER BY conversationMessage.id desc
+            ORDER BY conversationMessage.id DESC
             """)
     List<ConversationMessage> findBeforeMessages(
             @Param("conversationId") Long conversationId,

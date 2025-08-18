@@ -229,4 +229,12 @@ public class ConversationServiceImpl implements ConversationService {
                 .map(ConversationInfoResponse::of)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> findParticipantUserIds(Long conversationId) {
+        return conversationParticipantRepository.findAllByConversationId(conversationId).stream()
+                .map(ConversationParticipant::getUserId)
+                .toList();
+    }
 }

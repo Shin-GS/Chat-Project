@@ -5,7 +5,7 @@ let targetConversationId = null;
 function connectWebSocket(myId, conversationId) {
     if (stompClient !== null) {
         stompClient.disconnect(() => {
-            console.log("Disconnected from previous chat");
+            console.log("Disconnected from previous conversation");
         });
     }
 
@@ -17,9 +17,9 @@ function connectWebSocket(myId, conversationId) {
     stompClient.connect({}, function (frame) {
         // console.log('Connected: ' + frame);
 
-        stompClient.subscribe(`/sub/conversations/${myUserId}`, function (message) {
+        stompClient.subscribe(`/user/sub/conversations/${targetConversationId}`, function (message) {
             const renderedHtml = message.body;
-            const container = document.getElementById('chat-message-list');
+            const container = document.getElementById('conversation-message-list');
             container.insertAdjacentHTML('beforeend', renderedHtml);
             container.scrollTop = container.scrollHeight;
         });
@@ -27,7 +27,7 @@ function connectWebSocket(myId, conversationId) {
 }
 
 function sendMessage() {
-    const input = document.getElementById('chat-input');
+    const input = document.getElementById('conversation-input');
     const text = input.value?.trim();
 
     if (!text || !stompClient || !stompClient.connected || !targetConversationId) {
@@ -36,8 +36,8 @@ function sendMessage() {
     }
 
     const message = {
-        message: text,
-        conversationId: targetConversationId
+        conversationId: targetConversationId,
+        message: text
     };
 
     // console.log("Sending message:", message);

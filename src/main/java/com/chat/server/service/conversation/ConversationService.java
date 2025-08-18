@@ -25,4 +25,6 @@ public interface ConversationService {
 
     ConversationInfoResponse getConversation(Long conversationId,
                                              Long userId);
+
+    List<Long> findParticipantUserIds(Long conversationId);
 }

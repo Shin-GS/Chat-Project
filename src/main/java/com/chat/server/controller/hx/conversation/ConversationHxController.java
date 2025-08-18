@@ -3,6 +3,7 @@ package com.chat.server.controller.hx.conversation;
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationCreateRequest;
+import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.user.response.UserInfoResponse;
@@ -30,6 +31,19 @@ public class ConversationHxController {
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .build();
+    }
+
+    @Operation(summary = "채팅 패널")
+    @GetMapping("/{conversationId}/panel")
+    public List<ModelAndView> chatPanel(@PathVariable("conversationId") Long conversationId,
+                                        @JwtMember JwtMemberInfo memberInfo) {
+        ConversationInfoResponse conversation = conversationService.getConversation(conversationId, memberInfo.id());
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/message/panel.html",
+                        "components/conversation/message/panel :: conversation-panel",
+                        Map.of("user", UserInfoResponse.of(memberInfo),
+                                "conversation", conversation))
                 .build();
     }
 

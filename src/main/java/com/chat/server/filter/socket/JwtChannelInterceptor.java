@@ -29,7 +29,8 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
         if (accessor.getSessionAttributes().get("memberInfo") instanceof JwtMemberInfo memberInfo) {
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + memberInfo.role().name()));
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberInfo, null, authorities);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberInfo.id(), null, authorities);
+            auth.setDetails(memberInfo);
             accessor.setUser(auth);
         }
 

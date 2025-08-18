@@ -9,28 +9,28 @@
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
     <div>
-        <div class="chat-topbar">
-            <h2 id="chat-title" th:text="${conversation.title}">채팅방</h2>
+        <div class="conversation-topbar">
+            <h2 id="conversation-title" th:text="${conversation.title}">채팅방</h2>
         </div>
 
         <div hidden="hidden"
              id="initial-loader"
              th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/before'"
              hx-trigger="load"
-             hx-target="#chat-message-list"
+             hx-target="#conversation-message-list"
              hx-swap="afterbegin"></div>
 
-        <div id="chat-message-list"
+        <div id="conversation-message-list"
              style="height: 400px; overflow-y: auto; border: 1px solid #ccc;"></div>
 
-        <div class="chat-bottombar">
-            <label for="chat-input">
+        <div class="conversation">
+            <label for="conversation-input">
                 <input type="text"
-                       id="chat-input"
+                       id="conversation-input"
                        placeholder="메시지를 입력하세요..."
                        style="width: 80%;"/>
             </label>
-            <button id="chat-send-button" type="button">전송</button>
+            <button id="conversation-send-button" type="button">전송</button>
         </div>
     </div>
 </div>

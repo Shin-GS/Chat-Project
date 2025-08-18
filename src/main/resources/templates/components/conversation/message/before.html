@@ -4,13 +4,13 @@
 <!--/*@thymesVar id="conversationId" type="Long"*/-->
 <!--/*@thymesVar id="firstMessageId" type="Long"*/-->
 <div th:if="${hasMore}"
-     id="chat-scroll-loader"
+     id="conversation-scroll-loader"
      th:attr="data-hx-get='/hx/conversations/' + ${conversationId} + '/before?messageId=' + ${firstMessageId}"
      hx-trigger="revealed"
-     hx-target="#chat-message-list"
+     hx-target="#conversation-message-list"
      hx-swap="afterbegin"
      style="height: 20px; background: transparent;">
 </div>
 
-<div th:replace="~{components/conversation/list}"></div>
+<div th:replace="~{components/conversation/message/list}"></div>
 </html>
