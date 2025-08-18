@@ -4,8 +4,8 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
-import com.chat.server.domain.entity.converstaion.ConversationOneToOneKey;
-import com.chat.server.domain.entity.converstaion.ConversationParticipant;
+import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
+import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.converstaion.history.ConversationMembershipHistory;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationMembershipHistoryRepository;
@@ -98,10 +98,6 @@ public class ConversationServiceImpl implements ConversationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
-        if (conversation.getType() != GROUP) {
-            throw new CustomException(ErrorCode.CONVERSATION_NOT_GROUP);
-        }
-
         ConversationParticipant participant = conversationParticipantRepository
                 .findByConversationIdAndUserId(conversationId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));

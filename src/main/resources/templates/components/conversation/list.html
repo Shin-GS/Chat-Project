@@ -33,15 +33,12 @@
             </span>
         </div>
 
-        <form hx-delete="/hx/conversations"
-              hx-swap="none"
-              class="ml-2">
-            <input type="hidden" name="conversationId" th:value="${conversation.id}"/>
-            <button type="submit"
-                    class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-2 py-1 rounded text-xs">
-                Leave
-            </button>
-        </form>
+        <button type="button"
+                th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
+                hx-swap="none"
+                class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-2 py-1 rounded text-xs">
+            Leave
+        </button>
     </li>
 </ul>
 </body>

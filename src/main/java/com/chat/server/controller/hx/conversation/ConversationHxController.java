@@ -93,7 +93,7 @@ public class ConversationHxController {
     }
 
     @Operation(summary = "대화방 나가기")
-    @DeleteMapping("/leave/{conversationId}")
+    @PostMapping("/{conversationId}/leave")
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
         conversationService.leave(conversationId, memberInfo.id());

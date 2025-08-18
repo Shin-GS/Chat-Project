@@ -1,6 +1,6 @@
 package com.chat.server.domain.repository.conversation;
 
-import com.chat.server.domain.entity.converstaion.ConverstaionMessage;
+import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

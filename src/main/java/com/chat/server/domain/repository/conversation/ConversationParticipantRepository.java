@@ -1,6 +1,6 @@
 package com.chat.server.domain.repository.conversation;
 
-import com.chat.server.domain.entity.converstaion.ConversationParticipant;
+import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

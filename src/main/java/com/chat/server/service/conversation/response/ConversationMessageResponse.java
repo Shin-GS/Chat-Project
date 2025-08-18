@@ -1,6 +1,6 @@
 package com.chat.server.service.conversation.response;
 
-import com.chat.server.domain.entity.converstaion.ConverstaionMessage;
+import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
 
 public record ConversationMessageResponse(Long id,
                                           String from,

@@ -1,6 +1,7 @@
-package com.chat.server.domain.entity.converstaion;
+package com.chat.server.domain.entity.converstaion.participant;
 
 import com.chat.server.domain.entity.BaseTimeEntity;
+import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;

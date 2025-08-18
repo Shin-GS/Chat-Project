@@ -2,7 +2,7 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.entity.converstaion.ConverstaionMessage;
+import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.*;
 import com.chat.server.domain.repository.user.UserRepository;

@@ -1,4 +1,4 @@
-package com.chat.server.domain.entity.converstaion;
+package com.chat.server.domain.entity.converstaion.message;
 
 import com.chat.server.common.constant.Constants;
 import com.chat.server.domain.entity.BaseTimeEntity;
