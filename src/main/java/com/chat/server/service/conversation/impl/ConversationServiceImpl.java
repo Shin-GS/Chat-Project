@@ -103,6 +103,10 @@ public class ConversationServiceImpl implements ConversationService {
         ConversationParticipant participant = conversationParticipantRepository
                 .findByConversationIdAndUserId(conversationId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
+        if (ConversationUserRole.SUPER_ADMIN.equals(participant.getRole())
+                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversationId, ConversationUserRole.SUPER_ADMIN, userId)) {
+            throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
+        }
 
         // todo 멤버가 대화방을 나갔습니다.
         conversation.updateActivity();

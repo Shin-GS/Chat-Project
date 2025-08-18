@@ -36,6 +36,7 @@ public enum ErrorCode implements Code {
     CONVERSATION_NOT_MEMBER(400, "conversation is not a member"),
     CONVERSATION_TYPE_NOT_SUPPORTED(400, "conversation type is not supported"),
     CONVERSATION_NAME_REQUIRED(400, "conversation title is required"),
+    CONVERSATION_SUPER_ADMIN_REQUIRED(400, "conversation super admin is required"),
     ;
 
     private final Integer code;

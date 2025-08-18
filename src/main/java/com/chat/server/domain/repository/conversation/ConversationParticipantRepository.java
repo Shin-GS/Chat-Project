@@ -1,5 +1,6 @@
 package com.chat.server.domain.repository.conversation;
 
+import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,4 +12,6 @@ public interface ConversationParticipantRepository extends JpaRepository<Convers
     boolean existsByConversationIdAndUserId(Long conversationId, Long userId);
 
     Optional<ConversationParticipant> findByConversationIdAndUserId(Long conversationId, Long userId);
+
+    boolean existsByConversationIdAndRoleAndUserIdNot(Long conversationId, ConversationUserRole role, Long userId);
 }
