@@ -10,7 +10,7 @@ import com.chat.server.domain.entity.converstaion.history.ConversationRoleHistor
 import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
-import com.chat.server.domain.repository.conversation.*;
+import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.history.ConversationMembershipHistoryRepository;
 import com.chat.server.domain.repository.conversation.history.ConversationRoleHistoryRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
@@ -56,18 +56,18 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void joinOneToOne(Long userId,
+    public Long joinOneToOne(Long userId,
                              Long friendUserId) {
         if (userId == null || friendUserId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null);
+        return create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null);
     }
 
     @Override
     @Transactional
-    public void joinGroup(Long userId,
+    public Long joinGroup(Long userId,
                           Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
@@ -90,6 +90,7 @@ public class ConversationServiceImpl implements ConversationService {
         conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER));
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));
+        return conversation.getId();
     }
 
     @Override
@@ -121,7 +122,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void create(Long userId,
+    public Long create(Long userId,
                        ConversationType type,
                        Set<Long> userIds,
                        String title) {
@@ -131,14 +132,13 @@ public class ConversationServiceImpl implements ConversationService {
 
         User creator = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        switch (type) {
+        return switch (type) {
             case ONE_TO_ONE -> createOneToOne(creator, userIds);
             case GROUP -> createGroup(creator, userIds, title);
-            default -> throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
-        }
+        };
     }
 
-    private void createOneToOne(User creator,
+    private Long createOneToOne(User creator,
                                 Set<Long> userIds) {
         if (ObjectUtils.isEmpty(userIds)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
@@ -168,7 +168,7 @@ public class ConversationServiceImpl implements ConversationService {
                         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user, creator));
                     });
             existingConversation.updateActivity();
-            return;
+            return existingConversation.getId();
         }
 
         Conversation newConversation = conversationRepository.save(Conversation.ofOneToOne(creator));
@@ -181,9 +181,10 @@ public class ConversationServiceImpl implements ConversationService {
                     conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, user, ConversationUserRole.SUPER_ADMIN, creator));
                     conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, user, creator));
                 });
+        return newConversation.getId();
     }
 
-    private void createGroup(User creator,
+    private Long createGroup(User creator,
                              Set<Long> userIds,
                              String title) {
         if (!StringUtils.hasText(title)) {
@@ -199,7 +200,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         // participants
         if (userIds == null) {
-            return;
+            return conversation.getId();
         }
 
         List<Long> userIdsExcludeCreator = userIds.stream()
@@ -208,7 +209,7 @@ public class ConversationServiceImpl implements ConversationService {
                 .distinct()
                 .toList();
         if (ObjectUtils.isEmpty(userIdsExcludeCreator)) {
-            return;
+            return conversation.getId();
         }
 
         userRepository.findAllById(userIdsExcludeCreator)
@@ -217,5 +218,15 @@ public class ConversationServiceImpl implements ConversationService {
                     conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER, creator));
                     conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
                 });
+        return conversation.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConversationInfoResponse getConversation(Long conversationId,
+                                                    Long userId) {
+        return conversationRepository.findConversationDtoById(conversationId, userId)
+                .map(ConversationInfoResponse::of)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
     }
 }

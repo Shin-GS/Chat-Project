@@ -77,8 +77,8 @@
             document.body.addEventListener("htmx:oobAfterSwap", (event) => {
                 if (event.target.id === "conversation-panel") {
                     const myId = event.target.getAttribute("data-user-id");
-                    const friendId = event.target.getAttribute("data-friend-id");
-                    connectWebSocket(myId, friendId);
+                    const conversationId = event.target.getAttribute("data-conversation-id");
+                    connectWebSocket(myId, conversationId);
 
                     const sendButton = event.target.querySelector('#conversation-send-button');
                     if (sendButton) {

@@ -41,6 +41,26 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     List<ConversationDto> findAllByUserIdOrderLastActivityAt(@Param("userId") Long userId);
 
     @Query("""
+            SELECT new com.chat.server.domain.dto.ConversationDto(
+                conversation.id,
+                conversation.type,
+                CASE
+                     WHEN conversation.type = com.chat.server.common.constant.conversation.ConversationType.ONE_TO_ONE THEN COALESCE(user.username, 'Deleted user')
+                     ELSE COALESCE(conversation.title, 'Untitled group')
+                END,
+                conversation.lastActivityAt
+            )
+            FROM Conversation conversation
+            LEFT JOIN ConversationParticipant participant2 ON participant2.conversationId = conversation.id AND participant2.userId <> :userId AND conversation.type = com.chat.server.common.constant.conversation.ConversationType.ONE_TO_ONE
+            LEFT JOIN User user ON user.id = participant2.userId
+            WHERE
+                conversation.id = :conversationId
+                AND EXISTS (SELECT 1 FROM ConversationParticipant participant1 WHERE participant1.conversationId = conversation.id AND participant1.userId = :userId)
+            """)
+    Optional<ConversationDto> findConversationDtoById(@Param("conversationId") Long conversationId,
+                                                      @Param("userId") Long userId);
+
+    @Query("""
             select conversation
             from ConversationOneToOneKey oneToOneKey
             join Conversation conversation on conversation.id = oneToOneKey.conversationId

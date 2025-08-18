@@ -4,7 +4,6 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.user.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,22 +33,20 @@ public class ConversationFriendHxController {
     @GetMapping("/search")
     public List<ModelAndView> findSimilarUsernames(@RequestParam("keyword") String keyword,
                                                    @JwtMember JwtMemberInfo memberInfo) {
-        List<UserInfoResponse> searchUsers = conversationFriendService.findFriendsByKeyword(keyword, memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/search/result.html",
                         "components/conversation/friend/search/result :: friend-list",
-                        Map.of("searchUsers", searchUsers))
+                        Map.of("searchUsers", conversationFriendService.findFriendsByKeyword(keyword, memberInfo.id())))
                 .build();
     }
 
     @Operation(summary = "내 친구 목록 조회")
     @GetMapping
     public List<ModelAndView> myFriends(@JwtMember JwtMemberInfo memberInfo) {
-        List<UserInfoResponse> friends = conversationFriendService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
-                        Map.of("friends", friends))
+                        Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
                 .build();
     }
 
@@ -58,14 +55,13 @@ public class ConversationFriendHxController {
     public List<ModelAndView> addFriends(@RequestParam("friendUserId") Long friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.addFriend(memberInfo.id(), friendUserId);
-        List<UserInfoResponse> friends = conversationFriendService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
-                        Map.of("friends", friends))
+                        Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
                 .addFragment("templates/components/common/modalClose.html",
                         "components/common/modalClose :: close",
                         "targetId",
@@ -78,14 +74,13 @@ public class ConversationFriendHxController {
     public List<ModelAndView> removeFriends(@RequestParam("friendUserId") Long friendUserId,
                                             @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.removeFriend(memberInfo.id(), friendUserId);
-        List<UserInfoResponse> friends = conversationFriendService.findFriends(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
-                        Map.of("friends", friends))
+                        Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
                 .addFragment("templates/components/common/modalClose.html",
                         "components/common/modalClose :: close",
                         "targetId",

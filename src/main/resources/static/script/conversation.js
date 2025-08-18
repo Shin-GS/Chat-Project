@@ -1,8 +1,8 @@
 let stompClient = null;
 let myUserId = null;
-let chatTargetId = null;
+let targetConversationId = null;
 
-function connectWebSocket(myId, friendId) {
+function connectWebSocket(myId, conversationId) {
     if (stompClient !== null) {
         stompClient.disconnect(() => {
             console.log("Disconnected from previous chat");
@@ -10,7 +10,7 @@ function connectWebSocket(myId, friendId) {
     }
 
     myUserId = myId;
-    chatTargetId = friendId;
+    targetConversationId = conversationId;
 
     const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
     stompClient = Stomp.over(socket);
@@ -30,14 +30,14 @@ function sendMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value?.trim();
 
-    if (!text || !stompClient || !stompClient.connected || !chatTargetId) {
+    if (!text || !stompClient || !stompClient.connected || !targetConversationId) {
         console.warn("Unable to send message. Missing input or connection.");
         return;
     }
 
     const message = {
         message: text,
-        userId: chatTargetId
+        conversationId: targetConversationId
     };
 
     // console.log("Sending message:", message);

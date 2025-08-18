@@ -9,17 +9,20 @@ import java.util.Set;
 public interface ConversationService {
     List<ConversationInfoResponse> findConversations(Long userId);
 
-    void joinOneToOne(Long userId,
+    Long joinOneToOne(Long userId,
                       Long friendUserId);
 
-    void joinGroup(Long userId,
+    Long joinGroup(Long userId,
                    Long conversationId);
 
     void leave(Long userId,
                Long conversationId);
 
-    void create(Long userId,
+    Long create(Long userId,
                 ConversationType type,
                 Set<Long> userIds,
                 String title);
+
+    ConversationInfoResponse getConversation(Long conversationId,
+                                             Long userId);
 }

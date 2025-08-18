@@ -3,9 +3,9 @@ package com.chat.server.controller.hx.conversation;
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationCreateRequest;
-import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
+import com.chat.server.service.user.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,11 +26,10 @@ public class ConversationHxController {
     @Operation(summary = "내 대화방 목록 조회")
     @GetMapping
     public List<ModelAndView> myConversations(@JwtMember JwtMemberInfo memberInfo) {
-        List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversations))
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
                 .build();
     }
 
@@ -38,15 +37,18 @@ public class ConversationHxController {
     @PostMapping
     public List<ModelAndView> create(@ModelAttribute @Valid ConversationCreateRequest request,
                                      @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.create(memberInfo.id(), request.type(), request.userIds(), request.title());
-        List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
+        Long conversationId = conversationService.create(memberInfo.id(), request.type(), request.userIds(), request.title());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversations))
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment("templates/components/conversation/message/panel.html",
+                        "components/conversation/message/panel :: conversation-panel",
+                        Map.of("user", UserInfoResponse.of(memberInfo),
+                                "conversation", conversationService.getConversation(conversationId, memberInfo.id())))
                 .build();
     }
 
@@ -56,15 +58,18 @@ public class ConversationHxController {
     @PostMapping("/join/one-to-one/{friendUserId}")
     public List<ModelAndView> joinOneToOne(@PathVariable("friendUserId") Long friendUserId,
                                            @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.joinOneToOne(memberInfo.id(), friendUserId);
-        List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
+        Long conversationId = conversationService.joinOneToOne(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversations))
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment("templates/components/conversation/message/panel.html",
+                        "components/conversation/message/panel :: conversation-panel",
+                        Map.of("user", UserInfoResponse.of(memberInfo),
+                                "conversation", conversationService.getConversation(conversationId, memberInfo.id())))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",
 //                        "targetId",
@@ -76,15 +81,18 @@ public class ConversationHxController {
     @PostMapping("/join/group/{conversationId}")
     public List<ModelAndView> joinGroup(@PathVariable("conversationId") Long conversationId,
                                         @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.joinGroup(conversationId, memberInfo.id());
-        List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
+        Long groupConversationId = conversationService.joinGroup(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversations))
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment("templates/components/conversation/message/panel.html",
+                        "components/conversation/message/panel :: conversation-panel",
+                        Map.of("user", UserInfoResponse.of(memberInfo),
+                                "conversation", conversationService.getConversation(groupConversationId, memberInfo.id())))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",
 //                        "targetId",
@@ -97,14 +105,13 @@ public class ConversationHxController {
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
         conversationService.leave(conversationId, memberInfo.id());
-        List<ConversationInfoResponse> conversations = conversationService.findConversations(memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "request success"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversations))
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",
 //                        "targetId",

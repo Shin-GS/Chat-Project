@@ -2,20 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <body>
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
-<!--/*@thymesVar id="friendUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
+<!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
 <div th:fragment="conversation-panel"
      class="flex-1 p-4"
      id="conversation-panel"
      hx-swap-oob="true"
-     th:attr="data-user-id=${user.id}, data-friend-id=${friendUser.id}">
+     th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
     <div>
         <div class="chat-topbar">
-            <h2 id="chat-title" th:text="${friendUser.name}">채팅방</h2>
+            <h2 id="chat-title" th:text="${conversation.title}">채팅방</h2>
         </div>
 
         <div hidden="hidden"
              id="initial-loader"
-             th:attr="hx-get='/hx/conversations/' + ${friendUser.id} + '/before'"
+             th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/before'"
              hx-trigger="load"
              hx-target="#chat-message-list"
              hx-swap="afterbegin"></div>
