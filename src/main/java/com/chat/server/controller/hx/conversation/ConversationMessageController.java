@@ -53,7 +53,7 @@ public class ConversationMessageController {
                 .addFragment("templates/components/conversation/message/before.html",
                         "components/conversation/message/before",
                         Map.of("hasMore", hasMore,
-                                "friendUserId", conversationId,
+                                "conversationId", conversationId,
                                 "firstMessageId", firstMessageId,
                                 "messages", messages)
                 )

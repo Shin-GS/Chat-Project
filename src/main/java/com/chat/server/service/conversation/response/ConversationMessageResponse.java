@@ -1,25 +1,25 @@
 package com.chat.server.service.conversation.response;
 
-import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 
 public record ConversationMessageResponse(Long id,
                                           String from,
-                                          String to,
                                           String message,
                                           boolean mine) {
-    public static ConversationMessageResponse of(ConverstaionMessage chat, Long userId) {
-        return new ConversationMessageResponse(
-                chat.getId(),
-                chat.getSenderUsername(),
-                chat.getReceiverUsername(),
-                chat.getMessage(),
-                chat.getSenderUserId().equals(userId));
+    public static ConversationMessageResponse ofSender(ConversationMessage message) {
+        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), Boolean.TRUE);
     }
 
-    public static ConversationMessageResponse of(Long id,
-                                                 String from,
-                                                 String to,
-                                                 String message) {
-        return new ConversationMessageResponse(id, from, to, message, false);
+    public static ConversationMessageResponse ofReceiver(ConversationMessage message) {
+        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), Boolean.FALSE);
+    }
+
+    public static ConversationMessageResponse of(ConversationMessage message,
+                                                 Long userId) {
+        return new ConversationMessageResponse(
+                message.getId(),
+                message.getSenderUsername(),
+                message.getMessage(),
+                message.getSenderUserId().equals(userId));
     }
 }

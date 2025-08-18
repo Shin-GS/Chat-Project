@@ -27,6 +27,7 @@ public enum ErrorCode implements Code {
     TOKEN_NOT_EXPIRED(400, "Token not expired"),
 
     // Conversation
+    CONVERSATION_NOT_EXISTS(400, "Conversation not exists"),
     CONVERSATION_REQUEST_INVALID(400, "conversation request invalid"),
     CONVERSATION_FRIEND_ALREADY_EXISTS(400, "conversation friend already exists"),
     CONVERSATION_FRIEND_NOT_EXISTS(400, "conversation friend not exists"),
@@ -37,6 +38,7 @@ public enum ErrorCode implements Code {
     CONVERSATION_TYPE_NOT_SUPPORTED(400, "conversation type is not supported"),
     CONVERSATION_NAME_REQUIRED(400, "conversation title is required"),
     CONVERSATION_SUPER_ADMIN_REQUIRED(400, "conversation super admin is required"),
+    CONVERSATION_NOT_JOINED(400, "conversation is not joined"),
     ;
 
     private final Integer code;

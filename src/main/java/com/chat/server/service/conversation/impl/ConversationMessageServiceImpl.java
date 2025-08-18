@@ -2,12 +2,14 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.entity.converstaion.message.ConverstaionMessage;
+import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
+import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.service.conversation.ConversationMessageService;
-import com.chat.server.service.conversation.request.ConversationMessageRequest;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,29 +22,43 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ConversationMessageServiceImpl implements ConversationMessageService {
+    private final ConversationRepository conversationRepository;
+    private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationMessageRepository conversationMessageRepository;
     private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public ConversationMessageResponse saveMessage(Long userId,
-                                                   ConversationMessageRequest messageRequest) {
+    public ConversationMessage saveMessage(Long userId,
+                                           Long conversationId,
+                                           String message) {
+        if (userId == null || conversationId == null || message == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        User receiver = userRepository.findById(messageRequest.userId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        ConverstaionMessage converstaionMessage = conversationMessageRepository.save(ConverstaionMessage.of(sender, receiver, messageRequest.message()));
-        return ConversationMessageResponse.of(converstaionMessage, userId);
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, message));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ConversationMessageResponse> findBeforeMessage(Long userId,
-                                                               Long friendUserId,
+                                                               Long conversationId,
                                                                Long messageId,
                                                                Pageable pageable) {
-        return conversationMessageRepository.findBeforeMessagesBetweenUserIds(userId, friendUserId, messageId, pageable).stream()
-                .sorted(Comparator.comparing(ConverstaionMessage::getId))
+        if (userId == null || conversationId == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        if (!conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+            throw new CustomException(ErrorCode.CONVERSATION_NOT_JOINED);
+        }
+
+        return conversationMessageRepository.findBeforeMessages(conversationId, messageId, pageable).stream()
+                .sorted(Comparator.comparing(ConversationMessage::getId))
                 .map(chat -> ConversationMessageResponse.of(chat, userId))
                 .toList();
     }
