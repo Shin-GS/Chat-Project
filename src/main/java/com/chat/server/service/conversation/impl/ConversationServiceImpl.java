@@ -62,7 +62,7 @@ public class ConversationServiceImpl implements ConversationService {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        return create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null);
+        return create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null, null, Boolean.TRUE);
     }
 
     @Override
@@ -125,7 +125,9 @@ public class ConversationServiceImpl implements ConversationService {
     public Long create(Long userId,
                        ConversationType type,
                        Set<Long> userIds,
-                       String title) {
+                       String title,
+                       String joinCode,
+                       boolean hidden) {
         if (userId == null || type == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -134,7 +136,7 @@ public class ConversationServiceImpl implements ConversationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         return switch (type) {
             case ONE_TO_ONE -> createOneToOne(creator, userIds);
-            case GROUP -> createGroup(creator, userIds, title);
+            case GROUP -> createGroup(creator, userIds, title, joinCode, hidden);
         };
     }
 
@@ -186,12 +188,14 @@ public class ConversationServiceImpl implements ConversationService {
 
     private Long createGroup(User creator,
                              Set<Long> userIds,
-                             String title) {
+                             String title,
+                             String joinCode,
+                             boolean hidden) {
         if (!StringUtils.hasText(title)) {
             throw new CustomException(ErrorCode.CONVERSATION_NAME_REQUIRED);
         }
 
-        Conversation conversation = conversationRepository.save(Conversation.ofGroup(creator, title));
+        Conversation conversation = conversationRepository.save(Conversation.ofGroup(creator, title, joinCode, hidden));
 
         // creator
         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, creator));

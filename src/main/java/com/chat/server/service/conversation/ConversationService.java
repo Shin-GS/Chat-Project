@@ -21,7 +21,9 @@ public interface ConversationService {
     Long create(Long userId,
                 ConversationType type,
                 Set<Long> userIds,
-                String title);
+                String title,
+                String joinCode,
+                boolean hidden);
 
     ConversationInfoResponse getConversation(Long conversationId,
                                              Long userId);

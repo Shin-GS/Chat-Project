@@ -14,5 +14,9 @@ public record ConversationCreateRequest(@NotBlank
                                         @NotBlank
                                         ConversationType type,
 
+                                        String joinCode,
+
+                                        boolean hidden,
+
                                         Set<Long> userIds) {
 }

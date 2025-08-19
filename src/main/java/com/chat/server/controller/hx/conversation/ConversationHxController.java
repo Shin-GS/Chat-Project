@@ -51,7 +51,7 @@ public class ConversationHxController {
     @PostMapping
     public List<ModelAndView> create(@ModelAttribute @Valid ConversationCreateRequest request,
                                      @JwtMember JwtMemberInfo memberInfo) {
-        Long conversationId = conversationService.create(memberInfo.id(), request.type(), request.userIds(), request.title());
+        Long conversationId = conversationService.create(memberInfo.id(), request.type(), request.userIds(), request.title(), request.joinCode(), request.hidden());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
