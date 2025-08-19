@@ -1,6 +1,5 @@
 package com.chat.server.service.conversation;
 
-import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 
 import java.util.List;
@@ -9,8 +8,8 @@ import java.util.Set;
 public interface ConversationService {
     List<ConversationInfoResponse> findConversations(Long userId);
 
-    Long joinOneToOne(Long userId,
-                      Long friendUserId);
+    Long joinOneToOne(Long requestUserId,
+                      Long targetUserId);
 
     Long joinGroup(Long userId,
                    Long conversationId);
@@ -18,12 +17,11 @@ public interface ConversationService {
     void leave(Long userId,
                Long conversationId);
 
-    Long create(Long userId,
-                ConversationType type,
-                Set<Long> userIds,
-                String title,
-                String joinCode,
-                boolean hidden);
+    Long createGroup(Long requestUserId,
+                     Set<Long> targetUserIds,
+                     String title,
+                     String joinCode,
+                     boolean hidden);
 
     ConversationInfoResponse getConversation(Long conversationId,
                                              Long userId);

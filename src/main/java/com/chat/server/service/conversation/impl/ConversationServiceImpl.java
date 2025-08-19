@@ -1,7 +1,6 @@
 package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
-import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
@@ -56,13 +55,45 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public Long joinOneToOne(Long userId,
-                             Long friendUserId) {
-        if (userId == null || friendUserId == null) {
+    public Long joinOneToOne(Long requestUserId,
+                             Long targetUserId) {
+        if (requestUserId == null || targetUserId == null || requestUserId.equals(targetUserId)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        return create(userId, ConversationType.ONE_TO_ONE, Set.of(friendUserId), null, null, Boolean.TRUE);
+        User requestUser = userRepository.findById(requestUserId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        Optional<Conversation> OptionalConversation = conversationRepository.findOneToOneConversationByPair(
+                Math.min(requestUser.getId(), targetUser.getId()),
+                Math.max(requestUser.getId(), targetUser.getId())
+        );
+
+        // conversation exists
+        if (OptionalConversation.isPresent()) {
+            Conversation existingConversation = OptionalConversation.get();
+            Stream.of(requestUser, targetUser)
+                    .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getId(), user.getId()))
+                    .forEach(user -> {
+                        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
+                        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(existingConversation, user, ConversationUserRole.SUPER_ADMIN, requestUser));
+                        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user, requestUser));
+                    });
+            existingConversation.updateActivity();
+            return existingConversation.getId();
+        }
+
+        // conversation not exists
+        Conversation newConversation = conversationRepository.save(Conversation.ofOneToOne(requestUser));
+        conversationOneToOneKeyRepository.save(ConversationOneToOneKey.of(newConversation, requestUser, targetUser));
+        List.of(requestUser, targetUser)
+                .forEach(user -> {
+                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user));
+                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, user, ConversationUserRole.SUPER_ADMIN, requestUser));
+                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, user, requestUser));
+                });
+        return newConversation.getId();
     }
 
     @Override
@@ -87,8 +118,8 @@ public class ConversationServiceImpl implements ConversationService {
 
         // todo 새 멤버가 들어왔습니다.
         conversation.updateActivity();
-        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER));
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user));
         return conversation.getId();
     }
@@ -122,107 +153,49 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public Long create(Long userId,
-                       ConversationType type,
-                       Set<Long> userIds,
-                       String title,
-                       String joinCode,
-                       boolean hidden) {
-        if (userId == null || type == null) {
+    public Long createGroup(Long requestUserId,
+                            Set<Long> targetUserIds,
+                            String title,
+                            String joinCode,
+                            boolean hidden) {
+        if (requestUserId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        User creator = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        return switch (type) {
-            case ONE_TO_ONE -> createOneToOne(creator, userIds);
-            case GROUP -> createGroup(creator, userIds, title, joinCode, hidden);
-        };
-    }
-
-    private Long createOneToOne(User creator,
-                                Set<Long> userIds) {
-        if (ObjectUtils.isEmpty(userIds)) {
-            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
-        }
-
-        Long targetUserId = userIds.stream()
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-        if (targetUserId == null || targetUserId.equals(creator.getId())) {
-            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
-        }
-
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-
-        long smallUserId = Math.min(creator.getId(), targetUser.getId());
-        long largeUserId = Math.max(creator.getId(), targetUser.getId());
-        Optional<Conversation> existsConversationOptional = conversationRepository.findOneToOneConversationByPair(smallUserId, largeUserId);
-        if (existsConversationOptional.isPresent()) {
-            Conversation existingConversation = existsConversationOptional.get();
-            Stream.of(creator, targetUser)
-                    .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getId(), user.getId()))
-                    .forEach(user -> {
-                        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
-                        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(existingConversation, user, ConversationUserRole.SUPER_ADMIN, creator));
-                        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(existingConversation, user, creator));
-                    });
-            existingConversation.updateActivity();
-            return existingConversation.getId();
-        }
-
-        Conversation newConversation = conversationRepository.save(Conversation.ofOneToOne(creator));
-        conversationOneToOneKeyRepository.save(ConversationOneToOneKey.of(newConversation, creator, targetUser));
-
-        // creator, participants
-        List.of(creator, targetUser)
-                .forEach(user -> {
-                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user));
-                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, user, ConversationUserRole.SUPER_ADMIN, creator));
-                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, user, creator));
-                });
-        return newConversation.getId();
-    }
-
-    private Long createGroup(User creator,
-                             Set<Long> userIds,
-                             String title,
-                             String joinCode,
-                             boolean hidden) {
         if (!StringUtils.hasText(title)) {
             throw new CustomException(ErrorCode.CONVERSATION_NAME_REQUIRED);
         }
 
-        Conversation conversation = conversationRepository.save(Conversation.ofGroup(creator, title, joinCode, hidden));
+        User requester = userRepository.findById(requestUserId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        Conversation newConversation = conversationRepository.save(Conversation.ofGroup(requester, title, joinCode, hidden));
 
-        // creator
-        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(conversation, creator));
-        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, creator, ConversationUserRole.SUPER_ADMIN));
-        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, creator));
+        // requester
+        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, requester));
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, requester, ConversationUserRole.SUPER_ADMIN));
+        conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, requester));
 
         // participants
-        if (userIds == null) {
-            return conversation.getId();
+        if (targetUserIds == null || targetUserIds.isEmpty()) {
+            return newConversation.getId();
         }
 
-        List<Long> userIdsExcludeCreator = userIds.stream()
+        List<Long> targetUserIdsExcludeRequestUserId = targetUserIds.stream()
                 .filter(Objects::nonNull)
-                .filter(id -> !id.equals(creator.getId()))
+                .filter(id -> !id.equals(requester.getId()))
                 .distinct()
                 .toList();
-        if (ObjectUtils.isEmpty(userIdsExcludeCreator)) {
-            return conversation.getId();
+        if (ObjectUtils.isEmpty(targetUserIdsExcludeRequestUserId)) {
+            return newConversation.getId();
         }
 
-        userRepository.findAllById(userIdsExcludeCreator)
+        userRepository.findAllById(targetUserIdsExcludeRequestUserId)
                 .forEach(user -> {
-                    conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
-                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(conversation, user, ConversationUserRole.MEMBER, creator));
-                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(conversation, user, creator));
+                    conversationParticipantRepository.save(ConversationParticipant.ofMember(newConversation, user));
+                    conversationRoleHistoryRepository.save(ConversationRoleHistory.ofNew(newConversation, user, ConversationUserRole.MEMBER, requester));
+                    conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofJoin(newConversation, user, requester));
                 });
-        return conversation.getId();
+        return newConversation.getId();
     }
 
     @Override

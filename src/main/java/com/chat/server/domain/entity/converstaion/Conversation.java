@@ -38,11 +38,15 @@ public class Conversation extends BaseTimeEntity {
     @Column(name = "CREATED_USER_ID", nullable = false)
     private Long createdUserId;
 
+    // If there is a value, the code must be correct
+    // If hidden is True, the code is null
     @Column(name = "JOIN_CODE", length = 100)
-    private String joinCode; // If there is a value, the code must be correct
+    private String joinCode;
 
+    // If true, this room is hidden room
+    // If true, this room is Not searched for
     @Column(name = "IS_HIDDEN", nullable = false)
-    private boolean hidden = false; // If true, by invitation only
+    private boolean hidden = false;
 
     @Column(name = "LAST_ACTIVITY_DTM", nullable = false)
     private LocalDateTime lastActivityAt;
@@ -57,6 +61,8 @@ public class Conversation extends BaseTimeEntity {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.ONE_TO_ONE;
         conversation.createdUserId = creator.getId();
+        conversation.joinCode = null;
+        conversation.hidden = Boolean.TRUE;
         conversation.lastActivityAt = LocalDateTime.now();
         return conversation;
     }
@@ -69,9 +75,9 @@ public class Conversation extends BaseTimeEntity {
         conversation.type = ConversationType.GROUP;
         conversation.title = name;
         conversation.createdUserId = creator.getId();
-        conversation.lastActivityAt = LocalDateTime.now();
-        conversation.joinCode = joinCode;
+        conversation.joinCode = hidden ? null : joinCode;
         conversation.hidden = hidden;
+        conversation.lastActivityAt = LocalDateTime.now();
         return conversation;
     }
 

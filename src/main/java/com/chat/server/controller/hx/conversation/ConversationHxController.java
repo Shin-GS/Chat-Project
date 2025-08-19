@@ -2,7 +2,7 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationService;
-import com.chat.server.service.conversation.request.ConversationCreateRequest;
+import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -49,9 +49,15 @@ public class ConversationHxController {
 
     @Operation(summary = "대화방 생성")
     @PostMapping
-    public List<ModelAndView> create(@ModelAttribute @Valid ConversationCreateRequest request,
+    public List<ModelAndView> create(@ModelAttribute @Valid ConversationGroupCreateRequest request,
                                      @JwtMember JwtMemberInfo memberInfo) {
-        Long conversationId = conversationService.create(memberInfo.id(), request.type(), request.userIds(), request.title(), request.joinCode(), request.hidden());
+        Long conversationId = conversationService.createGroup(
+                memberInfo.id(),
+                request.userIds(),
+                request.title(),
+                request.joinCode(),
+                request.hidden()
+        );
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
