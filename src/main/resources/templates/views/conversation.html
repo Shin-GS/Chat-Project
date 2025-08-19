@@ -119,7 +119,21 @@
                                 hx-get="/hx/conversations/friends/search/modal"
                                 hx-swap="none"
                                 class="flex items-center gap-2 text-lg hover:text-blue-500">
-                            🔍 Search Friends
+                            <span aria-hidden="true">🔎👤</span> Search Friends
+                        </button>
+
+                        <button type="button"
+                                hx-get="/hx/conversations/groups/search/modal"
+                                hx-swap="none"
+                                class="flex items-center gap-2 text-lg hover:text-blue-500">
+                            <span aria-hidden="true">🔎👥</span> Search Groups
+                        </button>
+
+                        <button type="button"
+                                hx-get="/hx/conversations/groups/modal"
+                                hx-swap="none"
+                                class="flex items-center gap-2 text-lg hover:text-blue-500">
+                            <span aria-hidden="true">➕👥</span> Create Group
                         </button>
                     </aside>
 

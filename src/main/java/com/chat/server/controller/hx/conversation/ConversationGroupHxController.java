@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
 import com.chat.server.service.security.JwtMember;
@@ -19,16 +20,38 @@ import java.util.Map;
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/hx/conversations/group")
+@RequestMapping("/hx/conversations/groups")
 public class ConversationGroupHxController {
     private final ConversationService conversationService;
+    private final ConversationFriendService conversationFriendService;
 
-    @Operation(summary = "채팅방 검색 모달")
+    @Operation(summary = "그룹 채팅방 검색 모달")
     @GetMapping("/search/modal")
     public List<ModelAndView> searchConversationModal(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/search/modal.html",
                         "components/conversation/search/modal :: search-modal")
+                .build();
+    }
+
+    // 그룹 채팅방 검색
+
+    @Operation(summary = "그룹 채팅방 생성 모달")
+    @GetMapping("/modal")
+    public List<ModelAndView> createGroupModal(@JwtMember JwtMemberInfo memberInfo) {
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/create/modal.html",
+                        "components/conversation/group/create/modal :: create-modal")
+                .build();
+    }
+
+    @Operation(summary = "그룹 채팅방 생성 - 내 친구 목록 조회")
+    @GetMapping("/modal/friends")
+    public List<ModelAndView> createGroupModalFriends(@JwtMember JwtMemberInfo memberInfo) {
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/create/friend/list.html",
+                        "components/conversation/group/create/friend/list :: create-group-friend-list",
+                        Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
                 .build();
     }
 
@@ -41,7 +64,7 @@ public class ConversationGroupHxController {
                 request.userIds(),
                 request.title(),
                 request.joinCode(),
-                request.hidden()
+                Boolean.TRUE.equals(request.hidden())
         );
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
@@ -80,7 +103,7 @@ public class ConversationGroupHxController {
                 .build();
     }
 
-    @Operation(summary = "대화방 나가기")
+    @Operation(summary = "그룹 대화방 나가기")
     @PostMapping("/{conversationId}/leave")
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {

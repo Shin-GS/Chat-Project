@@ -12,7 +12,7 @@ public record ConversationGroupCreateRequest(@NotBlank
 
                                              String joinCode,
 
-                                             boolean hidden,
+                                             Boolean hidden,
 
                                              Set<Long> userIds) {
 }

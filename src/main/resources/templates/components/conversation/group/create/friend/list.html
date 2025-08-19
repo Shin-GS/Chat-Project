@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<ul th:fragment="create-group-friend-list"
+    id="create-group-friend-list"
+    hx-swap-oob="true"
+    class="mt-3 space-y-2 text-sm">
+    <!-- Empty state -->
+    <!--/*@thymesVar id="friends" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
+    <li th:if="${#lists.isEmpty(friends)}" class="text-gray-500 text-xs">
+        No friends available to add.
+    </li>
+
+    <!-- Friend choices -->
+    <!--/*@thymesVar id="friend" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
+    <li th:each="friend : ${friends}">
+        <label class="flex items-center gap-2">
+            <input type="checkbox"
+                   name="userIds"
+                   th:value="${friend.id}"
+                   class="h-4 w-4"/>
+            <span th:text="|${friend.name}[${T(com.chat.server.common.util.MaskingUtil).mask(friend.accountId)}]|"></span>
+        </label>
+    </li>
+</ul>
+</body>
+</html>
