@@ -29,7 +29,7 @@ public class ConversationFriendHxController {
                 .build();
     }
 
-    @Operation(summary = "친구 검색 결과 조회")
+    @Operation(summary = "친구 검색")
     @GetMapping("/search")
     public List<ModelAndView> findSimilarUsernames(@RequestParam("keyword") String keyword,
                                                    @JwtMember JwtMemberInfo memberInfo) {
