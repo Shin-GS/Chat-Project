@@ -37,7 +37,7 @@ public class ConversationRoleHistory extends BaseTimeEntity {
     private ConversationUserRole roleOld;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE_NEW", length = 20, nullable = false)
+    @Column(name = "ROLE_NEW", length = 20)
     private ConversationUserRole roleNew;
 
     @Column(name = "ACTOR_USER_ID", nullable = false)
@@ -48,41 +48,14 @@ public class ConversationRoleHistory extends BaseTimeEntity {
 
     public static ConversationRoleHistory ofNew(Conversation conversation,
                                                 User user,
-                                                ConversationUserRole newRole) {
-        ConversationRoleHistory history = new ConversationRoleHistory();
-        history.conversationId = conversation.getId();
-        history.userId = user.getId();
-        history.roleOld = null;
-        history.roleNew = newRole;
-        history.actorUserId = user.getId();
-        history.changedAt = LocalDateTime.now();
-        return history;
-    }
-
-    public static ConversationRoleHistory ofNew(Conversation conversation,
-                                                User user,
                                                 ConversationUserRole newRole,
-                                                User actor) {
+                                                User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
         history.conversationId = conversation.getId();
         history.userId = user.getId();
         history.roleOld = null;
         history.roleNew = newRole;
-        history.actorUserId = actor.getId();
-        history.changedAt = LocalDateTime.now();
-        return history;
-    }
-
-    public static ConversationRoleHistory ofChange(Conversation conversation,
-                                                   User user,
-                                                   ConversationUserRole oldRole,
-                                                   ConversationUserRole newRole) {
-        ConversationRoleHistory history = new ConversationRoleHistory();
-        history.conversationId = conversation.getId();
-        history.userId = user.getId();
-        history.roleOld = oldRole;
-        history.roleNew = newRole;
-        history.actorUserId = user.getId();
+        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
         history.changedAt = LocalDateTime.now();
         return history;
     }
@@ -97,20 +70,21 @@ public class ConversationRoleHistory extends BaseTimeEntity {
         history.userId = user.getId();
         history.roleOld = oldRole;
         history.roleNew = newRole;
-        history.actorUserId = actorUser.getId();
+        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
         history.changedAt = LocalDateTime.now();
         return history;
     }
 
     public static ConversationRoleHistory ofLeave(Conversation conversation,
                                                   User user,
-                                                  ConversationUserRole oldRole) {
+                                                  ConversationUserRole oldRole,
+                                                  User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
         history.conversationId = conversation.getId();
         history.userId = user.getId();
         history.roleOld = oldRole;
         history.roleNew = null;
-        history.actorUserId = user.getId();
+        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
         history.changedAt = LocalDateTime.now();
         return history;
     }

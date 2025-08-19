@@ -37,7 +37,7 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
     @Column(name = "ACTION", length = 20, nullable = false)
     private ConversationMembershipAction action;
 
-    @Column(name = "ACTOR_USER_ID")
+    @Column(name = "ACTOR_USER_ID", nullable = false)
     private Long actorUserId; // self or admin
 
     @Column(name = "REASON", length = Constants.CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH)
@@ -47,50 +47,25 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
     private LocalDateTime actionAt;
 
     public static ConversationMembershipHistory ofJoin(Conversation conversation,
-                                                       User user) {
-        ConversationMembershipHistory history = new ConversationMembershipHistory();
-        history.conversationId = conversation.getId();
-        history.userId = user.getId();
-        history.action = ConversationMembershipAction.JOIN;
-        history.actorUserId = user.getId();
-        history.actionAt = LocalDateTime.now();
-        return history;
-    }
-
-    public static ConversationMembershipHistory ofJoin(Conversation conversation,
                                                        User user,
-                                                       User actor) {
+                                                       User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
         history.conversationId = conversation.getId();
         history.userId = user.getId();
         history.action = ConversationMembershipAction.JOIN;
-        history.actorUserId = actor.getId();
+        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
         history.actionAt = LocalDateTime.now();
         return history;
     }
 
     public static ConversationMembershipHistory ofLeave(Conversation conversation,
-                                                        User user) {
+                                                        User user,
+                                                        User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
         history.conversationId = conversation.getId();
         history.userId = user.getId();
         history.action = ConversationMembershipAction.LEAVE;
-        history.actorUserId = user.getId();
-        history.actionAt = LocalDateTime.now();
-        return history;
-    }
-
-    public static ConversationMembershipHistory of(Conversation conversation,
-                                                   User user,
-                                                   ConversationMembershipAction action,
-                                                   User actorUser,
-                                                   String reason) {
-        ConversationMembershipHistory history = new ConversationMembershipHistory();
-        history.conversationId = conversation.getId();
-        history.userId = user.getId();
-        history.action = action;
-        history.actorUserId = actorUser.getId();
-        history.reason = reason;
+        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
         history.actionAt = LocalDateTime.now();
         return history;
     }
