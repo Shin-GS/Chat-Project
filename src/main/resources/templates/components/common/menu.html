@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <ul th:fragment="guest-menu"
     class="nav-menu flex items-center gap-6">
@@ -9,7 +8,7 @@
                 hx-get="/hx/auth/login/modal"
                 hx-swap="none"
                 class="flex items-center gap-2 text-lg hover:text-blue-500">
-            로그인
+            Log In
         </button>
     </li>
     <li>
@@ -17,7 +16,7 @@
                 hx-get="/hx/auth/signup/modal"
                 hx-swap="none"
                 class="flex items-center gap-2 text-lg hover:text-blue-500">
-            회원가입
+            Sign Up
         </button>
     </li>
 </ul>
@@ -26,7 +25,7 @@
     class="nav-menu flex items-center gap-6">
     <li>
         <a th:href="@{/conversation}" data-icon="📂" class="flex items-center gap-2 text-lg hover:text-blue-500">
-            채팅
+            Chats
         </a>
     </li>
 
@@ -36,12 +35,12 @@
             <span th:text="${member.username}" class="text-lg font-medium"></span>
         </div>
         <ul class="user-submenu absolute hidden bg-white shadow-lg rounded-md overflow-hidden group-hover:block right-0 w-48">
-            <li><a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">설정</a></li>
+            <li><a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">Settings</a></li>
             <li><a href="#"
                    hx-post="/hx/auth/logout"
                    hx-swap="none"
                    class="block px-4 py-2 hover:bg-blue-500 hover:text-white">
-                로그아웃
+                Log Out
             </a></li>
         </ul>
     </li>

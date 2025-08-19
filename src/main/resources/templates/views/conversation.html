@@ -119,25 +119,25 @@
                                 hx-get="/hx/conversations/friends/search/modal"
                                 hx-swap="none"
                                 class="flex items-center gap-2 text-lg hover:text-blue-500">
-                            🔍 친구 검색
+                            🔍 Search Friends
                         </button>
                     </aside>
 
                     <section>
-                        <h2 class="text-md font-semibold mb-2 text-gray-700">내 친구 목록</h2>
+                        <h2 class="text-md font-semibold mb-2 text-gray-700">My Friends</h2>
                         <div hidden="hidden" hx-get="/hx/conversations/friends" hx-trigger="load" hx-swap="none"></div>
                         <ul id="friend-list" class="space-y-2 text-sm text-gray-800"></ul>
                     </section>
 
                     <section>
-                        <h2 class="text-md font-semibold mb-2 text-gray-700">채팅방 목록</h2>
+                        <h2 class="text-md font-semibold mb-2 text-gray-700">Conversations</h2>
                         <div hidden="hidden" hx-get="/hx/conversations" hx-trigger="load" hx-swap="none"></div>
                         <ul id="conversation-list" class="space-y-2 text-sm text-gray-800"></ul>
                     </section>
                 </div>
             </div>
 
-            <!-- Converstaion Panel -->
+            <!-- Conversation Panel -->
             <div id="conversation-panel"></div>
         </div>
     </section>

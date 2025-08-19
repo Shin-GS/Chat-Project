@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
 <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
@@ -10,7 +10,7 @@
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
     <div>
         <div class="conversation-topbar">
-            <h2 id="conversation-title" th:text="${conversation.title}">채팅방</h2>
+            <h2 id="conversation-title" th:text="${conversation.title}">Conversation</h2>
         </div>
 
         <div hidden="hidden"
@@ -27,10 +27,10 @@
             <label for="conversation-input">
                 <input type="text"
                        id="conversation-input"
-                       placeholder="메시지를 입력하세요..."
+                       placeholder="Type a message..."
                        style="width: 80%;"/>
             </label>
-            <button id="conversation-send-button" type="button">전송</button>
+            <button id="conversation-send-button" type="button">Send</button>
         </div>
     </div>
 </div>

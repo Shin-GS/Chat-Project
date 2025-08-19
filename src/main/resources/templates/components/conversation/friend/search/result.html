@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <ul th:fragment="friend-list"
     id="search-friend-list"
     hx-swap-oob="true">
     <!--/*@thymesVar id="searchUsers" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
-    <li th:if="${#lists.isEmpty(searchUsers)}">not exists</li>
+    <li th:if="${#lists.isEmpty(searchUsers)}">No results found.</li>
 
     <li th:each="searchUser : ${searchUsers}">
         <!--/*@thymesVar id="searchUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
@@ -22,7 +22,7 @@
         <div th:if="${searchUser.friend}">
             <button type="button" disabled
                     class="bg-gray-300 text-gray-600 font-semibold px-3 py-1 rounded cursor-not-allowed">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|+ ' (친구)'">Friend</span>
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]| + ' (Friend)'">Friend</span>
             </button>
         </div>
     </li>
