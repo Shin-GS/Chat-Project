@@ -1,7 +1,9 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.service.common.response.PageResponse;
+import com.chat.server.service.common.request.CustomPageRequest;
+import com.chat.server.service.common.request.CustomPageRequestDefault;
+import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
@@ -13,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,23 +42,22 @@ public class ConversationGroupHxController {
     @Operation(summary = "그룹 채팅방 검색")
     @GetMapping("/search")
     public List<ModelAndView> searchGroup(@RequestParam("keyword") String keyword,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "5") int limit,
+                                          @CustomPageRequestDefault(limit = 5, maxLimit = 50) CustomPageRequest pageRequest,
                                           @JwtMember JwtMemberInfo memberInfo) {
-        PageResponse<ConversationInfoResponse> pageResponse = conversationService.findConversations(memberInfo.id(), keyword, PageRequest.of(page, limit));
+        CustomPageResponse<ConversationInfoResponse> customPageResponse = conversationService.findConversations(memberInfo.id(), keyword, pageRequest.toPageable());
         String hrefBase = UriComponentsBuilder
                 .fromPath("/hx/conversations/groups/search")
                 .queryParam("keyword", keyword)
-                .queryParam("limit", limit)
+                .queryParam("limit", pageRequest.limit())
                 .build()
                 .toUriString();
 
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/group/search/result.html",
                         "components/conversation/group/search/result :: conversation-group-list",
-                        Map.of("conversations", pageResponse.content(),
+                        Map.of("conversations", customPageResponse.content(),
                                 "hrefBase", hrefBase,
-                                "page", pageResponse))
+                                "page", customPageResponse))
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.chat.server.config;
 
+import com.chat.server.service.common.CustomPageRequestResolver;
 import com.chat.server.service.security.JwtMemberInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
     private final JwtMemberInfoArgumentResolver jwtMemberInfoArgumentResolver;
+    private final CustomPageRequestResolver customPageRequestResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -27,5 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(jwtMemberInfoArgumentResolver);
+        resolvers.add(customPageRequestResolver);
     }
 }

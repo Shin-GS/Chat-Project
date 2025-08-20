@@ -20,7 +20,7 @@
     </ul>
 
     <!--/*@thymesVar id="hrefBase" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="page" type="com.chat.server.service.common.response.PageResponse"*/-->
+    <!--/*@thymesVar id="page" type="com.chat.server.service.common.response.CustomPageResponse"*/-->
     <nav th:replace="~{/fragments/pagination :: pagination(blockSize=5, page=${page}, hrefBase=${hrefBase})}"></nav>
 </div>
 </body>

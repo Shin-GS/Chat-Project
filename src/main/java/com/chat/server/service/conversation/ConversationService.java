@@ -1,6 +1,6 @@
 package com.chat.server.service.conversation;
 
-import com.chat.server.service.common.response.PageResponse;
+import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -10,9 +10,9 @@ import java.util.Set;
 public interface ConversationService {
     List<ConversationInfoResponse> findConversations(Long userId);
 
-    PageResponse<ConversationInfoResponse> findConversations(Long userId,
-                                                             String keyword,
-                                                             Pageable pageable);
+    CustomPageResponse<ConversationInfoResponse> findConversations(Long userId,
+                                                                   String keyword,
+                                                                   Pageable pageable);
 
     Long joinOneToOne(Long requestUserId,
                       Long targetUserId);

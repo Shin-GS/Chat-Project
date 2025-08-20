@@ -12,7 +12,7 @@ import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
-import com.chat.server.service.common.response.PageResponse;
+import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationHistoryService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
@@ -55,15 +55,15 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<ConversationInfoResponse> findConversations(Long userId,
-                                                                    String keyword,
-                                                                    Pageable pageable) {
+    public CustomPageResponse<ConversationInfoResponse> findConversations(Long userId,
+                                                                          String keyword,
+                                                                          Pageable pageable) {
         if (keyword == null || keyword.isEmpty()) {
-            return PageResponse.emptyPage(pageable);
+            return CustomPageResponse.emptyPage(pageable);
         }
 
         Page<ConversationDto> dtoPage = conversationRepository.searchJoinAbleGroups(userId, keyword, pageable);
-        return PageResponse.fromPage(dtoPage, ConversationInfoResponse::of);
+        return CustomPageResponse.fromPage(dtoPage, ConversationInfoResponse::of);
     }
 
     @Override
