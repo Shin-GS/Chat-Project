@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<nav th:fragment="pagination(page, hrefBase, blockSize)"
+     id="search-group-pagination"
+     hx-swap-oob="true"
+     class="mt-4 flex items-center gap-1"
+     th:with="
+        bs=${(blockSize != null && blockSize > 0) ? blockSize : 5},
+        tp=${page.totalPages != null ? page.totalPages : 0},
+        cur=${page.page},
+        start=${(tp > 0) ? (cur - (cur % bs)) : 0},
+        end=${(tp > 0) ? (((start + bs - 1) < (tp - 1)) ? (start + bs - 1) : (tp - 1)) : -1},
+        prev=${(cur > 0) ? (cur - 1) : 0},
+        next=${cur + 1}
+     ">
+
+    <!--/*@thymesVar id="page" type="com.chat.server.service.common.response.PageResponse"*/-->
+    <!--/*@thymesVar id="blockSize" type="java.lang.Integer"*/-->
+    <!--/*@thymesVar id="hrefBase" type="java.lang.String"*/-->
+    <th:block th:if="${page.totalElements == 0}">
+        <button th:if="${page.hasPrevious}"
+                th:attr="hx-get=${hrefBase + '&page=' + prev}"
+                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">« Prev
+        </button>
+
+        <button th:if="${page.hasNext}"
+                th:attr="hx-get=${hrefBase + '&page=' + next}"
+                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Next »
+        </button>
+    </th:block>
+
+    <th:block th:if="${page.totalElements != 0 && tp > 0}">
+        <!-- Prev -->
+        <button th:if="${page.hasPrevious}"
+                th:attr="hx-get=${hrefBase + '&page=' + prev}"
+                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">« Prev
+        </button>
+
+        <!-- Numbered Pages -->
+        <button th:each="i : ${#numbers.sequence(start, end)}"
+                th:attr="hx-get=${hrefBase + '&page=' + i}"
+                th:class="'px-3 py-1 rounded ' + (i == cur ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200')"
+                th:text="${i + 1}">1
+        </button>
+
+        <!-- Next -->
+        <button th:if="${page.hasNext}"
+                th:attr="hx-get=${hrefBase + '&page=' + next}"
+                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Next »
+        </button>
+    </th:block>
+</nav>
+</body>
+</html>

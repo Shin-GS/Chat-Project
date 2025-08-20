@@ -36,7 +36,7 @@ public class ConversationMessageController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/message/before.html",
                         "components/conversation/message/before",
-                        Map.of("hasMore", !messages.isEmpty(),
+                        Map.of("hasNext", !messages.isEmpty(),
                                 "conversationId", conversationId,
                                 "firstMessageId", messages.isEmpty() ? 0L : messages.stream().findFirst().map(ConversationMessageResponse::id).orElse(0L),
                                 "messages", messages)

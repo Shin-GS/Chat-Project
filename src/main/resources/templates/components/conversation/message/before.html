@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<!--/*@thymesVar id="hasMore" type="boolean"*/-->
+<!--/*@thymesVar id="hasNext" type="boolean"*/-->
 <!--/*@thymesVar id="conversationId" type="Long"*/-->
 <!--/*@thymesVar id="firstMessageId" type="Long"*/-->
-<div th:if="${hasMore}"
+<div th:if="${hasNext}"
      id="conversation-scroll-loader"
      th:attr="data-hx-get='/hx/conversations/' + ${conversationId} + '/before?messageId=' + ${firstMessageId}"
      hx-trigger="revealed"

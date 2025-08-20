@@ -1,9 +1,11 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.service.common.response.PageResponse;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
+import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import com.chat.server.service.user.response.UserInfoResponse;
@@ -11,8 +13,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -27,18 +31,39 @@ public class ConversationGroupHxController {
 
     @Operation(summary = "그룹 채팅방 검색 모달")
     @GetMapping("/search/modal")
-    public List<ModelAndView> searchConversationModal(@JwtMember JwtMemberInfo memberInfo) {
+    public List<ModelAndView> searchGroupModal() {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/search/modal.html",
-                        "components/conversation/search/modal :: search-modal")
+                .addFragment("templates/components/conversation/group/search/modal.html",
+                        "components/conversation/group/search/modal :: search-modal")
                 .build();
     }
 
-    // 그룹 채팅방 검색
+    @Operation(summary = "그룹 채팅방 검색")
+    @GetMapping("/search")
+    public List<ModelAndView> searchGroup(@RequestParam("keyword") String keyword,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "5") int limit,
+                                          @JwtMember JwtMemberInfo memberInfo) {
+        PageResponse<ConversationInfoResponse> pageResponse = conversationService.findConversations(memberInfo.id(), keyword, PageRequest.of(page, limit));
+        String hrefBase = UriComponentsBuilder
+                .fromPath("/hx/conversations/groups/search")
+                .queryParam("keyword", keyword)
+                .queryParam("limit", limit)
+                .build()
+                .toUriString();
+
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/search/result.html",
+                        "components/conversation/group/search/result :: conversation-group-list",
+                        Map.of("conversations", pageResponse.content(),
+                                "hrefBase", hrefBase,
+                                "page", pageResponse))
+                .build();
+    }
 
     @Operation(summary = "그룹 채팅방 생성 모달")
     @GetMapping("/modal")
-    public List<ModelAndView> createGroupModal(@JwtMember JwtMemberInfo memberInfo) {
+    public List<ModelAndView> createGroupModal() {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/group/create/modal.html",
                         "components/conversation/group/create/modal :: create-modal")

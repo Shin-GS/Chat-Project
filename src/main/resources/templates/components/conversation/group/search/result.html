@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<div th:fragment="conversation-group-list"
+     id="search-group-list"
+     hx-swap-oob="true">
+    <ul class="divide-y divide-gray-200">
+        <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.conversation.response.ConversationInfoResponse>"*/-->
+        <li th:if="${#lists.isEmpty(conversations)}" class="py-3 text-gray-500">
+            No results found.
+        </li>
+
+        <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
+        <li th:each="conversation : ${conversations}" class="py-3 flex items-center justify-between">
+            <div class="flex flex-col">
+                <span class="font-semibold" th:text="${conversation.title}">Group title</span>
+                <span th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
+            </div>
+        </li>
+    </ul>
+
+    <!--/*@thymesVar id="hrefBase" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="page" type="com.chat.server.service.common.response.PageResponse"*/-->
+    <nav th:replace="~{/fragments/pagination :: pagination(blockSize=5, page=${page}, hrefBase=${hrefBase})}"></nav>
+</div>
+</body>
+</html>

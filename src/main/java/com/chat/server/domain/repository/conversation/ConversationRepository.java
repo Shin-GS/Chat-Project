@@ -4,6 +4,8 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.dto.ConversationDto;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -68,6 +70,24 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             """)
     Optional<Conversation> findOneToOneConversationByPair(@Param("smallUserId") Long smallUserId,
                                                           @Param("largeUserId") Long largeUserId);
+
+    @Query("""
+            select new com.chat.server.domain.dto.ConversationDto(
+                conversation.id,
+                conversation.type,
+                COALESCE(conversation.title, 'Untitled group'),
+                conversation.lastActivityAt
+            )
+            from Conversation conversation
+            where conversation.type = com.chat.server.common.constant.conversation.ConversationType.GROUP
+              and conversation.hidden = false
+              and (:keyword is null or :keyword = '' or LOWER(conversation.title) like CONCAT('%', LOWER(:keyword), '%'))
+              and not exists (select 1 from ConversationParticipant participant where participant.conversationId = conversation.id and participant.userId = :userId)
+            order by conversation.lastActivityAt desc, conversation.id desc
+            """)
+    Page<ConversationDto> searchJoinAbleGroups(@Param("userId") Long userId,
+                                               @Param("keyword") String keyword,
+                                               Pageable pageable);
 
     // Delete Prevention
     @Override

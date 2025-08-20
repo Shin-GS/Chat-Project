@@ -3,6 +3,7 @@ package com.chat.server.service.conversation.impl;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.domain.dto.ConversationDto;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.participant.ConversationOneToOneKey;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
@@ -11,11 +12,14 @@ import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.service.common.response.PageResponse;
 import com.chat.server.service.conversation.ConversationHistoryService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -47,6 +51,19 @@ public class ConversationServiceImpl implements ConversationService {
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
                 .map(ConversationInfoResponse::of)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<ConversationInfoResponse> findConversations(Long userId,
+                                                                    String keyword,
+                                                                    Pageable pageable) {
+        if (keyword == null || keyword.isEmpty()) {
+            return PageResponse.emptyPage(pageable);
+        }
+
+        Page<ConversationDto> dtoPage = conversationRepository.searchJoinAbleGroups(userId, keyword, pageable);
+        return PageResponse.fromPage(dtoPage, ConversationInfoResponse::of);
     }
 
     @Override

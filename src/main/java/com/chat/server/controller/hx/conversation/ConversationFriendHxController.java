@@ -22,7 +22,7 @@ public class ConversationFriendHxController {
 
     @Operation(summary = "친구 검색 모달")
     @GetMapping("/search/modal")
-    public List<ModelAndView> findSimilarUsernamesModal() {
+    public List<ModelAndView> searchSimilarUsernamesModal() {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/search/modal.html",
                         "components/conversation/friend/search/modal :: search-modal")
@@ -31,7 +31,7 @@ public class ConversationFriendHxController {
 
     @Operation(summary = "친구 검색")
     @GetMapping("/search")
-    public List<ModelAndView> findSimilarUsernames(@RequestParam("keyword") String keyword,
+    public List<ModelAndView> searchSimilarUsernames(@RequestParam("keyword") String keyword,
                                                    @JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/search/result.html",
