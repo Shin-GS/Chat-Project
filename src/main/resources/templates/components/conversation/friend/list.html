@@ -14,7 +14,7 @@
             <span th:text="${friend.name}">Chat With Friend</span>
         </button>
 
-        <form hx-delete="/hx/friends"
+        <form hx-delete="/hx/conversations/friends"
               hx-swap="none"
               class="ml-2">
             <input type="hidden" name="friendUserId" th:value="${friend.id}"/>
