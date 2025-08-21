@@ -17,11 +17,14 @@ public interface ConversationService {
     Long joinOneToOne(Long requestUserId,
                       Long targetUserId);
 
+    void leaveOneToOne(Long userId,
+                       Long conversationId);
+
     Long joinGroup(Long userId,
                    Long conversationId);
 
-    void leave(Long userId,
-               Long conversationId);
+    void leaveGroup(Long userId,
+                    Long conversationId);
 
     Long createGroup(Long requestUserId,
                      Set<Long> targetUserIds,

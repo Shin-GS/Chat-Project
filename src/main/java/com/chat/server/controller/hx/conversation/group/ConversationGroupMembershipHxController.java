@@ -28,7 +28,7 @@ public class ConversationGroupMembershipHxController {
     @PostMapping("/{conversationId}/join")
     public List<ModelAndView> joinGroup(@PathVariable("conversationId") Long conversationId,
                                         @JwtMember JwtMemberInfo memberInfo) {
-        Long groupConversationId = conversationService.joinGroup(conversationId, memberInfo.id());
+        Long groupConversationId = conversationService.joinGroup(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
@@ -51,7 +51,7 @@ public class ConversationGroupMembershipHxController {
     @PostMapping("/{conversationId}/leave")
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.leave(conversationId, memberInfo.id());
+        conversationService.leaveGroup(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",

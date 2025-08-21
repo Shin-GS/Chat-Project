@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.chat.server.common.constant.conversation.ConversationType.GROUP;
+import static com.chat.server.common.constant.conversation.ConversationType.ONE_TO_ONE;
 
 @Service
 @RequiredArgsConstructor
@@ -136,16 +137,43 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional
-    public void leave(Long userId,
-                      Long conversationId) {
+    public void leaveOneToOne(Long userId,
+                              Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
+        if (!conversation.getType().equals(ONE_TO_ONE)) {
+            throw new CustomException(ErrorCode.CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED);
+        }
+
+        ConversationParticipant participant = conversationParticipantRepository
+                .findByConversationIdAndUserId(conversationId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+
+        ConversationUserRole beforeRole = participant.getRole();
+        conversationParticipantRepository.delete(participant);
+        conversationHistoryService.leave(user, conversation, beforeRole);
+    }
+
+    @Override
+    @Transactional
+    public void leaveGroup(Long userId,
+                           Long conversationId) {
+        if (userId == null || conversationId == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
+        if (!conversation.getType().equals(GROUP)) {
+            throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
+        }
+
         ConversationParticipant participant = conversationParticipantRepository
                 .findByConversationIdAndUserId(conversationId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
@@ -153,6 +181,9 @@ public class ConversationServiceImpl implements ConversationService {
                 && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversationId, ConversationUserRole.SUPER_ADMIN, userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
         }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
 
         // todo 멤버가 대화방을 나갔습니다.
         conversation.updateActivity();

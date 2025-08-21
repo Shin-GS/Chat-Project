@@ -39,6 +39,8 @@ public enum ErrorCode implements Code {
     CONVERSATION_NAME_REQUIRED(400, "conversation title is required"),
     CONVERSATION_SUPER_ADMIN_REQUIRED(400, "conversation super admin is required"),
     CONVERSATION_NOT_JOINED(400, "conversation is not joined"),
+    CONVERSATION_GROUP_ONLY_ALLOWED(400, "conversation group is only allowed"),
+    CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED(400, "conversation one to one is only allowed"),
     ;
 
     private final Integer code;
