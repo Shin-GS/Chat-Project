@@ -11,4 +11,7 @@ public interface ConversationService {
                                              Long userId);
 
     List<Long> findParticipantUserIds(Long conversationId);
+
+    void leave(Long userId,
+               Long conversationId);
 }

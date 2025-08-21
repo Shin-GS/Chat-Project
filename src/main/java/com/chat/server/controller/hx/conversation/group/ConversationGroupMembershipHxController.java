@@ -34,7 +34,7 @@ public class ConversationGroupMembershipHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "request success"))
+                        Map.of("type", "success", "message", "You joined the chat"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
@@ -42,29 +42,6 @@ public class ConversationGroupMembershipHxController {
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
                                 "conversation", conversationService.getConversation(groupConversationId, memberInfo.id())))
-//                .addFragment("templates/components/common/modalClose.html",
-//                        "components/common/modalClose :: close",
-//                        "targetId",
-//                        "search-friend-list")
-                .build();
-    }
-
-    @Operation(summary = "그룹 대화방 나가기")
-    @PostMapping("/{conversationId}/leave")
-    public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
-                                    @JwtMember JwtMemberInfo memberInfo) {
-        conversationGroupService.leave(memberInfo.id(), conversationId);
-        return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", "request success"))
-                .addFragment("templates/components/conversation/list.html",
-                        "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
-//                .addFragment("templates/components/common/modalClose.html",
-//                        "components/common/modalClose :: close",
-//                        "targetId",
-//                        "search-friend-list")
                 .build();
     }
 }

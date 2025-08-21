@@ -9,10 +9,7 @@ import com.chat.server.service.user.response.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -45,6 +42,25 @@ public class ConversationHxController {
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
                                 "conversation", conversation))
+                .build();
+    }
+
+    @Operation(summary = "대화방 나가기")
+    @PostMapping("/{conversationId}/leave")
+    public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
+                                    @JwtMember JwtMemberInfo memberInfo) {
+        conversationService.leave(memberInfo.id(), conversationId);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/common/toast.html",
+                        "components/common/toast :: message",
+                        Map.of("type", "success", "message", "You left the chat"))
+                .addFragment("templates/components/conversation/list.html",
+                        "components/conversation/list :: conversation-list",
+                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment("templates/components/common/modalClose.html",
+                        "components/common/modalClose :: close",
+                        "targetId",
+                        "conversation-panel")
                 .build();
     }
 }

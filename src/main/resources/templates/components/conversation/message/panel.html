@@ -11,6 +11,12 @@
     <div>
         <div class="conversation-topbar">
             <h2 id="conversation-title" th:text="${conversation.title}">Conversation</h2>
+            <button id="conversation-leave-button"
+                    th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
+                    type="button"
+                    title="Leave this chat">
+                Leave
+            </button>
         </div>
 
         <div hidden="hidden"

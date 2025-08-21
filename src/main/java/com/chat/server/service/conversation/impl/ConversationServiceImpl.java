@@ -8,6 +8,8 @@ import com.chat.server.domain.entity.converstaion.participant.ConversationPartic
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
+import com.chat.server.service.conversation.ConversationGroupService;
+import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import io.micrometer.common.util.StringUtils;
@@ -23,6 +25,8 @@ public class ConversationServiceImpl implements ConversationService {
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
+    private final ConversationGroupService conversationGroupService;
+    private final ConversationOneToOneService conversationOneToOneService;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,5 +69,18 @@ public class ConversationServiceImpl implements ConversationService {
         return conversationParticipantRepository.findAllByConversationId(conversationId).stream()
                 .map(ConversationParticipant::getUserId)
                 .toList();
+    }
+
+    @Override
+    public void leave(Long userId,
+                      Long conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
+        if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
+            conversationOneToOneService.leave(userId, conversationId);
+            return;
+        }
+
+        conversationGroupService.leave(userId, conversationId);
     }
 }
