@@ -15,30 +15,30 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
 
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
-                        user.id,
-                        user.accountId,
-                        user.username,
+                        friendUser.id,
+                        friendUser.accountId,
+                        friendUser.username,
                         CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
             )
             FROM UserFriend userFriend
-            JOIN User user ON userFriend.friendUserId = user.id
+            JOIN User friendUser ON userFriend.friendUserId = friendUser.id
             WHERE userFriend.userId = :userId
-            ORDER BY user.username
+            ORDER BY friendUser.username
             """)
     List<UserDto> findAllByUserIdOrderByName(@Param("userId") Long userId);
 
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
-                    user.id,
-                    user.accountId,
-                    user.username,
+                    friendUser.id,
+                    friendUser.accountId,
+                    friendUser.username,
                     CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
                 )
-            FROM User user
-            LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = user.id AND userFriend.userId = :userId
-            WHERE user.id <> :userId
-                AND (LOWER(user.username) LIKE CONCAT('%', LOWER(:pattern), '%') OR LOWER(user.accountId) LIKE CONCAT('%', LOWER(:pattern), '%'))
-                ORDER BY LOWER(user.username)
+            FROM User friendUser
+            LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = friendUser.id AND userFriend.userId = :userId
+            WHERE friendUser.id <> :userId
+                AND (LOWER(friendUser.username) LIKE CONCAT('%', LOWER(:pattern), '%') OR LOWER(friendUser.accountId) LIKE CONCAT('%', LOWER(:pattern), '%'))
+                ORDER BY LOWER(friendUser.username)
             """)
     List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,
                                                       @Param("userId") Long userId);
