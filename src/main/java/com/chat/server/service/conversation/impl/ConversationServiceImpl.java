@@ -36,7 +36,13 @@ public class ConversationServiceImpl implements ConversationService {
         }
 
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
-                .map(ConversationInfoResponse::of)
+                .map(conversation -> {
+                    if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
+                        return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getId(), userId));
+                    }
+
+                    return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
+                })
                 .toList();
     }
 
@@ -49,9 +55,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         // oneToOne conversation
         if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
-            String oneToOneTitle = conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
-                    .orElse("Deleted user");
-            return ConversationInfoResponse.of(conversation, oneToOneTitle);
+            return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversationId, userId));
         }
 
         // group conversation
@@ -59,8 +63,17 @@ public class ConversationServiceImpl implements ConversationService {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        String groupTitle = StringUtils.isBlank(conversation.getTitle()) ? "Untitled group" : conversation.getTitle();
-        return ConversationInfoResponse.of(conversation, groupTitle);
+        return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
+    }
+
+    private String getOneToOneTitle(Long conversationId,
+                                    Long userId) {
+        return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
+                .orElse("Deleted user");
+    }
+
+    private String getGroupTitle(Conversation conversation) {
+        return StringUtils.isBlank(conversation.getTitle()) ? "Untitled group" : conversation.getTitle();
     }
 
     @Override

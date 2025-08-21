@@ -17,30 +17,13 @@ import java.util.Optional;
 
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
-    /*
-        1:1 → 상대 이름
-        1:1(상대 탈퇴) → “Deleted user”
-        그룹(이름 O) → 그룹 이름
-        그룹(이름 X or 혼자) → “Untitled group”
-        그 외 → 미노출
-     */
     @Query("""
-            SELECT DISTINCT new com.chat.server.domain.dto.ConversationDto(
-                conversation.id,
-                conversation.type,
-                CASE
-                     WHEN conversation.type = com.chat.server.common.constant.conversation.ConversationType.ONE_TO_ONE THEN COALESCE(conversationuser.username, 'Deleted user')
-                     ELSE COALESCE(conversation.title, 'Untitled group')
-                END,
-                conversation.lastActivityAt
-            )
+            SELECT conversation
             FROM Conversation conversation
-            LEFT JOIN ConversationParticipant participant2 ON participant2.conversationId = conversation.id AND participant2.userId <> :userId AND conversation.type = com.chat.server.common.constant.conversation.ConversationType.ONE_TO_ONE
-            LEFT JOIN User conversationuser ON conversationuser.id = participant2.userId
-            WHERE EXISTS (SELECT 1 FROM ConversationParticipant participant1 WHERE participant1.conversationId = conversation.id AND participant1.userId = :userId)
+            WHERE EXISTS (SELECT 1 FROM ConversationParticipant participant WHERE participant.conversationId = conversation.id AND participant.userId = :userId)
             ORDER BY conversation.lastActivityAt DESC
             """)
-    List<ConversationDto> findAllByUserIdOrderLastActivityAt(@Param("userId") Long userId);
+    List<Conversation> findAllByUserIdOrderLastActivityAt(@Param("userId") Long userId);
 
     @Query("""
             select conversation
