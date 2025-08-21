@@ -24,7 +24,7 @@ import java.util.Map;
 public class ConversationOneToOneHxController {
     private final ConversationService conversationService;
 
-    @Operation(summary = "1:1 대화방 입장")
+    @Operation(summary = "1:1 대화방 들어가기")
     @PostMapping("/{friendUserId}/join")
     public List<ModelAndView> joinOneToOne(@PathVariable("friendUserId") Long friendUserId,
                                            @JwtMember JwtMemberInfo memberInfo) {
