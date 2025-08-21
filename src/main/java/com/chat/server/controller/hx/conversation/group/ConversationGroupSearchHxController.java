@@ -4,7 +4,7 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.common.request.CustomPageRequest;
 import com.chat.server.service.common.request.CustomPageRequestDefault;
 import com.chat.server.service.common.response.CustomPageResponse;
-import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -26,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupSearchHxController {
-    private final ConversationService conversationService;
+    private final ConversationGroupService conversationGroupService;
 
     @Operation(summary = "그룹 채팅방 검색 모달")
     @GetMapping("/search/modal")
@@ -42,7 +42,7 @@ public class ConversationGroupSearchHxController {
     public List<ModelAndView> searchGroup(@RequestParam("keyword") String keyword,
                                           @CustomPageRequestDefault(limit = 5, maxLimit = 50) CustomPageRequest pageRequest,
                                           @JwtMember JwtMemberInfo memberInfo) {
-        CustomPageResponse<ConversationInfoResponse> customPageResponse = conversationService.findConversations(memberInfo.id(), keyword, pageRequest.toPageable());
+        CustomPageResponse<ConversationInfoResponse> customPageResponse = conversationGroupService.findConversations(memberInfo.id(), keyword, pageRequest.toPageable());
         String hrefBase = UriComponentsBuilder
                 .fromPath("/hx/conversations/groups/search")
                 .queryParam("keyword", keyword)

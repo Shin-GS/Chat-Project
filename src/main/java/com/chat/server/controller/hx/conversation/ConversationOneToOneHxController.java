@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -22,13 +23,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/one-to-one")
 public class ConversationOneToOneHxController {
+    private final ConversationOneToOneService conversationOneToOneService;
     private final ConversationService conversationService;
 
     @Operation(summary = "1:1 대화방 들어가기")
     @PostMapping("/{friendUserId}/join")
-    public List<ModelAndView> joinOneToOne(@PathVariable("friendUserId") Long friendUserId,
-                                           @JwtMember JwtMemberInfo memberInfo) {
-        Long conversationId = conversationService.joinOneToOne(memberInfo.id(), friendUserId);
+    public List<ModelAndView> join(@PathVariable("friendUserId") Long friendUserId,
+                                   @JwtMember JwtMemberInfo memberInfo) {
+        Long oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
@@ -39,7 +41,7 @@ public class ConversationOneToOneHxController {
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversationService.getConversation(conversationId, memberInfo.id())))
+                                "conversation", conversationService.getConversation(oneToOneConversationId, memberInfo.id())))
 //                .addFragment("templates/components/common/modalClose.html",
 //                        "components/common/modalClose :: close",
 //                        "targetId",
@@ -51,7 +53,7 @@ public class ConversationOneToOneHxController {
     @PostMapping("/{conversationId}/leave")
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.leaveOneToOne(memberInfo.id(), conversationId);
+        conversationOneToOneService.leave(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",

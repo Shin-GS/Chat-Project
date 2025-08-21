@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.service.conversation.ConversationFriendService;
+import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
 import com.chat.server.service.security.JwtMember;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupManageHxController {
     private final ConversationService conversationService;
+    private final ConversationGroupService conversationGroupService;
     private final ConversationFriendService conversationFriendService;
 
     @Operation(summary = "그룹 채팅방 생성 모달")
@@ -48,7 +50,7 @@ public class ConversationGroupManageHxController {
     @PostMapping
     public List<ModelAndView> createGroup(@ModelAttribute @Valid ConversationGroupCreateRequest request,
                                           @JwtMember JwtMemberInfo memberInfo) {
-        Long conversationId = conversationService.createGroup(
+        Long conversationId = conversationGroupService.create(
                 memberInfo.id(),
                 request.userIds(),
                 request.title(),

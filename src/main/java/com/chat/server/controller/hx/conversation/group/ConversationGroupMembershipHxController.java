@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -22,13 +23,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupMembershipHxController {
+    private final ConversationGroupService conversationGroupService;
     private final ConversationService conversationService;
 
     @Operation(summary = "그룹 대화방 들어가기")
     @PostMapping("/{conversationId}/join")
-    public List<ModelAndView> joinGroup(@PathVariable("conversationId") Long conversationId,
-                                        @JwtMember JwtMemberInfo memberInfo) {
-        Long groupConversationId = conversationService.joinGroup(memberInfo.id(), conversationId);
+    public List<ModelAndView> join(@PathVariable("conversationId") Long conversationId,
+                                   @JwtMember JwtMemberInfo memberInfo) {
+        Long groupConversationId = conversationGroupService.join(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
@@ -51,7 +53,7 @@ public class ConversationGroupMembershipHxController {
     @PostMapping("/{conversationId}/leave")
     public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
-        conversationService.leaveGroup(memberInfo.id(), conversationId);
+        conversationGroupService.leave(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
