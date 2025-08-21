@@ -19,4 +19,14 @@ public interface ConversationOneToOneKeyRepository extends JpaRepository<Convers
             """)
     Optional<String> findOtherUsername(@Param("conversationId") Long conversationId,
                                        @Param("userId") Long userId);
+
+    @Query("""
+                SELECT conversationUser.id
+                FROM ConversationOneToOneKey oneToOneKey, User conversationUser
+                    WHERE oneToOneKey.conversationId = :conversationId
+                    AND ((:userId = oneToOneKey.smallUserId AND conversationUser.id = oneToOneKey.largeUserId)
+                        OR (:userId = oneToOneKey.largeUserId AND conversationUser.id = oneToOneKey.smallUserId))
+            """)
+    Optional<Long> findOtherUserId(@Param("conversationId") Long conversationId,
+                                     @Param("userId") Long userId);
 }

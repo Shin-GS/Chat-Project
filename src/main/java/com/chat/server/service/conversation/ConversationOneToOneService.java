@@ -6,4 +6,10 @@ public interface ConversationOneToOneService {
 
     void leave(Long userId,
                Long conversationId);
+
+    boolean isUserLeft(Long userId,
+                       Long conversationId);
+
+    Long getOtherUserId(Long userId,
+                        Long conversationId);
 }

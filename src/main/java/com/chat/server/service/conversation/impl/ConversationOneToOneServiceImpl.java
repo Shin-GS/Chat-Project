@@ -73,7 +73,6 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         return newConversation.getId();
     }
 
-
     @Override
     @Transactional
     public void leave(Long userId,
@@ -97,5 +96,20 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         ConversationUserRole beforeRole = participant.getRole();
         conversationParticipantRepository.delete(participant);
         conversationHistoryService.leave(user, conversation, beforeRole);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isUserLeft(Long userId,
+                              Long conversationId) {
+        return !conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getOtherUserId(Long userId,
+                               Long conversationId) {
+        return conversationOneToOneKeyRepository.findOtherUserId(conversationId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
     }
 }
