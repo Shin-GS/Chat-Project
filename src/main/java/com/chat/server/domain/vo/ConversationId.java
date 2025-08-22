@@ -1,20 +1,18 @@
 package com.chat.server.domain.vo;
 
 import com.chat.server.common.util.VOUtil;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.chat.server.domain.vo.base.BaseLongId;
+import com.chat.server.domain.vo.base.BaseLongIdDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import java.util.Objects;
-
 @Embeddable
-public class ConversationId implements Comparable<ConversationId> {
-    // 실제 컬럼명은 @AttributeOverride로 지정
+@JsonDeserialize(using = BaseLongIdDeserializer.class)
+public class ConversationId extends BaseLongId<ConversationId> {
     @Column(name = "IGNORED_BY_OVERRIDE")
     private Long value;
 
-    // for JPA
     protected ConversationId() {
     }
 
@@ -26,38 +24,8 @@ public class ConversationId implements Comparable<ConversationId> {
         return new ConversationId(v);
     }
 
-    @JsonCreator
-    public static ConversationId fromJson(String raw) {
-        return new ConversationId(Long.valueOf(raw)); // "123" → 123
-    }
-
-    @JsonValue
-    public Long json() {
-        return value;
-    }
-
+    @Override
     public Long value() {
         return value;
     }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    @Override
-    public int compareTo(ConversationId o) {
-        return this.value.compareTo(o.value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof ConversationId that && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
 }
-
