@@ -2,6 +2,7 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.user.UserFriend;
 import com.chat.server.domain.repository.user.UserFriendRepository;
 import com.chat.server.service.conversation.ConversationFriendService;
@@ -20,7 +21,7 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserInfoResponse> findFriends(Long userId) {
+    public List<UserInfoResponse> findFriends(UserId userId) {
         if (userId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -32,8 +33,8 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
 
     @Override
     @Transactional
-    public void addFriend(Long userId,
-                          Long friendUserId) {
+    public void addFriend(UserId userId,
+                          UserId friendUserId) {
         if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -47,8 +48,8 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
 
     @Override
     @Transactional
-    public void removeFriend(Long userId,
-                             Long friendUserId) {
+    public void removeFriend(UserId userId,
+                             UserId friendUserId) {
         if (userId == null || friendUserId == null || userId.equals(friendUserId)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -63,7 +64,7 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
     @Override
     @Transactional(readOnly = true)
     public List<UserInfoResponse> findFriendsByKeyword(String keyword,
-                                                       Long userId) {
+                                                       UserId userId) {
         if (keyword == null || userId == null) {
             return new ArrayList<>();
         }

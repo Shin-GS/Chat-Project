@@ -1,6 +1,7 @@
 package com.chat.server.service.conversation.request;
 
 import com.chat.server.common.constant.Constants;
+import com.chat.server.domain.vo.UserId;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -14,5 +15,5 @@ public record ConversationGroupCreateRequest(@NotBlank
 
                                              Boolean hidden,
 
-                                             Set<Long> userIds) {
+                                             Set<UserId> userIds) {
 }

@@ -4,6 +4,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.user.User;
 import jakarta.persistence.*;
@@ -35,8 +36,9 @@ public class Conversation extends BaseTimeEntity {
     @Column(name = "TITLE", length = Constants.CONVERSATION_TITLE_MAX_LENGTH)
     private String title;
 
-    @Column(name = "CREATED_USER_ID", nullable = false)
-    private Long createdUserId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "CREATED_USER_ID", nullable = false))
+    private UserId createdUserId;
 
     // If there is a value, the code must be correct
     // If hidden is True, the code is null
@@ -60,7 +62,7 @@ public class Conversation extends BaseTimeEntity {
     public static Conversation ofOneToOne(User creator) {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.ONE_TO_ONE;
-        conversation.createdUserId = creator.getId();
+        conversation.createdUserId = creator.getUserId();
         conversation.joinCode = null;
         conversation.hidden = Boolean.TRUE;
         conversation.lastActivityAt = LocalDateTime.now();
@@ -74,7 +76,7 @@ public class Conversation extends BaseTimeEntity {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.GROUP;
         conversation.title = name;
-        conversation.createdUserId = creator.getId();
+        conversation.createdUserId = creator.getUserId();
         conversation.joinCode = hidden ? null : joinCode;
         conversation.hidden = hidden;
         conversation.lastActivityAt = LocalDateTime.now();

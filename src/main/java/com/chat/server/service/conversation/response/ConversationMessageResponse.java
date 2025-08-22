@@ -1,6 +1,7 @@
 package com.chat.server.service.conversation.response;
 
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
+import com.chat.server.domain.vo.UserId;
 
 public record ConversationMessageResponse(Long id,
                                           String from,
@@ -15,7 +16,7 @@ public record ConversationMessageResponse(Long id,
     }
 
     public static ConversationMessageResponse of(ConversationMessage message,
-                                                 Long userId) {
+                                                 UserId userId) {
         return new ConversationMessageResponse(
                 message.getId(),
                 message.getSenderUsername(),

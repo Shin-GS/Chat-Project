@@ -1,15 +1,17 @@
 package com.chat.server.service.conversation;
 
-public interface ConversationOneToOneService {
-    Long join(Long requestUserId,
-              Long targetUserId);
+import com.chat.server.domain.vo.UserId;
 
-    void leave(Long userId,
+public interface ConversationOneToOneService {
+    Long join(UserId requestUserId,
+              UserId targetUserId);
+
+    void leave(UserId userId,
                Long conversationId);
 
-    boolean isUserLeft(Long userId,
+    boolean isUserLeft(UserId userId,
                        Long conversationId);
 
-    Long getOtherUserId(Long userId,
-                        Long conversationId);
+    UserId getOtherUserId(UserId userId,
+                          Long conversationId);
 }

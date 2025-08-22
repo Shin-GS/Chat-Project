@@ -1,17 +1,18 @@
 package com.chat.server.service.conversation;
 
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 
 import java.util.List;
 
 public interface ConversationService {
-    List<ConversationInfoResponse> findConversations(Long userId);
+    List<ConversationInfoResponse> findConversations(UserId userId);
 
     ConversationInfoResponse getConversation(Long conversationId,
-                                             Long userId);
+                                             UserId userId);
 
-    List<Long> findParticipantUserIds(Long conversationId);
+    List<UserId> findParticipantUserIds(Long conversationId);
 
-    void leave(Long userId,
+    void leave(UserId userId,
                Long conversationId);
 }

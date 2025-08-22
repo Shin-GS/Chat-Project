@@ -1,5 +1,6 @@
 package com.chat.server.domain.repository.user;
 
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.dto.UserDto;
 import com.chat.server.domain.entity.user.UserFriend;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
-    boolean existsByUserIdAndFriendUserId(Long userId, Long friendUserId);
+    boolean existsByUserIdAndFriendUserId(UserId userId, UserId friendUserId);
 
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
@@ -21,11 +22,11 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
                         CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
             )
             FROM UserFriend userFriend
-            JOIN User friendUser ON userFriend.friendUserId = friendUser.id
-            WHERE userFriend.userId = :userId
+            JOIN User friendUser ON userFriend.friendUserId.value = friendUser.id
+            WHERE userFriend.userId.value = :#{#userId.value}
             ORDER BY friendUser.username
             """)
-    List<UserDto> findAllByUserIdOrderByName(@Param("userId") Long userId);
+    List<UserDto> findAllByUserIdOrderByName(@Param("userId") UserId userId);
 
     @Query("""
             SELECT new com.chat.server.domain.dto.UserDto(
@@ -35,13 +36,13 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
                     CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
                 )
             FROM User friendUser
-            LEFT JOIN UserFriend userFriend ON userFriend.friendUserId = friendUser.id AND userFriend.userId = :userId
-            WHERE friendUser.id <> :userId
+            LEFT JOIN UserFriend userFriend ON userFriend.friendUserId.value = friendUser.id AND userFriend.userId.value = :#{#userId.value}
+            WHERE friendUser.id <> :#{#userId.value}
                 AND (LOWER(friendUser.username) LIKE CONCAT('%', LOWER(:pattern), '%') OR LOWER(friendUser.accountId) LIKE CONCAT('%', LOWER(:pattern), '%'))
                 ORDER BY LOWER(friendUser.username)
             """)
     List<UserDto> findSimilarNamesExcludingExactMatch(@Param("pattern") String pattern,
-                                                      @Param("userId") Long userId);
+                                                      @Param("userId") UserId userId);
 
-    void deleteByUserIdAndFriendUserId(Long userId, Long friendUserId);
+    void deleteByUserIdAndFriendUserId(UserId userId, UserId friendUserId);
 }

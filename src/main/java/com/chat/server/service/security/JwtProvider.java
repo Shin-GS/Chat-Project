@@ -11,6 +11,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.UserRole;
 import com.chat.server.common.exception.CustomTokenException;
+import com.chat.server.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -124,7 +125,7 @@ public class JwtProvider {
         String accountId = decodedJWT.getClaim(Constants.JWT_USER_ACCOUNT_ID).asString();
         String username = decodedJWT.getClaim(Constants.JWT_USER_NAME).asString();
         String userRole = decodedJWT.getClaim(Constants.JWT_USER_ROLE).asString();
-        return JwtMemberInfo.of(memberId, accountId, username, UserRole.from(userRole));
+        return JwtMemberInfo.of(UserId.of(memberId), accountId, username, UserRole.from(userRole));
     }
 
     // 서명 검증을 포함한 디코딩. 유효하지 않거나 만료된 경우 예외 발생.

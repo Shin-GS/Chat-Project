@@ -10,6 +10,7 @@ import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
@@ -38,8 +39,8 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
     @Override
     @Transactional
-    public Long create(Long requestUserId,
-                       Set<Long> targetUserIds,
+    public Long create(UserId requestUserId,
+                       Set<UserId> targetUserIds,
                        String title,
                        String joinCode,
                        boolean hidden) {
@@ -51,7 +52,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             throw new CustomException(ErrorCode.CONVERSATION_NAME_REQUIRED);
         }
 
-        User requestUser = userRepository.findById(requestUserId)
+        User requestUser = userRepository.findById(requestUserId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation newConversation = conversationRepository.save(Conversation.ofGroup(requestUser, title, joinCode, hidden));
 
@@ -66,6 +67,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         List<Long> targetUserIdsExcludeRequestUserId = targetUserIds.stream()
                 .filter(Objects::nonNull)
+                .map(UserId::value)
                 .filter(id -> !id.equals(requestUser.getId()))
                 .distinct()
                 .toList();
@@ -83,13 +85,13 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
     @Override
     @Transactional
-    public Long join(Long userId,
+    public Long join(UserId userId,
                      Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
@@ -110,7 +112,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
     @Override
     @Transactional
-    public void leave(Long userId,
+    public void leave(UserId userId,
                       Long conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
@@ -130,7 +132,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
         }
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
 
         // todo 멤버가 대화방을 나갔습니다.
@@ -142,7 +144,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public CustomPageResponse<ConversationInfoResponse> findConversations(Long userId,
+    public CustomPageResponse<ConversationInfoResponse> findConversations(UserId userId,
                                                                           String keyword,
                                                                           Pageable pageable) {
         if (keyword == null || keyword.isEmpty()) {

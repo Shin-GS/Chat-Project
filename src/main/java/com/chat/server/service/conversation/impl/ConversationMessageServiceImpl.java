@@ -9,6 +9,7 @@ import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,14 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
 
     @Override
     @Transactional
-    public ConversationMessage saveMessage(Long userId,
+    public ConversationMessage saveMessage(UserId userId,
                                            Long conversationId,
                                            String message) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        User sender = userRepository.findById(userId)
+        User sender = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
@@ -45,7 +46,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConversationMessageResponse> findBeforeMessage(Long userId,
+    public List<ConversationMessageResponse> findBeforeMessage(UserId userId,
                                                                Long conversationId,
                                                                Long messageId,
                                                                Pageable pageable) {

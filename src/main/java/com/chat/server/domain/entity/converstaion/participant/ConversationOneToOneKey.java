@@ -1,5 +1,6 @@
 package com.chat.server.domain.entity.converstaion.participant;
 
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
@@ -26,11 +27,13 @@ public class ConversationOneToOneKey extends BaseTimeEntity {
     @Column(name = "CONVERSATION_ID", nullable = false)
     private Long conversationId;
 
-    @Column(name = "SMALL_USER_ID", nullable = false)
-    private Long smallUserId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SMALL_USER_ID", nullable = false))
+    private UserId smallUserId;
 
-    @Column(name = "LARGE_USER_ID", nullable = false)
-    private Long largeUserId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "LARGE_USER_ID", nullable = false))
+    private UserId largeUserId;
 
     public static ConversationOneToOneKey of(Conversation conversation,
                                              User userA,
@@ -40,8 +43,8 @@ public class ConversationOneToOneKey extends BaseTimeEntity {
 
         ConversationOneToOneKey oneToOneKey = new ConversationOneToOneKey();
         oneToOneKey.conversationId = conversation.getId();
-        oneToOneKey.smallUserId = Math.min(userAId, userBId);
-        oneToOneKey.largeUserId = Math.max(userAId, userBId);
+        oneToOneKey.smallUserId = UserId.of(Math.min(userAId, userBId));
+        oneToOneKey.largeUserId = UserId.of(Math.max(userAId, userBId));
         return oneToOneKey;
     }
 }

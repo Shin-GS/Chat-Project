@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
@@ -28,7 +29,7 @@ public class ConversationOneToOneHxController {
 
     @Operation(summary = "1:1 대화방 들어가기")
     @PostMapping("/{friendUserId}/join")
-    public List<ModelAndView> join(@PathVariable("friendUserId") Long friendUserId,
+    public List<ModelAndView> join(@PathVariable("friendUserId") UserId friendUserId,
                                    @JwtMember JwtMemberInfo memberInfo) {
         Long oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()

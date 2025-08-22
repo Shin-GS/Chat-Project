@@ -1,6 +1,7 @@
 package com.chat.server.domain.entity.converstaion.participant;
 
 import com.chat.server.common.constant.conversation.ConversationUserRole;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
@@ -32,8 +33,9 @@ public class ConversationParticipant extends BaseTimeEntity {
     @Column(name = "CONVERSATION_ID", nullable = false)
     private Long conversationId;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
+    private UserId userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", length = 20, nullable = false)
@@ -55,7 +57,7 @@ public class ConversationParticipant extends BaseTimeEntity {
                                                    User user) {
         ConversationParticipant participant = new ConversationParticipant();
         participant.conversationId = conversation.getId();
-        participant.userId = user.getId();
+        participant.userId = user.getUserId();
         participant.role = ConversationUserRole.MEMBER;
         participant.muted = false;
         participant.joinedAt = LocalDateTime.now();
@@ -66,7 +68,7 @@ public class ConversationParticipant extends BaseTimeEntity {
                                                        User user) {
         ConversationParticipant participant = new ConversationParticipant();
         participant.conversationId = conversation.getId();
-        participant.userId = user.getId();
+        participant.userId = user.getUserId();
         participant.role = ConversationUserRole.SUPER_ADMIN;
         participant.muted = false;
         participant.joinedAt = LocalDateTime.now();

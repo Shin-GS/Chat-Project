@@ -3,6 +3,7 @@ package com.chat.server.domain.entity.user;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.UserRole;
 import com.chat.server.domain.entity.BaseTimeEntity;
+import com.chat.server.domain.vo.UserId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,5 +46,9 @@ public class User extends BaseTimeEntity {
         user.username = username;
         user.role = UserRole.USER;
         return user;
+    }
+
+    public UserId getUserId() {
+        return id == null ? null : UserId.of(id);
     }
 }

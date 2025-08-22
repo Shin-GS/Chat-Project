@@ -2,6 +2,7 @@ package com.chat.server.domain.entity.converstaion.history;
 
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationMembershipAction;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
@@ -30,15 +31,17 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
     @Column(name = "CONVERSATION_ID", nullable = false)
     private Long conversationId;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
+    private UserId userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ACTION", length = 20, nullable = false)
     private ConversationMembershipAction action;
 
-    @Column(name = "ACTOR_USER_ID", nullable = false)
-    private Long actorUserId; // self or admin
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "ACTOR_USER_ID", nullable = false))
+    private UserId actorUserId; // self or admin
 
     @Column(name = "REASON", length = Constants.CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH)
     private String reason;
@@ -51,9 +54,9 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
                                                        User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
         history.conversationId = conversation.getId();
-        history.userId = user.getId();
+        history.userId = user.getUserId();
         history.action = ConversationMembershipAction.JOIN;
-        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
+        history.actorUserId = actorUser == null ? user.getUserId() : actorUser.getUserId();
         history.actionAt = LocalDateTime.now();
         return history;
     }
@@ -63,9 +66,9 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
                                                         User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
         history.conversationId = conversation.getId();
-        history.userId = user.getId();
+        history.userId = user.getUserId();
         history.action = ConversationMembershipAction.LEAVE;
-        history.actorUserId = actorUser == null ? user.getId() : actorUser.getId();
+        history.actorUserId = actorUser == null ? user.getUserId() : actorUser.getUserId();
         history.actionAt = LocalDateTime.now();
         return history;
     }

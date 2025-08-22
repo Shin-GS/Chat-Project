@@ -8,6 +8,7 @@ import com.chat.server.domain.entity.converstaion.participant.ConversationPartic
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
@@ -30,7 +31,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConversationInfoResponse> findConversations(Long userId) {
+    public List<ConversationInfoResponse> findConversations(UserId userId) {
         if (userId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -49,7 +50,7 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     @Transactional(readOnly = true)
     public ConversationInfoResponse getConversation(Long conversationId,
-                                                    Long userId) {
+                                                    UserId userId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
 
@@ -67,7 +68,7 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     private String getOneToOneTitle(Long conversationId,
-                                    Long userId) {
+                                    UserId userId) {
         return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
                 .orElse("Deleted user");
     }
@@ -78,14 +79,14 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Long> findParticipantUserIds(Long conversationId) {
+    public List<UserId> findParticipantUserIds(Long conversationId) {
         return conversationParticipantRepository.findAllByConversationId(conversationId).stream()
                 .map(ConversationParticipant::getUserId)
                 .toList();
     }
 
     @Override
-    public void leave(Long userId,
+    public void leave(UserId userId,
                       Long conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));

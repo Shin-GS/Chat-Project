@@ -2,18 +2,19 @@ package com.chat.server.service.user.response;
 
 import com.chat.server.domain.dto.UserDto;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.security.JwtMemberInfo;
 
-public record UserInfoResponse(Long id,
+public record UserInfoResponse(UserId id,
                                String accountId,
                                String name,
                                boolean friend) {
     public static UserInfoResponse of(UserDto userDto) {
-        return new UserInfoResponse(userDto.id(), userDto.accountId(), userDto.name(), userDto.friend());
+        return new UserInfoResponse(UserId.of(userDto.id()), userDto.accountId(), userDto.name(), userDto.friend());
     }
 
     public static UserInfoResponse of(User user) {
-        return new UserInfoResponse(user.getId(), user.getAccountId(), user.getUsername(), Boolean.FALSE);
+        return new UserInfoResponse(UserId.of(user.getId()), user.getAccountId(), user.getUsername(), Boolean.FALSE);
     }
 
     public static UserInfoResponse of(JwtMemberInfo userInfo) {

@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -32,7 +33,7 @@ public class ConversationFriendHxController {
     @Operation(summary = "친구 검색")
     @GetMapping("/search")
     public List<ModelAndView> searchSimilarUsernames(@RequestParam("keyword") String keyword,
-                                                   @JwtMember JwtMemberInfo memberInfo) {
+                                                     @JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/friend/search/result.html",
                         "components/conversation/friend/search/result :: friend-list",
@@ -52,7 +53,7 @@ public class ConversationFriendHxController {
 
     @Operation(summary = "친구 추가")
     @PostMapping
-    public List<ModelAndView> addFriends(@RequestParam("friendUserId") Long friendUserId,
+    public List<ModelAndView> addFriends(@RequestParam("friendUserId") UserId friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.addFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
@@ -71,7 +72,7 @@ public class ConversationFriendHxController {
 
     @Operation(summary = "친구 삭제")
     @DeleteMapping
-    public List<ModelAndView> removeFriends(@RequestParam("friendUserId") Long friendUserId,
+    public List<ModelAndView> removeFriends(@RequestParam("friendUserId") UserId friendUserId,
                                             @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.removeFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()

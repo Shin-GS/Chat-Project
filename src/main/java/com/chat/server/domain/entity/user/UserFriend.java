@@ -1,5 +1,6 @@
 package com.chat.server.domain.entity.user;
 
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,14 +27,16 @@ public class UserFriend extends BaseTimeEntity {
     @Column(name = "USER_FRIEND_ID")
     private Long id;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
+    private UserId userId;
 
-    @Column(name = "FRIEND_USER_ID", nullable = false)
-    private Long friendUserId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "FRIEND_USER_ID", nullable = false))
+    private UserId friendUserId;
 
-    public static UserFriend of(Long userId,
-                                Long friendUserId) {
+    public static UserFriend of(UserId userId,
+                                UserId friendUserId) {
         UserFriend userFriend = new UserFriend();
         userFriend.userId = userId;
         userFriend.friendUserId = friendUserId;

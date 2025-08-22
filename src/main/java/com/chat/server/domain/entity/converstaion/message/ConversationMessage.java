@@ -1,6 +1,7 @@
 package com.chat.server.domain.entity.converstaion.message;
 
 import com.chat.server.common.constant.Constants;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
@@ -26,8 +27,9 @@ public class ConversationMessage extends BaseTimeEntity {
     @Column(name = "MESSAGE_ID")
     private Long id;
 
-    @Column(name = "SENDER_USER_ID", nullable = false)
-    private Long senderUserId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SENDER_USER_ID", nullable = false))
+    private UserId senderUserId;
 
     @Column(name = "SENDER_USER_NAME", length = Constants.USER_NAME_MAX_LENGTH, nullable = false)
     private String senderUsername;
@@ -42,7 +44,7 @@ public class ConversationMessage extends BaseTimeEntity {
                                          Conversation conversation,
                                          String message) {
         ConversationMessage conversationMessage = new ConversationMessage();
-        conversationMessage.senderUserId = sender.getId();
+        conversationMessage.senderUserId = sender.getUserId();
         conversationMessage.senderUsername = sender.getUsername();
         conversationMessage.conversationId = conversation.getId();
         conversationMessage.message = message;

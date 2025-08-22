@@ -1,18 +1,19 @@
 package com.chat.server.service.conversation;
 
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.user.response.UserInfoResponse;
 
 import java.util.List;
 
 public interface ConversationFriendService {
-    List<UserInfoResponse> findFriends(Long userId);
+    List<UserInfoResponse> findFriends(UserId userId);
 
-    void addFriend(Long userId,
-                   Long friendUserId);
+    void addFriend(UserId userId,
+                   UserId friendUserId);
 
-    void removeFriend(Long userId,
-                      Long friendUserId);
+    void removeFriend(UserId userId,
+                      UserId friendUserId);
 
     List<UserInfoResponse> findFriendsByKeyword(String keyword,
-                                                Long userId);
+                                                UserId userId);
 }
