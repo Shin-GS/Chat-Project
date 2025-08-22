@@ -16,6 +16,7 @@ public interface ConversationGroupService {
                           boolean hidden);
 
     ConversationId join(UserId userId,
+                        String joinCode,
                         ConversationId conversationId);
 
     void leave(UserId userId,
@@ -24,4 +25,9 @@ public interface ConversationGroupService {
     CustomPageResponse<ConversationInfoResponse> findConversations(UserId userId,
                                                                    String keyword,
                                                                    Pageable pageable);
+
+    ConversationInfoResponse getJoinAbleConversation(ConversationId conversationId,
+                                                     UserId userId);
+
+    String getGroupTitle(ConversationId conversationId);
 }

@@ -37,7 +37,7 @@ public class ConversationHxController {
     @GetMapping("/{conversationId}/panel")
     public List<ModelAndView> chatPanel(@PathVariable("conversationId") ConversationId conversationId,
                                         @JwtMember JwtMemberInfo memberInfo) {
-        ConversationInfoResponse conversation = conversationService.getConversation(conversationId, memberInfo.id());
+        ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",

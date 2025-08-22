@@ -41,6 +41,8 @@ public enum ErrorCode implements Code {
     CONVERSATION_NOT_JOINED(400, "conversation is not joined"),
     CONVERSATION_GROUP_ONLY_ALLOWED(400, "conversation group is only allowed"),
     CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED(400, "conversation one to one is only allowed"),
+    CONVERSATION_IS_HIDDEN(400, "conversation is hidden"),
+    CONVERSATION_JOIN_CODE_IS_INVALID(400, "conversation join code is invalid"),
     ;
 
     private final Integer code;

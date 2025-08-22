@@ -43,7 +43,7 @@ public class ConversationOneToOneHxController {
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversationService.getConversation(oneToOneConversationId, memberInfo.id())))
+                                "conversation", conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
                 .build();
     }
 }

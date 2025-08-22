@@ -15,4 +15,7 @@ public interface ConversationOneToOneService {
 
     UserId getOtherUserId(UserId userId,
                           ConversationId conversationId);
+
+    String getOneToOneTitle(ConversationId conversationId,
+                            UserId userId);
 }

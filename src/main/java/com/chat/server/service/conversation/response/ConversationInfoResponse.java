@@ -10,11 +10,13 @@ import java.time.LocalDateTime;
 public record ConversationInfoResponse(ConversationId id,
                                        String title,
                                        ConversationType type,
+                                       boolean hasCode,
                                        LocalDateTime lastActivityAt) {
     public static ConversationInfoResponse of(ConversationDto conversation) {
         return new ConversationInfoResponse(ConversationId.of(conversation.id()),
                 conversation.title(),
                 conversation.type(),
+                conversation.hasCode(),
                 conversation.lastActivityAt());
     }
 
@@ -23,6 +25,7 @@ public record ConversationInfoResponse(ConversationId id,
         return new ConversationInfoResponse(conversation.getConversationId(),
                 title,
                 conversation.getType(),
+                conversation.hasCode(),
                 conversation.getLastActivityAt());
     }
 }

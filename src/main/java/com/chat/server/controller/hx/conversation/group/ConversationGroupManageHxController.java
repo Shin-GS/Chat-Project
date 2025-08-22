@@ -28,7 +28,7 @@ public class ConversationGroupManageHxController {
     private final ConversationGroupService conversationGroupService;
     private final ConversationFriendService conversationFriendService;
 
-    @Operation(summary = "그룹 채팅방 생성 모달")
+    @Operation(summary = "그룹 대화방 생성 모달")
     @GetMapping("/modal")
     public List<ModelAndView> createGroupModal() {
         return new ModelAndViewBuilder()
@@ -37,7 +37,7 @@ public class ConversationGroupManageHxController {
                 .build();
     }
 
-    @Operation(summary = "그룹 채팅방 생성 - 내 친구 목록 조회")
+    @Operation(summary = "그룹 대화방 생성 - 내 친구 목록 조회")
     @GetMapping("/modal/friends")
     public List<ModelAndView> createGroupModalFriends(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
@@ -68,10 +68,10 @@ public class ConversationGroupManageHxController {
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversationService.getConversation(conversationId, memberInfo.id())))
+                                "conversation", conversationService.getAccessibleConversation(conversationId, memberInfo.id())))
                 .build();
     }
 
-    // 그룹 채팅방 삭제
+    // 그룹 대화방 삭제
     // 슈퍼 어드민만 가능
 }

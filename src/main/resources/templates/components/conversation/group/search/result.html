@@ -16,6 +16,15 @@
                 <span class="font-semibold" th:text="${conversation.title}">Group title</span>
                 <span th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
             </div>
+            <div class="flex items-center">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded"
+                        type="button"
+                        th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${conversation.id.value()})}"
+                        hx-swap="none"
+                        aria-label="Join this group">
+                    Join
+                </button>
+            </div>
         </li>
     </ul>
 

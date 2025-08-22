@@ -115,4 +115,12 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
                 .map(UserId::of)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getOneToOneTitle(ConversationId conversationId,
+                                    UserId userId) {
+        return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
+                .orElse("Deleted user");
+    }
 }

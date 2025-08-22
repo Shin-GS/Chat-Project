@@ -28,7 +28,7 @@ import java.util.Map;
 public class ConversationGroupSearchHxController {
     private final ConversationGroupService conversationGroupService;
 
-    @Operation(summary = "그룹 채팅방 검색 모달")
+    @Operation(summary = "그룹 대화방 검색 모달")
     @GetMapping("/search/modal")
     public List<ModelAndView> searchGroupModal() {
         return new ModelAndViewBuilder()
@@ -37,7 +37,7 @@ public class ConversationGroupSearchHxController {
                 .build();
     }
 
-    @Operation(summary = "그룹 채팅방 검색")
+    @Operation(summary = "그룹 대화방 검색")
     @GetMapping("/search")
     public List<ModelAndView> searchGroup(@RequestParam("keyword") String keyword,
                                           @CustomPageRequestDefault(limit = 5, maxLimit = 50) CustomPageRequest pageRequest,

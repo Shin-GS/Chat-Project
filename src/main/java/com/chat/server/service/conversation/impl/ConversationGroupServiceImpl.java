@@ -87,7 +87,8 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     @Override
     @Transactional
     public ConversationId join(UserId userId,
-                     ConversationId conversationId) {
+                               String joinCode,
+                               ConversationId conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -102,6 +103,10 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         if (conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_ALREADY_JOINED);
+        }
+
+        if (conversation.hasCode() && (!StringUtils.hasText(joinCode) || !Objects.equals(conversation.getJoinCode(), joinCode))) {
+            throw new CustomException(ErrorCode.CONVERSATION_JOIN_CODE_IS_INVALID);
         }
 
         // todo 새 멤버가 들어왔습니다.
@@ -154,5 +159,34 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         Page<ConversationDto> dtoPage = conversationRepository.searchJoinAbleGroups(userId, keyword, pageable);
         return CustomPageResponse.fromPage(dtoPage, ConversationInfoResponse::of);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConversationInfoResponse getJoinAbleConversation(ConversationId conversationId,
+                                                            UserId userId) {
+        Conversation conversation = conversationRepository.findById(conversationId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        if (!conversation.getType().equals(GROUP)) {
+            throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
+        }
+
+        if (conversation.isHidden()) {
+            throw new CustomException(ErrorCode.CONVERSATION_IS_HIDDEN);
+        }
+
+        if (conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+            throw new CustomException(ErrorCode.CONVERSATION_ALREADY_JOINED);
+        }
+
+        return ConversationInfoResponse.of(conversation, getGroupTitle(conversation.getConversationId()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getGroupTitle(ConversationId conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        return !StringUtils.hasText(conversation.getTitle()) ? "Untitled group" : conversation.getTitle();
     }
 }

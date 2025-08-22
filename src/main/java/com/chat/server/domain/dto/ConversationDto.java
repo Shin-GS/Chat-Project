@@ -7,5 +7,6 @@ import java.time.LocalDateTime;
 public record ConversationDto(Long id,
                               ConversationType type,
                               String title,
+                              boolean hasCode,
                               LocalDateTime lastActivityAt) {
 }

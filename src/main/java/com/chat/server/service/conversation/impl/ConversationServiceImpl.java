@@ -6,7 +6,6 @@ import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
-import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
@@ -14,7 +13,6 @@ import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +24,8 @@ import java.util.List;
 public class ConversationServiceImpl implements ConversationService {
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
-    private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
-    private final ConversationGroupService conversationGroupService;
     private final ConversationOneToOneService conversationOneToOneService;
+    private final ConversationGroupService conversationGroupService;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,24 +37,24 @@ public class ConversationServiceImpl implements ConversationService {
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
                 .map(conversation -> {
                     if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
-                        return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getConversationId(), userId));
+                        return ConversationInfoResponse.of(conversation, conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId));
                     }
 
-                    return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
+                    return ConversationInfoResponse.of(conversation, conversationGroupService.getGroupTitle(conversation.getConversationId()));
                 })
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ConversationInfoResponse getConversation(ConversationId conversationId,
-                                                    UserId userId) {
+    public ConversationInfoResponse getAccessibleConversation(ConversationId conversationId,
+                                                              UserId userId) {
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
 
         // oneToOne conversation
         if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
-            return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getConversationId(), userId));
+            return ConversationInfoResponse.of(conversation, conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId));
         }
 
         // group conversation
@@ -65,17 +62,7 @@ public class ConversationServiceImpl implements ConversationService {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
-    }
-
-    private String getOneToOneTitle(ConversationId conversationId,
-                                    UserId userId) {
-        return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
-                .orElse("Deleted user");
-    }
-
-    private String getGroupTitle(Conversation conversation) {
-        return StringUtils.isBlank(conversation.getTitle()) ? "Untitled group" : conversation.getTitle();
+        return ConversationInfoResponse.of(conversation, conversationGroupService.getGroupTitle(conversation.getConversationId()));
     }
 
     @Override

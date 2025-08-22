@@ -44,6 +44,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
                 conversation.id,
                 conversation.type,
                 COALESCE(conversation.title, 'Untitled group'),
+                case
+                    when conversation.joinCode is null then false
+                    when TRIM(conversation.joinCode) = '' then false
+                    else true
+                end,
                 conversation.lastActivityAt
             )
             from Conversation conversation

@@ -9,8 +9,8 @@ import java.util.List;
 public interface ConversationService {
     List<ConversationInfoResponse> findConversations(UserId userId);
 
-    ConversationInfoResponse getConversation(ConversationId conversationId,
-                                             UserId userId);
+    ConversationInfoResponse getAccessibleConversation(ConversationId conversationId,
+                                                       UserId userId);
 
     List<UserId> findParticipantUserIds(ConversationId conversationId);
 

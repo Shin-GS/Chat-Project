@@ -91,4 +91,8 @@ public class Conversation extends BaseTimeEntity {
     public ConversationId getConversationId() {
         return id == null ? null : ConversationId.of(id);
     }
+
+    public boolean hasCode() {
+        return joinCode != null && !joinCode.isBlank();
+    }
 }
