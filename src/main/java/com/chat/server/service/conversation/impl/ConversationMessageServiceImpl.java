@@ -9,6 +9,7 @@ import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
@@ -31,7 +32,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     @Override
     @Transactional
     public ConversationMessage saveMessage(UserId userId,
-                                           Long conversationId,
+                                           ConversationId conversationId,
                                            String message) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
@@ -39,7 +40,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
 
         User sender = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        Conversation conversation = conversationRepository.findById(conversationId)
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
         return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, message));
     }
@@ -47,7 +48,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     @Override
     @Transactional(readOnly = true)
     public List<ConversationMessageResponse> findBeforeMessage(UserId userId,
-                                                               Long conversationId,
+                                                               ConversationId conversationId,
                                                                Long messageId,
                                                                Pageable pageable) {
         if (userId == null || conversationId == null) {

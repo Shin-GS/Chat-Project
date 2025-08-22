@@ -11,6 +11,7 @@ import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationHistoryService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
@@ -35,8 +36,8 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
 
     @Override
     @Transactional
-    public Long join(UserId requestUserId,
-                     UserId targetUserId) {
+    public ConversationId join(UserId requestUserId,
+                               UserId targetUserId) {
         if (requestUserId == null || targetUserId == null || requestUserId.equals(targetUserId)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -54,13 +55,13 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         if (OptionalConversation.isPresent()) {
             Conversation existingConversation = OptionalConversation.get();
             Stream.of(requestUser, targetUser)
-                    .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getId(), user.getUserId()))
+                    .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getConversationId(), user.getUserId()))
                     .forEach(user -> {
                         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
                         conversationHistoryService.join(user, existingConversation, ConversationUserRole.SUPER_ADMIN, requestUser);
                     });
             existingConversation.updateActivity();
-            return existingConversation.getId();
+            return existingConversation.getConversationId();
         }
 
         // conversation not exists
@@ -71,25 +72,25 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
                     conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user));
                     conversationHistoryService.join(user, newConversation, ConversationUserRole.SUPER_ADMIN, requestUser);
                 });
-        return newConversation.getId();
+        return newConversation.getConversationId();
     }
 
     @Override
     @Transactional
     public void leave(UserId userId,
-                      Long conversationId) {
+                      ConversationId conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        Conversation conversation = conversationRepository.findById(conversationId)
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
         if (!conversation.getType().equals(ONE_TO_ONE)) {
             throw new CustomException(ErrorCode.CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED);
         }
 
         ConversationParticipant participant = conversationParticipantRepository
-                .findByConversationIdAndUserId(conversationId, userId)
+                .findByConversationIdAndUserId(conversation.getConversationId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
         User user = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
@@ -102,14 +103,14 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
     @Override
     @Transactional(readOnly = true)
     public boolean isUserLeft(UserId userId,
-                              Long conversationId) {
+                              ConversationId conversationId) {
         return !conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserId getOtherUserId(UserId userId,
-                                 Long conversationId) {
+                                 ConversationId conversationId) {
         return conversationOneToOneKeyRepository.findOtherUserId(conversationId, userId)
                 .map(UserId::of)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));

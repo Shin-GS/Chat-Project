@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
@@ -28,9 +29,9 @@ public class ConversationGroupMembershipHxController {
 
     @Operation(summary = "그룹 대화방 들어가기")
     @PostMapping("/{conversationId}/join")
-    public List<ModelAndView> join(@PathVariable("conversationId") Long conversationId,
+    public List<ModelAndView> join(@PathVariable("conversationId") ConversationId conversationId,
                                    @JwtMember JwtMemberInfo memberInfo) {
-        Long groupConversationId = conversationGroupService.join(memberInfo.id(), conversationId);
+        ConversationId groupConversationId = conversationGroupService.join(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",

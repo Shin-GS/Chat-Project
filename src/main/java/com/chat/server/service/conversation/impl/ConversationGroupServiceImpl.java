@@ -10,6 +10,7 @@ import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.repository.user.UserRepository;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
@@ -39,11 +40,11 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
     @Override
     @Transactional
-    public Long create(UserId requestUserId,
-                       Set<UserId> targetUserIds,
-                       String title,
-                       String joinCode,
-                       boolean hidden) {
+    public ConversationId create(UserId requestUserId,
+                                 Set<UserId> targetUserIds,
+                                 String title,
+                                 String joinCode,
+                                 boolean hidden) {
         if (requestUserId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -62,7 +63,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         // participants
         if (targetUserIds == null || targetUserIds.isEmpty()) {
-            return newConversation.getId();
+            return newConversation.getConversationId();
         }
 
         List<Long> targetUserIdsExcludeRequestUserId = targetUserIds.stream()
@@ -72,7 +73,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
                 .distinct()
                 .toList();
         if (ObjectUtils.isEmpty(targetUserIdsExcludeRequestUserId)) {
-            return newConversation.getId();
+            return newConversation.getConversationId();
         }
 
         userRepository.findAllById(targetUserIdsExcludeRequestUserId)
@@ -80,20 +81,20 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
                     conversationParticipantRepository.save(ConversationParticipant.ofMember(newConversation, user));
                     conversationHistoryService.join(user, newConversation, ConversationUserRole.MEMBER, requestUser);
                 });
-        return newConversation.getId();
+        return newConversation.getConversationId();
     }
 
     @Override
     @Transactional
-    public Long join(UserId userId,
-                     Long conversationId) {
+    public ConversationId join(UserId userId,
+                     ConversationId conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
         User user = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        Conversation conversation = conversationRepository.findById(conversationId)
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
         if (conversation.getType() != GROUP) {
             throw new CustomException(ErrorCode.CONVERSATION_NOT_GROUP);
@@ -107,28 +108,28 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversation.updateActivity();
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
-        return conversation.getId();
+        return conversation.getConversationId();
     }
 
     @Override
     @Transactional
     public void leave(UserId userId,
-                      Long conversationId) {
+                      ConversationId conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        Conversation conversation = conversationRepository.findById(conversationId)
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
         if (!conversation.getType().equals(GROUP)) {
             throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
         }
 
         ConversationParticipant participant = conversationParticipantRepository
-                .findByConversationIdAndUserId(conversationId, userId)
+                .findByConversationIdAndUserId(conversation.getConversationId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
         if (ConversationUserRole.SUPER_ADMIN.equals(participant.getRole())
-                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversationId, ConversationUserRole.SUPER_ADMIN, userId)) {
+                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversation.getConversationId(), ConversationUserRole.SUPER_ADMIN, userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
         }
 

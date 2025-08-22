@@ -21,7 +21,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query("""
             SELECT conversation
             FROM Conversation conversation
-            WHERE EXISTS (SELECT 1 FROM ConversationParticipant participant WHERE participant.conversationId = conversation.id AND participant.userId.value = :#{#userId.value})
+            WHERE EXISTS (
+                SELECT 1
+                FROM ConversationParticipant participant
+                WHERE participant.conversationId.value = conversation.id AND participant.userId.value = :#{#userId.value}
+            )
             ORDER BY conversation.lastActivityAt DESC
             """)
     List<Conversation> findAllByUserIdOrderLastActivityAt(@Param("userId") UserId userId);
@@ -29,7 +33,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query("""
             select conversation
             from ConversationOneToOneKey oneToOneKey
-            join Conversation conversation on conversation.id = oneToOneKey.conversationId
+            join Conversation conversation on conversation.id = oneToOneKey.conversationId.value
             where oneToOneKey.smallUserId.value = :#{#smallUserId.value} and oneToOneKey.largeUserId.value = :#{#largeUserId.value}
             """)
     Optional<Conversation> findOneToOneConversationByPair(@Param("smallUserId") UserId smallUserId,
@@ -46,7 +50,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             where conversation.type = com.chat.server.common.constant.conversation.ConversationType.GROUP
               and conversation.hidden = false
               and (:keyword is null or :keyword = '' or LOWER(conversation.title) like CONCAT('%', LOWER(:keyword), '%'))
-              and not exists (select 1 from ConversationParticipant participant where participant.conversationId = conversation.id and participant.userId.value = :#{#userId.value})
+              and not exists (
+                select 1
+                from ConversationParticipant participant
+                where participant.conversationId.value = conversation.id and participant.userId.value = :#{#userId.value}
+            )
             order by conversation.lastActivityAt desc, conversation.id desc
             """)
     Page<ConversationDto> searchJoinAbleGroups(@Param("userId") UserId userId,

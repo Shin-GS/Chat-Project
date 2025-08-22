@@ -2,6 +2,7 @@ package com.chat.server.controller.socket;
 
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
@@ -34,7 +35,7 @@ public class WebSocketControllerV1 {
     public void receivedMessage(ConversationMessageRequest message,
                                 Principal principal) {
         UserId userId = UserId.of(Long.parseLong(principal.getName()));
-        Long conversationId = message.conversationId();
+        ConversationId conversationId = message.conversationId();
         log.info("Message received -> From: {}, to: {}, msg: {}", userId, conversationId, message.message());
 
         reJoinOneToOneConversation(conversationId, userId);
@@ -51,7 +52,7 @@ public class WebSocketControllerV1 {
                 );
     }
 
-    private void reJoinOneToOneConversation(Long conversationId,
+    private void reJoinOneToOneConversation(ConversationId conversationId,
                                             UserId userId) {
         ConversationInfoResponse conversation = conversationService.getConversation(conversationId, userId);
         if (!conversation.type().equals(ConversationType.ONE_TO_ONE)) {

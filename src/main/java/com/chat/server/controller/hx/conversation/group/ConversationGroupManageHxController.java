@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationService;
@@ -50,7 +51,7 @@ public class ConversationGroupManageHxController {
     @PostMapping
     public List<ModelAndView> createGroup(@ModelAttribute @Valid ConversationGroupCreateRequest request,
                                           @JwtMember JwtMemberInfo memberInfo) {
-        Long conversationId = conversationGroupService.create(
+        ConversationId conversationId = conversationGroupService.create(
                 memberInfo.id(),
                 request.userIds(),
                 request.title(),

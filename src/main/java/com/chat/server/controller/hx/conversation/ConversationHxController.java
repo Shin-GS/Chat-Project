@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
@@ -34,7 +35,7 @@ public class ConversationHxController {
 
     @Operation(summary = "채팅 패널")
     @GetMapping("/{conversationId}/panel")
-    public List<ModelAndView> chatPanel(@PathVariable("conversationId") Long conversationId,
+    public List<ModelAndView> chatPanel(@PathVariable("conversationId") ConversationId conversationId,
                                         @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
@@ -47,7 +48,7 @@ public class ConversationHxController {
 
     @Operation(summary = "대화방 나가기")
     @PostMapping("/{conversationId}/leave")
-    public List<ModelAndView> leave(@PathVariable("conversationId") Long conversationId,
+    public List<ModelAndView> leave(@PathVariable("conversationId") ConversationId conversationId,
                                     @JwtMember JwtMemberInfo memberInfo) {
         conversationService.leave(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()

@@ -1,5 +1,7 @@
 package com.chat.server.service.conversation.request;
 
-public record ConversationMessageRequest(Long conversationId,
+import com.chat.server.domain.vo.ConversationId;
+
+public record ConversationMessageRequest(ConversationId conversationId,
                                          String message) {
 }

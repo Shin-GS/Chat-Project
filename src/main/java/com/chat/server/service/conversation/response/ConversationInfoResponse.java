@@ -3,15 +3,16 @@ package com.chat.server.service.conversation.response;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.domain.dto.ConversationDto;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.vo.ConversationId;
 
 import java.time.LocalDateTime;
 
-public record ConversationInfoResponse(Long id,
+public record ConversationInfoResponse(ConversationId id,
                                        String title,
                                        ConversationType type,
                                        LocalDateTime lastActivityAt) {
     public static ConversationInfoResponse of(ConversationDto conversation) {
-        return new ConversationInfoResponse(conversation.id(),
+        return new ConversationInfoResponse(ConversationId.of(conversation.id()),
                 conversation.title(),
                 conversation.type(),
                 conversation.lastActivityAt());
@@ -19,7 +20,7 @@ public record ConversationInfoResponse(Long id,
 
     public static ConversationInfoResponse of(Conversation conversation,
                                               String title) {
-        return new ConversationInfoResponse(conversation.getId(),
+        return new ConversationInfoResponse(conversation.getConversationId(),
                 title,
                 conversation.getType(),
                 conversation.getLastActivityAt());

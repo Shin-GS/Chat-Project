@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
@@ -31,7 +32,7 @@ public class ConversationOneToOneHxController {
     @PostMapping("/{friendUserId}/join")
     public List<ModelAndView> join(@PathVariable("friendUserId") UserId friendUserId,
                                    @JwtMember JwtMemberInfo memberInfo) {
-        Long oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
+        ConversationId oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",

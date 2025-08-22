@@ -1,6 +1,7 @@
 package com.chat.server.domain.entity.converstaion.participant;
 
 import com.chat.server.common.constant.conversation.ConversationUserRole;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
@@ -30,8 +31,9 @@ public class ConversationParticipant extends BaseTimeEntity {
     @Column(name = "CONVERSATION_PARTICIPANT_ID")
     private Long id;
 
-    @Column(name = "CONVERSATION_ID", nullable = false)
-    private Long conversationId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "CONVERSATION_ID", nullable = false))
+    private ConversationId conversationId;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
@@ -56,7 +58,7 @@ public class ConversationParticipant extends BaseTimeEntity {
     public static ConversationParticipant ofMember(Conversation conversation,
                                                    User user) {
         ConversationParticipant participant = new ConversationParticipant();
-        participant.conversationId = conversation.getId();
+        participant.conversationId = conversation.getConversationId();
         participant.userId = user.getUserId();
         participant.role = ConversationUserRole.MEMBER;
         participant.muted = false;
@@ -67,7 +69,7 @@ public class ConversationParticipant extends BaseTimeEntity {
     public static ConversationParticipant ofSuperAdmin(Conversation conversation,
                                                        User user) {
         ConversationParticipant participant = new ConversationParticipant();
-        participant.conversationId = conversation.getId();
+        participant.conversationId = conversation.getConversationId();
         participant.userId = user.getUserId();
         participant.role = ConversationUserRole.SUPER_ADMIN;
         participant.muted = false;

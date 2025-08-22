@@ -8,6 +8,7 @@ import com.chat.server.domain.entity.converstaion.participant.ConversationPartic
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationOneToOneKeyRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
@@ -39,7 +40,7 @@ public class ConversationServiceImpl implements ConversationService {
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
                 .map(conversation -> {
                     if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
-                        return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getId(), userId));
+                        return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getConversationId(), userId));
                     }
 
                     return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
@@ -49,25 +50,25 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public ConversationInfoResponse getConversation(Long conversationId,
+    public ConversationInfoResponse getConversation(ConversationId conversationId,
                                                     UserId userId) {
-        Conversation conversation = conversationRepository.findById(conversationId)
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
 
         // oneToOne conversation
         if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
-            return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversationId, userId));
+            return ConversationInfoResponse.of(conversation, getOneToOneTitle(conversation.getConversationId(), userId));
         }
 
         // group conversation
-        if (!conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+        if (!conversationParticipantRepository.existsByConversationIdAndUserId(conversation.getConversationId(), userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
         return ConversationInfoResponse.of(conversation, getGroupTitle(conversation));
     }
 
-    private String getOneToOneTitle(Long conversationId,
+    private String getOneToOneTitle(ConversationId conversationId,
                                     UserId userId) {
         return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
                 .orElse("Deleted user");
@@ -79,7 +80,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserId> findParticipantUserIds(Long conversationId) {
+    public List<UserId> findParticipantUserIds(ConversationId conversationId) {
         return conversationParticipantRepository.findAllByConversationId(conversationId).stream()
                 .map(ConversationParticipant::getUserId)
                 .toList();
@@ -87,8 +88,8 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public void leave(UserId userId,
-                      Long conversationId) {
-        Conversation conversation = conversationRepository.findById(conversationId)
+                      ConversationId conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
         if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
             conversationOneToOneService.leave(userId, conversationId);

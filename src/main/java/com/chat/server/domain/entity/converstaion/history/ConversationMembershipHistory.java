@@ -2,10 +2,11 @@ package com.chat.server.domain.entity.converstaion.history;
 
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationMembershipAction;
-import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.vo.ConversationId;
+import com.chat.server.domain.vo.UserId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,8 +29,9 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
     @Column(name = "CONVERSATION_MEMBERSHIP_H_ID")
     private Long id;
 
-    @Column(name = "CONVERSATION_ID", nullable = false)
-    private Long conversationId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "CONVERSATION_ID", nullable = false))
+    private ConversationId conversationId;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
@@ -53,7 +55,7 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
                                                        User user,
                                                        User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
-        history.conversationId = conversation.getId();
+        history.conversationId = conversation.getConversationId();
         history.userId = user.getUserId();
         history.action = ConversationMembershipAction.JOIN;
         history.actorUserId = actorUser == null ? user.getUserId() : actorUser.getUserId();
@@ -65,7 +67,7 @@ public class ConversationMembershipHistory extends BaseTimeEntity {
                                                         User user,
                                                         User actorUser) {
         ConversationMembershipHistory history = new ConversationMembershipHistory();
-        history.conversationId = conversation.getId();
+        history.conversationId = conversation.getConversationId();
         history.userId = user.getUserId();
         history.action = ConversationMembershipAction.LEAVE;
         history.actorUserId = actorUser == null ? user.getUserId() : actorUser.getUserId();

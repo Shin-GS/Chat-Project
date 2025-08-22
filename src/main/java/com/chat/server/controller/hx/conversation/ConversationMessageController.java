@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import com.chat.server.service.security.JwtMember;
@@ -24,7 +25,7 @@ public class ConversationMessageController {
 
     @Operation(summary = "messageId 이전 이전 메시지 리스트 조회")
     @GetMapping("/{conversationId}/before")
-    public List<ModelAndView> beforeMessages(@PathVariable("conversationId") Long conversationId,
+    public List<ModelAndView> beforeMessages(@PathVariable("conversationId") ConversationId conversationId,
                                              @RequestParam(name = "size", defaultValue = "15") int limit,
                                              @RequestParam(name = "messageId", required = false) Long messageId,
                                              @JwtMember JwtMemberInfo memberInfo) {

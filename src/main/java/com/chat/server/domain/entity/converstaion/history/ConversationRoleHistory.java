@@ -1,10 +1,11 @@
 package com.chat.server.domain.entity.converstaion.history;
 
 import com.chat.server.common.constant.conversation.ConversationUserRole;
-import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.vo.ConversationId;
+import com.chat.server.domain.vo.UserId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,8 +28,9 @@ public class ConversationRoleHistory extends BaseTimeEntity {
     @Column(name = "CONVERSATION_ROLE_H_ID")
     private Long id;
 
-    @Column(name = "CONVERSATION_ID", nullable = false)
-    private Long conversationId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "CONVERSATION_ID", nullable = false))
+    private ConversationId conversationId;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "USER_ID", nullable = false))
@@ -54,7 +56,7 @@ public class ConversationRoleHistory extends BaseTimeEntity {
                                                 ConversationUserRole newRole,
                                                 User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
-        history.conversationId = conversation.getId();
+        history.conversationId = conversation.getConversationId();
         history.userId = user.getUserId();
         history.roleOld = null;
         history.roleNew = newRole;
@@ -69,7 +71,7 @@ public class ConversationRoleHistory extends BaseTimeEntity {
                                                    ConversationUserRole newRole,
                                                    User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
-        history.conversationId = conversation.getId();
+        history.conversationId = conversation.getConversationId();
         history.userId = user.getUserId();
         history.roleOld = oldRole;
         history.roleNew = newRole;
@@ -83,7 +85,7 @@ public class ConversationRoleHistory extends BaseTimeEntity {
                                                   ConversationUserRole oldRole,
                                                   User actorUser) {
         ConversationRoleHistory history = new ConversationRoleHistory();
-        history.conversationId = conversation.getId();
+        history.conversationId = conversation.getConversationId();
         history.userId = user.getUserId();
         history.roleOld = oldRole;
         history.roleNew = null;

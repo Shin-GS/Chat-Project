@@ -4,9 +4,10 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.vo.ConversationId;
+import com.chat.server.domain.vo.UserId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -85,5 +86,9 @@ public class Conversation extends BaseTimeEntity {
 
     public void updateActivity() {
         this.lastActivityAt = LocalDateTime.now();
+    }
+
+    public ConversationId getConversationId() {
+        return id == null ? null : ConversationId.of(id);
     }
 }
