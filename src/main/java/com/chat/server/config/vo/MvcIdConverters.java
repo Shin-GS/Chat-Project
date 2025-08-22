@@ -12,6 +12,8 @@ import java.lang.reflect.Constructor;
 import java.util.Set;
 
 // For MVC and Thymeleaf
+// MVC - PathVariable, RequestParam, ModelAttribute
+// Thymeleaf - @{}
 @Configuration
 public class MvcIdConverters implements WebMvcConfigurer {
     @Override
