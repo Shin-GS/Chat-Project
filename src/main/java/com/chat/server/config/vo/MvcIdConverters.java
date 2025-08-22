@@ -11,15 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.lang.reflect.Constructor;
 import java.util.Set;
 
-// For MVC and Thymeleaf
-// MVC - PathVariable, RequestParam, ModelAttribute
-// Thymeleaf - @{}
+/**
+ * MvcIdConverters is For MVC and Thymeleaf
+ * MVC - PathVariable, RequestParam, ModelAttribute
+ * Thymeleaf - @{}
+ */
 @Configuration
 public class MvcIdConverters implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry r) {
-        r.addConverter(new StringToAnyId());
-        r.addConverter(new AnyIdToString());
+        r.addConverter(new StringToAnyId()); // String -> Any-BaseLongId-subclass
+        r.addConverter(new AnyIdToString()); // Any-BaseLongId-subclass -> String
     }
 
     /**
