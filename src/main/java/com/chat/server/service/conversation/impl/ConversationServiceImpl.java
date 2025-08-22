@@ -13,6 +13,7 @@ import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
+import com.chat.server.service.conversation.response.ConversationParticipantInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +75,15 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ConversationParticipantInfoResponse> findParticipants(ConversationId conversationId) {
+        return conversationParticipantRepository.findDtoAllByConversationId(conversationId).stream()
+                .map(ConversationParticipantInfoResponse::of)
+                .toList();
+    }
+
+    @Override
+    @Transactional
     public void leave(UserId userId,
                       ConversationId conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId.value())

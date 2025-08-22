@@ -42,7 +42,8 @@ public class ConversationHxController {
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversation))
+                                "conversation", conversation,
+                                "participants", conversationService.findParticipants(conversationId)))
                 .build();
     }
 

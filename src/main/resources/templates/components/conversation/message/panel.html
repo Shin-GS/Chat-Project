@@ -19,6 +19,25 @@
             </button>
         </div>
 
+        <section th:if="${conversation.type == T(com.chat.server.common.constant.conversation.ConversationType).GROUP}"
+                 class="mt-4">
+            <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold">Participants</h3>
+                <span class="text-xs text-gray-500"
+                      th:text="${#lists.size(participants)} + ' members'">0 members</span>
+            </div>
+
+            <ul class="divide-y divide-gray-200 border rounded">
+                <li th:each="participant : ${participants}" class="px-3 py-2 flex items-center justify-between">
+                    <span class="font-medium"
+                          th:text="|${participant.name}[${#strings.defaultString(participant.role.roleName, participant.role.name())}]|">
+                      Name[MEMBER]
+                    </span>
+                </li>
+            </ul>
+        </section>
+
         <div hidden="hidden"
              id="initial-loader"
              th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/before'"

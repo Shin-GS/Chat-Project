@@ -53,7 +53,8 @@ public class ConversationGroupMembershipHxController {
                 .addFragment("templates/components/conversation/message/panel.html",
                         "components/conversation/message/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id())))
+                                "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id()),
+                                "participants", conversationService.findParticipants(conversationId)))
                 .build();
     }
 }
