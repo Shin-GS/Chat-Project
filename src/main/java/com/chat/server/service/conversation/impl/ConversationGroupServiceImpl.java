@@ -111,11 +111,12 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             throw new CustomException(ErrorCode.CONVERSATION_JOIN_CODE_IS_INVALID);
         }
 
-        // todo 새 멤버가 들어왔습니다.
         conversation.updateActivity();
         Long recentlyMessageId = conversationMessageService.findRecentlyMessageId(conversation.getConversationId());
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user, recentlyMessageId));
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
+
+        // todo 새 멤버가 들어왔습니다.
         return conversation.getConversationId();
     }
 

@@ -1,6 +1,7 @@
 package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.constant.conversation.ConversationMessageType;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
@@ -44,7 +45,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, message));
+        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT,message));
     }
 
     @Override

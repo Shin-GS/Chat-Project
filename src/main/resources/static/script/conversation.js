@@ -42,7 +42,7 @@ function ensureConnected(cb) {
         return;
     }
 
-    const socket = new SockJS("/ws-stomp", null, { transports: ["websocket"], withCredentials: true });
+    const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
     stompClient = Stomp.over(socket);
     stompClient.debug = null;          // Silence logs
     stompClient.heartbeat.outgoing = 10000; // Send heartbeat every 10s
@@ -97,8 +97,8 @@ function subscribeConversation(conversationId) {
         // Guard: if user switched room before connection finished, bail out
         if (currentConversationId !== desiredConversationId) return;
 
-        const dest = `/user/sub/conversations/${desiredConversationId}`;
-        currentSubscription = stompClient.subscribe(dest, (frame) => {
+        const messageDest = `/user/sub/conversations/${desiredConversationId}`;
+        currentSubscription = stompClient.subscribe(messageDest, (frame) => {
             // Guard: drop late frames from a stale subscription
             if (currentConversationId !== desiredConversationId) return;
 
@@ -108,7 +108,7 @@ function subscribeConversation(conversationId) {
             container.insertAdjacentHTML('beforeend', frame.body);
             container.scrollTop = container.scrollHeight;
         });
-        console.log("Subscribed:", dest);
+        console.log("Subscribed:", messageDest);
     });
 }
 
