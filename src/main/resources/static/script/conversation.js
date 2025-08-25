@@ -1,46 +1,130 @@
 let stompClient = null;
-let myUserId = null;
-let targetConversationId = null;
+let currentConversationId = null;
+let currentSubscription = null; // Track active subscription
+let reconnectTimer = null;      // Optional: backoff timer
 
-function connectWebSocket(myId, conversationId) {
-    if (stompClient !== null) {
-        stompClient.disconnect(() => {
-            console.log("Disconnected from previous conversation");
-        });
+// Unsubscribe previous topic (keep connection for reuse)
+function unsubscribeCurrent() {
+    try {
+        if (currentSubscription) {
+            currentSubscription.unsubscribe(); // Stop receiving from previous room
+            currentSubscription = null;
+        }
+    } catch (e) {
+        console.warn(e);
     }
-
-    myUserId = myId;
-    targetConversationId = conversationId;
-
-    const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        // console.log('Connected: ' + frame);
-
-        stompClient.subscribe(`/user/sub/conversations/${targetConversationId}`, function (message) {
-            const renderedHtml = message.body;
-            const container = document.getElementById('conversation-message-list');
-            container.insertAdjacentHTML('beforeend', renderedHtml);
-            container.scrollTop = container.scrollHeight;
-        });
-    });
 }
 
-function sendMessage() {
-    const input = document.getElementById('conversation-input');
-    const text = input.value?.trim();
+// Fully disconnect (use when panel disappears or leaving the page)
+function disconnectAll() {
+    unsubscribeCurrent();
+    try {
+        if (stompClient && stompClient.connected) {
+            stompClient.disconnect(() => console.log("STOMP disconnected"));
+        }
 
-    if (!text || !stompClient || !stompClient.connected || !targetConversationId) {
-        console.warn("Unable to send message. Missing input or connection.");
+    } catch (e) {
+        console.warn(e);
+    }
+
+    stompClient = null;
+    currentConversationId = null;
+    if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+    }
+}
+
+// Ensure STOMP connection (create if missing), then run callback
+function ensureConnected(cb) {
+    if (stompClient && stompClient.connected) {
+        cb();
         return;
     }
 
-    const message = {
-        conversationId: targetConversationId,
-        message: text
+    const socket = new SockJS("/ws-stomp", null, { transports: ["websocket"], withCredentials: true });
+    stompClient = Stomp.over(socket);
+    stompClient.debug = null;          // Silence logs
+    stompClient.heartbeat.outgoing = 10000; // Send heartbeat every 10s
+    stompClient.heartbeat.incoming = 10000; // Expect heartbeat every 10s
+
+    // Optional: basic backoff reconnect on close
+    socket.onclose = () => {
+        console.warn("SockJS closed");
+        if (reconnectTimer) return;
+        reconnectTimer = setTimeout(() => {
+            reconnectTimer = null;
+            if (currentConversationId) {
+                // Try to re-subscribe to current conversation
+                subscribeConversation(currentConversationId);
+            }
+        }, 2000); // basic backoff; tune as needed
     };
 
-    // console.log("Sending message:", message);
-    stompClient.send("/pub/conversations/message", {}, JSON.stringify(message));
+    stompClient.connect(
+        {},
+        () => cb(),
+        (err) => {
+            console.error("STOMP error:", err);
+            // Optional: schedule reconnect attempt
+            if (!reconnectTimer) {
+                reconnectTimer = setTimeout(() => {
+                    reconnectTimer = null;
+                    if (currentConversationId) {
+                        subscribeConversation(currentConversationId);
+                    }
+                }, 2000);
+            }
+        }
+    );
+}
+
+// Subscribe to a conversation (no buttons, purely automatic)
+function subscribeConversation(conversationId) {
+    // Skip if already subscribed to the same room
+    if (stompClient && stompClient.connected && currentConversationId === conversationId && currentSubscription) {
+        return;
+    }
+
+    // Unsubscribe previous room first
+    unsubscribeCurrent();
+
+    // Capture the intended conversation for this subscription (guard against races)
+    const desiredConversationId = conversationId;
+    currentConversationId = conversationId;
+
+    ensureConnected(() => {
+        // Guard: if user switched room before connection finished, bail out
+        if (currentConversationId !== desiredConversationId) return;
+
+        const dest = `/user/sub/conversations/${desiredConversationId}`;
+        currentSubscription = stompClient.subscribe(dest, (frame) => {
+            // Guard: drop late frames from a stale subscription
+            if (currentConversationId !== desiredConversationId) return;
+
+            const container = document.getElementById('conversation-message-list');
+            if (!container) return; // Panel may have been swapped out
+
+            container.insertAdjacentHTML('beforeend', frame.body);
+            container.scrollTop = container.scrollHeight;
+        });
+        console.log("Subscribed:", dest);
+    });
+}
+
+// Send message (existing implementation; unchanged)
+function sendMessage() {
+    const input = document.getElementById('conversation-input');
+    const text = input?.value?.trim();
+
+    if (!text || !stompClient || !stompClient.connected || !currentConversationId) {
+        return;
+    }
+
+    stompClient.send("/pub/conversations/message", {}, JSON.stringify({
+        conversationId: currentConversationId,
+        message: text
+    }));
+
     input.value = '';
 }

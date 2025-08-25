@@ -40,6 +40,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             let previousScrollHeight = null;
 
+            // Safety: disconnect on page unload
+            window.addEventListener('beforeunload', disconnectAll);
+
             // Before sending HX request, save scroll height
             document.body.addEventListener("htmx:beforeRequest", (event) => {
                 if (event.target.id === "conversation-scroll-loader") {
@@ -61,6 +64,13 @@
             document.body.addEventListener("htmx:afterSwap", (event) => {
                 const container = getConversationContainer();
 
+                // If panel gets removed or navigated away, fully disconnect
+                if (event.target && event.target.id === 'conversation-panel') {
+                    if (!document.getElementById('conversation-message-list')) {
+                        disconnectAll();
+                    }
+                }
+
                 // Scroll to bottom on initial load
                 if (event.target.id === "conversation-message-list" && document.getElementById("initial-loader")) {
                     container.scrollTop = container.scrollHeight;
@@ -73,16 +83,24 @@
                 }
             });
 
+            document.body.addEventListener('htmx:oobBeforeSwap', (e) => {
+                // Before OOB swap of the panel: unsubscribe the previous room
+                if (e.target && e.target.id === 'conversation-panel') {
+                    unsubscribeCurrent();
+                }
+            });
+
             // Handle out-of-band swaps (conversation panel load or scroll restoration)
             document.body.addEventListener("htmx:oobAfterSwap", (event) => {
-                if (event.target.id === "conversation-panel") {
-                    const myId = event.target.getAttribute("data-user-id");
-                    const conversationId = event.target.getAttribute("data-conversation-id");
-                    connectWebSocket(myId, conversationId);
+                if (event.target && event.target.id === 'conversation-panel') {
+                    const panel = event.target;
+                    const conversationId = panel.getAttribute('data-conversation-id');
+                    subscribeConversation(conversationId);
 
-                    const sendButton = event.target.querySelector('#conversation-send-button');
+                    // Optional: wire send button if present (not a resubscribe button)
+                    const sendButton = panel.querySelector('#conversation-send-button');
                     if (sendButton) {
-                        sendButton.addEventListener("click", sendMessage);
+                        sendButton.addEventListener('click', sendMessage);
                     }
                 }
 
