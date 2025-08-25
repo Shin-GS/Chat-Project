@@ -3,16 +3,19 @@ package com.chat.server.service.conversation.response;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.vo.UserId;
 
+import java.time.LocalDateTime;
+
 public record ConversationMessageResponse(Long id,
                                           String from,
                                           String message,
+                                          LocalDateTime createdAt,
                                           boolean mine) {
     public static ConversationMessageResponse ofSender(ConversationMessage message) {
-        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), Boolean.TRUE);
+        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), message.getCreatedAt(), Boolean.TRUE);
     }
 
     public static ConversationMessageResponse ofReceiver(ConversationMessage message) {
-        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), Boolean.FALSE);
+        return new ConversationMessageResponse(message.getId(), message.getSenderUsername(), message.getMessage(), message.getCreatedAt(), Boolean.FALSE);
     }
 
     public static ConversationMessageResponse of(ConversationMessage message,
@@ -21,6 +24,7 @@ public record ConversationMessageResponse(Long id,
                 message.getId(),
                 message.getSenderUsername(),
                 message.getMessage(),
+                message.getCreatedAt(),
                 message.getSenderUserId().equals(userId));
     }
 }

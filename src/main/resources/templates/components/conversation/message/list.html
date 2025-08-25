@@ -3,4 +3,11 @@
    th:style="'text-align:' + (${message.mine} ? 'right' : 'left')">
     <strong th:text="${message.from}">Sender</strong>:
     <span th:text="${message.message}">Message</span>
+    <time class="msg-time"
+          th:if="${message.createdAt != null}"
+          th:text="${#temporals.format(message.createdAt, 'HH:mm:ss')}"
+          th:attr="title=${#temporals.format(message.createdAt, 'yyyy/MM/dd HH:mm:ss')}"
+          th:datetime="${#temporals.format(message.createdAt, 'yyyy-MM-dd''T''HH:mm:ss')}">
+        00:00:00
+    </time>
 </p>
