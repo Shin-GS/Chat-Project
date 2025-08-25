@@ -18,12 +18,21 @@ public interface ConversationMessageRepository extends JpaRepository<Conversatio
             FROM ConversationMessage conversationMessage
             WHERE
                conversationMessage.conversationId.value = :#{#conversationId.value}
+               AND (:joinMessageId IS NULL OR conversationMessage.id > :joinMessageId)
                AND (:messageId IS NULL OR conversationMessage.id < :messageId)
             ORDER BY conversationMessage.id DESC
             """)
     List<ConversationMessage> findBeforeMessages(
             @Param("conversationId") ConversationId conversationId,
             @Param("messageId") Long messageId,
+            @Param("joinMessageId") Long joinMessageId,
             Pageable pageable
     );
+
+    @Query("""
+            select max(conversationMessage.id)
+            from ConversationMessage conversationMessage
+            where conversationMessage.conversationId.value = :#{#conversationId.value}
+            """)
+    Long findMaxMessageIdByConversation(@Param("conversationId") ConversationId conversationId);
 }

@@ -15,6 +15,7 @@ import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
+import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,6 +38,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationHistoryService conversationHistoryService;
+    private final ConversationMessageService conversationMessageService;
 
     @Override
     @Transactional
@@ -58,7 +60,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         Conversation newConversation = conversationRepository.save(Conversation.ofGroup(requestUser, title, joinCode, hidden));
 
         // requestUser
-        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, requestUser));
+        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, requestUser, null));
         conversationHistoryService.join(requestUser, newConversation, ConversationUserRole.SUPER_ADMIN);
 
         // participants
@@ -78,7 +80,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         userRepository.findAllById(targetUserIdsExcludeRequestUserId)
                 .forEach(user -> {
-                    conversationParticipantRepository.save(ConversationParticipant.ofMember(newConversation, user));
+                    conversationParticipantRepository.save(ConversationParticipant.ofMember(newConversation, user, null));
                     conversationHistoryService.join(user, newConversation, ConversationUserRole.MEMBER, requestUser);
                 });
         return newConversation.getConversationId();
@@ -111,7 +113,8 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         // todo 새 멤버가 들어왔습니다.
         conversation.updateActivity();
-        conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user));
+        Long recentlyMessageId = conversationMessageService.findRecentlyMessageId(conversation.getConversationId());
+        conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user, recentlyMessageId));
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
         return conversation.getConversationId();
     }

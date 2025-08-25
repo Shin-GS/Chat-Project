@@ -4,6 +4,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
+import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,13 +57,20 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        if (!conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+        Optional<ConversationParticipant> optionalParticipant = conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId);
+        if (optionalParticipant.isEmpty()) {
             throw new CustomException(ErrorCode.CONVERSATION_NOT_JOINED);
         }
 
-        return conversationMessageRepository.findBeforeMessages(conversationId, messageId, pageable).stream()
+        ConversationParticipant participant = optionalParticipant.get();
+        return conversationMessageRepository.findBeforeMessages(conversationId, messageId, participant.getJoinMessageId(), pageable).stream()
                 .sorted(Comparator.comparing(ConversationMessage::getId))
                 .map(chat -> ConversationMessageResponse.of(chat, userId))
                 .toList();
+    }
+
+    @Override
+    public Long findRecentlyMessageId(ConversationId conversationId) {
+        return conversationMessageRepository.findMaxMessageIdByConversation(conversationId);
     }
 }

@@ -14,6 +14,7 @@ import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationHistoryService;
+import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneKeyRepository conversationOneToOneKeyRepository;
     private final ConversationHistoryService conversationHistoryService;
+    private final ConversationMessageService conversationMessageService;
 
     @Override
     @Transactional
@@ -54,10 +56,11 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         // conversation exists
         if (OptionalConversation.isPresent()) {
             Conversation existingConversation = OptionalConversation.get();
+            Long recentlyMessageId = conversationMessageService.findRecentlyMessageId(existingConversation.getConversationId());
             Stream.of(requestUser, targetUser)
                     .filter(user -> !conversationParticipantRepository.existsByConversationIdAndUserId(existingConversation.getConversationId(), user.getUserId()))
                     .forEach(user -> {
-                        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user));
+                        conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user, recentlyMessageId));
                         conversationHistoryService.join(user, existingConversation, ConversationUserRole.SUPER_ADMIN, requestUser);
                     });
             existingConversation.updateActivity();
@@ -69,7 +72,7 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         conversationOneToOneKeyRepository.save(ConversationOneToOneKey.of(newConversation, requestUser, targetUser));
         List.of(requestUser, targetUser)
                 .forEach(user -> {
-                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user));
+                    conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, user, null));
                     conversationHistoryService.join(user, newConversation, ConversationUserRole.SUPER_ADMIN, requestUser);
                 });
         return newConversation.getConversationId();
@@ -119,7 +122,7 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
     @Override
     @Transactional(readOnly = true)
     public String getOneToOneTitle(ConversationId conversationId,
-                                    UserId userId) {
+                                   UserId userId) {
         return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
                 .orElse("Deleted user");
     }

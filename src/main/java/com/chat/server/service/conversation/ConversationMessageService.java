@@ -17,4 +17,6 @@ public interface ConversationMessageService {
                                                         ConversationId conversationId,
                                                         Long messageId,
                                                         Pageable pageable);
+
+    Long findRecentlyMessageId(ConversationId conversationId);
 }
