@@ -1,5 +1,6 @@
 package com.chat.server.controller.socket;
 
+import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.vo.ConversationId;
@@ -47,7 +48,7 @@ public class WebSocketControllerV1 {
                 .forEach(participantUserId ->
                         messagingTemplate.convertAndSendToUser(
                                 String.valueOf(participantUserId),
-                                "/sub/conversations/" + message.conversationId(),
+                                Constants.SOCKET_DESTINATION_CONVERSATION_MESSAGE.formatted(message.conversationId()),
                                 participantUserId.equals(userId) ? senderHtml : receiverHtml)
                 );
     }

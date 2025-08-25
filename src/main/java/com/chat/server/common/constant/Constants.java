@@ -50,4 +50,7 @@ public class Constants {
                 </div>
             </div>
             """;
+
+    // Socket
+    public static final String SOCKET_DESTINATION_CONVERSATION_MESSAGE = "/sub/conversations/%s";
 }
