@@ -43,7 +43,7 @@ public class ConversationParticipant extends BaseTimeEntity {
     @Column(name = "ROLE", length = 20, nullable = false)
     private ConversationUserRole role;
 
-    @Column(name = "JOIN_MESSAGE_ID", nullable = false)
+    @Column(name = "JOIN_MESSAGE_ID")
     private Long joinMessageId;
 
     @Column(name = "LAST_READ_MESSAGE_ID")

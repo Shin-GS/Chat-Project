@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<!--/*@thymesVar id="type" type="com.chat.server.common.constant.conversation.ConversationType"*/-->
+<section th:fragment="participant(page, hrefBase, blockSize)"
+         id="conversation-participant-list"
+         hx-swap-oob="true"
+         class="mt-4">
+    <th:block th:if="${type != null && type == T(com.chat.server.common.constant.conversation.ConversationType).GROUP}">
+        <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold">Participants</h3>
+            <span class="text-xs text-gray-500"
+                  th:text="${#lists.size(participants)} + ' members'">0 members</span>
+        </div>
+
+        <ul class="divide-y divide-gray-200 border rounded">
+            <li th:each="participant : ${participants}" class="px-3 py-2 flex items-center justify-between">
+                    <span class="font-medium"
+                          th:text="|${participant.name}[${#strings.defaultString(participant.role.roleName, participant.role.name())}]|">
+                      Name[MEMBER]
+                    </span>
+            </li>
+        </ul>
+    </th:block>
+</section>
+</body>
+</html>

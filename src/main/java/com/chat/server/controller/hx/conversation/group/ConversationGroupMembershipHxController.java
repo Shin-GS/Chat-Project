@@ -50,11 +50,10 @@ public class ConversationGroupMembershipHxController {
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
-                .addFragment("templates/components/conversation/message/panel.html",
-                        "components/conversation/message/panel :: conversation-panel",
+                .addFragment("templates/components/conversation/panel.html",
+                        "components/conversation/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id()),
-                                "participants", conversationService.findParticipants(conversationId)))
+                                "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id())))
                 .build();
     }
 }

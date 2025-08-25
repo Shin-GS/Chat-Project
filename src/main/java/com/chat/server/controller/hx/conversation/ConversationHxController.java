@@ -35,14 +35,26 @@ public class ConversationHxController {
 
     @Operation(summary = "채팅 패널")
     @GetMapping("/{conversationId}/panel")
-    public List<ModelAndView> chatPanel(@PathVariable("conversationId") ConversationId conversationId,
-                                        @JwtMember JwtMemberInfo memberInfo) {
+    public List<ModelAndView> panel(@PathVariable("conversationId") ConversationId conversationId,
+                                    @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/message/panel.html",
-                        "components/conversation/message/panel :: conversation-panel",
+                .addFragment("templates/components/conversation/panel.html",
+                        "components/conversation/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
-                                "conversation", conversation,
+                                "conversation", conversation))
+                .build();
+    }
+
+    @Operation(summary = "채팅 참여자 정보 조회")
+    @GetMapping("/{conversationId}/participants")
+    public List<ModelAndView> participants(@PathVariable("conversationId") ConversationId conversationId,
+                                           @JwtMember JwtMemberInfo memberInfo) {
+        ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/participant/list.html",
+                        "components/conversation/participant/list :: participant",
+                        Map.of("type", conversation.type(),
                                 "participants", conversationService.findParticipants(conversationId)))
                 .build();
     }
