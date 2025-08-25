@@ -13,6 +13,10 @@ public interface ConversationMessageService {
                                     ConversationId conversationId,
                                     String message);
 
+    ConversationMessage saveSystemMessage(UserId userId,
+                                          ConversationId conversationId,
+                                          String message);
+
     List<ConversationMessageResponse> findBeforeMessage(UserId userId,
                                                         ConversationId conversationId,
                                                         Long messageId,

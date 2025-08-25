@@ -5,6 +5,7 @@ import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.dto.ConversationDto;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
@@ -12,6 +13,7 @@ import com.chat.server.domain.repository.conversation.participant.ConversationPa
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
+import com.chat.server.event.membership.UserMembershipEvent;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
@@ -19,6 +21,7 @@ import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationHistoryService conversationHistoryService;
     private final ConversationMessageService conversationMessageService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional
@@ -116,7 +120,10 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationParticipantRepository.save(ConversationParticipant.ofMember(conversation, user, recentlyMessageId));
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
 
-        // todo 새 멤버가 들어왔습니다.
+        // notice
+        String systemMessage = user.getUsername() + " has joined";
+        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(userId, conversationId, systemMessage);
+        applicationEventPublisher.publishEvent(UserMembershipEvent.of(conversationId, userId, conversationMessage.getId()));
         return conversation.getConversationId();
     }
 
@@ -144,12 +151,14 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         User user = userRepository.findById(userId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-
-        // todo 멤버가 대화방을 나갔습니다.
         conversation.updateActivity();
         ConversationUserRole beforeRole = participant.getRole();
         conversationParticipantRepository.delete(participant);
         conversationHistoryService.leave(user, conversation, beforeRole);
+
+        String systemMessage = user.getUsername() + " has leaved";
+        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(userId, conversationId, systemMessage);
+        applicationEventPublisher.publishEvent(UserMembershipEvent.of(conversationId, userId, conversationMessage.getId()));
     }
 
     @Override

@@ -32,6 +32,16 @@ public record ConversationMessageResponse(Long id,
                 Boolean.FALSE);
     }
 
+    public static ConversationMessageResponse ofSystem(ConversationMessage message) {
+        return new ConversationMessageResponse(
+                message.getId(),
+                message.getType(),
+                message.getSenderUsername(),
+                message.getMessage(),
+                message.getCreatedAt(),
+                Boolean.FALSE);
+    }
+
     public static ConversationMessageResponse of(ConversationMessage message,
                                                  UserId userId) {
         return new ConversationMessageResponse(

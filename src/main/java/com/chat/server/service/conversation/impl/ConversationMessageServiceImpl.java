@@ -45,7 +45,22 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT,message));
+        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
+    }
+
+    @Override
+    public ConversationMessage saveSystemMessage(UserId userId,
+                                                 ConversationId conversationId,
+                                                 String message) {
+        if (userId == null || conversationId == null || message == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        User sender = userRepository.findById(userId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        Conversation conversation = conversationRepository.findById(conversationId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message));
     }
 
     @Override
