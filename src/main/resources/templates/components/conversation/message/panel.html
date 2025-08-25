@@ -14,6 +14,7 @@
             <button id="conversation-leave-button"
                     th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
                     type="button"
+                    hx-swap="none"
                     title="Leave this chat">
                 Leave
             </button>
