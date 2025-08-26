@@ -60,7 +60,7 @@ public class ConversationHxController {
                                 "type", conversation.type(),
                                 "user", UserInfoResponse.of(memberInfo),
                                 "nowRole", conversationGroupService.getRole(conversationId, memberInfo.id()),
-                                "participants", conversationService.findParticipants(conversationId)))
+                                "participants", conversationService.findParticipants(conversationId, memberInfo.id())))
                 .build();
     }
 

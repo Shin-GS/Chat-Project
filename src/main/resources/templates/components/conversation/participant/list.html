@@ -28,7 +28,7 @@
                 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
                 <div th:if="${nowRole == T(com.chat.server.common.constant.conversation.ConversationUserRole).SUPER_ADMIN && user.id != participant.userId}">
                     <button type="button"
-                            th:attr="hx-get=@{|/hx/conversations/groups/${conversationId}/${participant.userId}/role/modal|}"
+                            th:attr="hx-get=@{|/hx/conversations/groups/role/${conversationId}/${participant.userId}/modal|}"
                             hx-swap="none"
                             class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
                             th:attrappend="aria-label=|Change role for ${participant.name}|">

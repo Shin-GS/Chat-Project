@@ -15,7 +15,8 @@ public interface ConversationService {
 
     List<UserId> findParticipantUserIds(ConversationId conversationId);
 
-    List<ConversationParticipantInfoResponse> findParticipants(ConversationId conversationId);
+    List<ConversationParticipantInfoResponse> findParticipants(ConversationId conversationId,
+                                                               UserId userId);
 
     void leave(UserId userId,
                ConversationId conversationId);

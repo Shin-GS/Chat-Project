@@ -2,6 +2,7 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.conversation.ConversationType;
+import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -76,9 +78,14 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConversationParticipantInfoResponse> findParticipants(ConversationId conversationId) {
+    public List<ConversationParticipantInfoResponse> findParticipants(ConversationId conversationId,
+                                                                      UserId userId) {
         return conversationParticipantRepository.findDtoAllByConversationId(conversationId).stream()
                 .map(ConversationParticipantInfoResponse::of)
+                .sorted(Comparator
+                        .comparing((ConversationParticipantInfoResponse participant) -> !participant.userId().equals(userId)) // In Java, when sorting Booleans, false is considered less than true(false < true)
+                        .thenComparing(participant -> ConversationUserRole.sortPriority(participant.role()))
+                        .thenComparing(ConversationParticipantInfoResponse::name, Comparator.nullsLast(String::compareToIgnoreCase)))
                 .toList();
     }
 

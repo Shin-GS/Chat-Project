@@ -19,12 +19,12 @@ import java.util.Map;
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/hx/conversations/groups")
+@RequestMapping("/hx/conversations/groups/role")
 public class ConversationGroupRoleHxController {
     private final ConversationGroupService conversationGroupService;
 
     @Operation(summary = "그룹 대화방 사용자 룰 변경 모달")
-    @GetMapping("/{conversationId}/{userId}/role/modal")
+    @GetMapping("/{conversationId}/{userId}/modal")
     public List<ModelAndView> changeRoleModal(@PathVariable("conversationId") ConversationId conversationId,
                                               @PathVariable("userId") UserId userId) {
         ConversationUserRole nowRole = conversationGroupService.getRole(conversationId, userId);
@@ -38,7 +38,7 @@ public class ConversationGroupRoleHxController {
     }
 
     @Operation(summary = "그룹 대화방 사용자 룰 변경")
-    @PutMapping("/{conversationId}/{userId}/role")
+    @PutMapping("/{conversationId}/{userId}")
     public List<ModelAndView> changeRole(@PathVariable("conversationId") ConversationId conversationId,
                                          @PathVariable("userId") UserId userId,
                                          @RequestParam(name = "role") ConversationUserRole role,
