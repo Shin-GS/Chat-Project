@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
+import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/hx/conversations")
 public class ConversationHxController {
     private final ConversationService conversationService;
+    private final ConversationGroupService conversationGroupService;
 
     @Operation(summary = "내 대화방 목록 조회")
     @GetMapping
@@ -54,7 +56,10 @@ public class ConversationHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/participant/list.html",
                         "components/conversation/participant/list :: participant",
-                        Map.of("type", conversation.type(),
+                        Map.of("conversationId", conversationId,
+                                "type", conversation.type(),
+                                "user", UserInfoResponse.of(memberInfo),
+                                "nowRole", conversationGroupService.getRole(conversationId, memberInfo.id()),
                                 "participants", conversationService.findParticipants(conversationId)))
                 .build();
     }

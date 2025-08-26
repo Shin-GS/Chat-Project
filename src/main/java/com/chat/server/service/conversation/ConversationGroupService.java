@@ -36,4 +36,7 @@ public interface ConversationGroupService {
                     ConversationId conversationId,
                     UserId targetUserId,
                     ConversationUserRole role);
+
+    ConversationUserRole getRole(ConversationId conversationId,
+                                 UserId userId);
 }

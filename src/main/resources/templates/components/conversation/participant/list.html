@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <!--/*@thymesVar id="type" type="com.chat.server.common.constant.conversation.ConversationType"*/-->
-<section th:fragment="participant(page, hrefBase, blockSize)"
+<section th:fragment="participant"
          id="conversation-participant-list"
          hx-swap-oob="true"
          class="mt-4">
@@ -11,15 +11,30 @@
         <div class="flex items-center justify-between mb-2">
             <h3 class="text-sm font-semibold">Participants</h3>
             <span class="text-xs text-gray-500"
-                  th:text="${#lists.size(participants)} + ' members'">0 members</span>
+                  th:text="${#lists.size(participants)} + ' members'">
+                0 members
+            </span>
         </div>
 
         <ul class="divide-y divide-gray-200 border rounded">
             <li th:each="participant : ${participants}" class="px-3 py-2 flex items-center justify-between">
-                    <span class="font-medium"
-                          th:text="|${participant.name}[${#strings.defaultString(participant.role.roleName, participant.role.name())}]|">
-                      Name[MEMBER]
-                    </span>
+                <span class="font-medium"
+                      th:text="|${participant.name}[${#strings.defaultString(participant.role.getRoleName(), participant.role.getRoleName())}]|">
+                    Name[MEMBER]
+                </span>
+
+                <!--/*@thymesVar id="nowRole" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
+                <!--/*@thymesVar id="conversationId" type="com.chat.server.domain.vo.ConversationId"*/-->
+                <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
+                <div th:if="${nowRole == T(com.chat.server.common.constant.conversation.ConversationUserRole).SUPER_ADMIN && user.id != participant.userId}">
+                    <button type="button"
+                            th:attr="hx-get=@{|/hx/conversations/groups/${conversationId}/${participant.userId}/role/modal|}"
+                            hx-swap="none"
+                            class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
+                            th:attrappend="aria-label=|Change role for ${participant.name}|">
+                        Change Role
+                    </button>
+                </div>
             </li>
         </ul>
     </th:block>

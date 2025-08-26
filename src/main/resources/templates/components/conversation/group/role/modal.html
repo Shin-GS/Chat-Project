@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
+<body>
+<div th:fragment="role-modal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+     id="modal-container"
+     hx-swap-oob="true">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md relative">
+        <button onclick="document.getElementById('modal-container').innerHTML=''"
+                class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl font-bold"
+                aria-label="Close">
+            &times;
+        </button>
+
+        <h2 class="text-xl font-semibold mb-4">Change User Role</h2>
+
+        <!--/*@thymesVar id="nowRole" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
+        <!--/*@thymesVar id="conversationId" type="com.chat.server.domain.vo.ConversationId"*/-->
+        <!--/*@thymesVar id="userId" type="com.chat.server.domain.vo.UserId"*/-->
+        <form class="space-y-4"
+              th:with="roles=${T(com.chat.server.common.constant.conversation.ConversationUserRole).values()}"
+              th:attr="hx-put=@{|/hx/conversations/groups/${conversationId}/${userId}/role|}"
+              hx-target="body"
+              hx-swap="none"
+              hx-on::after-request="if (event.detail.successful) { document.getElementById('modal-container').innerHTML=''; }">
+            <div role="radiogroup" aria-label="Select a role" class="space-y-2">
+                <label th:each="role : ${roles}"
+                       class="flex items-start gap-3 p-3 border rounded-lg"
+                       th:classappend="${role == nowRole} ? ' opacity-60 cursor-not-allowed' : ' hover:border-gray-300'">
+                    <input type="radio"
+                           name="role"
+                           th:value="${role}"
+                           th:disabled="${role == nowRole}"
+                           required
+                           class="mt-1">
+                    <div>
+                        <!--/*@thymesVar id="roleName" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
+                        <div class="font-semibold" th:text="${role.getRoleName()}">Role Name</div>
+                        <div class="text-xs text-gray-500" th:text="${role.getDescription()}">Description</div>
+                        <div class="text-xs text-red-500 mt-1" th:if="${role == nowRole}">Current Role</div>
+                    </div>
+                </label>
+            </div>
+            <p class="text-xs text-gray-500">You can select only one role. Your current role cannot be selected.</p>
+            <div class="text-right space-x-2">
+                <button type="button"
+                        class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
+                        onclick="document.getElementById('modal-container').innerHTML=''">
+                    Close
+                </button>
+                <button type="submit"
+                        class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -273,4 +273,13 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
                 )
         );
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConversationUserRole getRole(ConversationId conversationId,
+                                        UserId userId) {
+        return conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
+                .map(ConversationParticipant::getRole)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_PARTICIPANT_NOT_EXISTS));
+    }
 }

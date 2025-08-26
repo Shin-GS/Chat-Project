@@ -1,12 +1,10 @@
 package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.ModelAndViewBuilder;
-import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationGroupService;
-import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,8 +21,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupRoleHxController {
-    private final ConversationService conversationService;
     private final ConversationGroupService conversationGroupService;
+
+    @Operation(summary = "그룹 대화방 사용자 룰 변경 모달")
+    @GetMapping("/{conversationId}/{userId}/role/modal")
+    public List<ModelAndView> changeRoleModal(@PathVariable("conversationId") ConversationId conversationId,
+                                              @PathVariable("userId") UserId userId) {
+        ConversationUserRole nowRole = conversationGroupService.getRole(conversationId, userId);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/role/modal.html",
+                        "components/conversation/group/role/modal :: role-modal",
+                        Map.of("conversationId", conversationId,
+                                "userId", userId,
+                                "nowRole", nowRole))
+                .build();
+    }
 
     @Operation(summary = "그룹 대화방 사용자 룰 변경")
     @PutMapping("/{conversationId}/{userId}/role")
@@ -37,10 +48,6 @@ public class ConversationGroupRoleHxController {
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "Role Change success"))
-                .addFragment("templates/components/conversation/participant/list.html",
-                        "components/conversation/participant/list :: participant",
-                        Map.of("type", ConversationType.GROUP,
-                                "participants", conversationService.findParticipants(conversationId)))
                 .build();
     }
 }
