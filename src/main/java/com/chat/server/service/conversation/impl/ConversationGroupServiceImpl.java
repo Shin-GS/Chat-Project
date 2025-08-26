@@ -13,7 +13,7 @@ import com.chat.server.domain.repository.conversation.participant.ConversationPa
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
-import com.chat.server.event.membership.UserMembershipEvent;
+import com.chat.server.event.SystemMessageEvent;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
@@ -32,7 +32,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.chat.server.common.constant.Constants.SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE;
 import static com.chat.server.common.constant.conversation.ConversationType.GROUP;
+import static com.chat.server.common.constant.conversation.ConversationUserRole.SUPER_ADMIN;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +67,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         // requestUser
         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, requestUser, null));
-        conversationHistoryService.join(requestUser, newConversation, ConversationUserRole.SUPER_ADMIN);
+        conversationHistoryService.join(requestUser, newConversation, SUPER_ADMIN);
 
         // participants
         if (targetUserIds == null || targetUserIds.isEmpty()) {
@@ -107,7 +109,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             throw new CustomException(ErrorCode.CONVERSATION_NOT_GROUP);
         }
 
-        if (conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+        if (conversationParticipantRepository.existsByConversationIdAndUserId(conversation.getConversationId(), user.getUserId())) {
             throw new CustomException(ErrorCode.CONVERSATION_ALREADY_JOINED);
         }
 
@@ -121,9 +123,18 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
 
         // notice
-        String systemMessage = user.getUsername() + " has joined";
-        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(userId, conversationId, systemMessage);
-        applicationEventPublisher.publishEvent(UserMembershipEvent.of(conversationId, userId, conversationMessage.getId()));
+        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+                user.getUserId(),
+                conversation.getConversationId(),
+                "%s has joined".formatted(user.getUsername()));
+        applicationEventPublisher.publishEvent(
+                SystemMessageEvent.of(
+                        conversation.getConversationId(),
+                        conversationMessage.getId(),
+                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
+                        null
+                )
+        );
         return conversation.getConversationId();
     }
 
@@ -137,15 +148,15 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
-        if (!conversation.getType().equals(GROUP)) {
+        if (conversation.getType() != GROUP) {
             throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
         }
 
         ConversationParticipant participant = conversationParticipantRepository
                 .findByConversationIdAndUserId(conversation.getConversationId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_MEMBER));
-        if (ConversationUserRole.SUPER_ADMIN.equals(participant.getRole())
-                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversation.getConversationId(), ConversationUserRole.SUPER_ADMIN, userId)) {
+        if (participant.getRole() == SUPER_ADMIN
+                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversation.getConversationId(), SUPER_ADMIN, userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
         }
 
@@ -156,9 +167,18 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationParticipantRepository.delete(participant);
         conversationHistoryService.leave(user, conversation, beforeRole);
 
-        String systemMessage = user.getUsername() + " has leaved";
-        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(userId, conversationId, systemMessage);
-        applicationEventPublisher.publishEvent(UserMembershipEvent.of(conversationId, userId, conversationMessage.getId()));
+        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+                user.getUserId(),
+                conversation.getConversationId(),
+                "%s has leaved".formatted(user.getUsername()));
+        applicationEventPublisher.publishEvent(
+                SystemMessageEvent.of(
+                        conversation.getConversationId(),
+                        conversationMessage.getId(),
+                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
+                        null
+                )
+        );
     }
 
     @Override
@@ -180,7 +200,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
                                                             UserId userId) {
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        if (!conversation.getType().equals(GROUP)) {
+        if (conversation.getType() != GROUP) {
             throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
         }
 
@@ -188,7 +208,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             throw new CustomException(ErrorCode.CONVERSATION_IS_HIDDEN);
         }
 
-        if (conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId)) {
+        if (conversationParticipantRepository.existsByConversationIdAndUserId(conversation.getConversationId(), userId)) {
             throw new CustomException(ErrorCode.CONVERSATION_ALREADY_JOINED);
         }
 
@@ -201,5 +221,56 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
         return !StringUtils.hasText(conversation.getTitle()) ? "Untitled group" : conversation.getTitle();
+    }
+
+    @Override
+    @Transactional
+    public void changeRole(UserId requestUserId,
+                           ConversationId conversationId,
+                           UserId targetUserId,
+                           ConversationUserRole role) {
+        Conversation conversation = conversationRepository.findById(conversationId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        if (conversation.getType() != GROUP) {
+            throw new CustomException(ErrorCode.CONVERSATION_GROUP_ONLY_ALLOWED);
+        }
+
+        User requestUser = userRepository.findById(requestUserId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        ConversationParticipant requestParticipant = conversationParticipantRepository.findByConversationIdAndUserId(conversationId, requestUser.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_PARTICIPANT_NOT_EXISTS));
+        if (requestParticipant.getRole() != SUPER_ADMIN) {
+            throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
+        }
+
+        User targetUser = userRepository.findById(targetUserId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        ConversationParticipant targetParticipant = conversationParticipantRepository.findByConversationIdAndUserId(conversationId, targetUser.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_PARTICIPANT_NOT_EXISTS));
+        if (targetParticipant.getRole() == role) {
+            throw new CustomException(ErrorCode.CONVERSATION_ROLE_ALREADY_EXISTS);
+        }
+
+        if (targetParticipant.getRole() == SUPER_ADMIN
+                && !conversationParticipantRepository.existsByConversationIdAndRoleAndUserIdNot(conversation.getConversationId(), SUPER_ADMIN, targetUser.getUserId())) {
+            throw new CustomException(ErrorCode.CONVERSATION_SUPER_ADMIN_REQUIRED);
+        }
+
+        ConversationUserRole beforeRole = targetParticipant.getRole();
+        targetParticipant.changeRole(role);
+        conversationHistoryService.changeRole(targetUser, conversation, beforeRole, role, requestUser);
+
+        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+                requestUser.getUserId(),
+                conversation.getConversationId(),
+                "%s role changed to %s".formatted(targetUser.getUsername(), role));
+        applicationEventPublisher.publishEvent(
+                SystemMessageEvent.of(
+                        conversation.getConversationId(),
+                        conversationMessage.getId(),
+                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
+                        List.of("refresh-conversation-participant-list")
+                )
+        );
     }
 }

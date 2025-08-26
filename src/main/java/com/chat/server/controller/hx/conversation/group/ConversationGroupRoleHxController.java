@@ -1,0 +1,46 @@
+package com.chat.server.controller.hx.conversation.group;
+
+import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.common.constant.conversation.ConversationType;
+import com.chat.server.common.constant.conversation.ConversationUserRole;
+import com.chat.server.domain.vo.ConversationId;
+import com.chat.server.domain.vo.UserId;
+import com.chat.server.service.conversation.ConversationGroupService;
+import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.security.JwtMember;
+import com.chat.server.service.security.JwtMemberInfo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.Map;
+
+@Tag(name = "Conversation Page")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/hx/conversations/groups")
+public class ConversationGroupRoleHxController {
+    private final ConversationService conversationService;
+    private final ConversationGroupService conversationGroupService;
+
+    @Operation(summary = "그룹 대화방 사용자 룰 변경")
+    @PutMapping("/{conversationId}/{userId}/role")
+    public List<ModelAndView> changeRole(@PathVariable("conversationId") ConversationId conversationId,
+                                         @PathVariable("userId") UserId userId,
+                                         @RequestParam(name = "role") ConversationUserRole role,
+                                         @JwtMember JwtMemberInfo memberInfo) {
+        conversationGroupService.changeRole(memberInfo.id(), conversationId, userId, role);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/common/toast.html",
+                        "components/common/toast :: message",
+                        Map.of("type", "success", "message", "Role Change success"))
+                .addFragment("templates/components/conversation/participant/list.html",
+                        "components/conversation/participant/list :: participant",
+                        Map.of("type", ConversationType.GROUP,
+                                "participants", conversationService.findParticipants(conversationId)))
+                .build();
+    }
+}

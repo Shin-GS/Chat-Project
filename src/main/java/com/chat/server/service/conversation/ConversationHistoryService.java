@@ -22,4 +22,10 @@ public interface ConversationHistoryService {
                Conversation conversation,
                ConversationUserRole beforeRole,
                User actor);
+
+    void changeRole(User user,
+                    Conversation conversation,
+                    ConversationUserRole oldRole,
+                    ConversationUserRole newRole,
+                    User actorUser);
 }

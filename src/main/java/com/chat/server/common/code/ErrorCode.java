@@ -43,6 +43,8 @@ public enum ErrorCode implements Code {
     CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED(400, "conversation one to one is only allowed"),
     CONVERSATION_IS_HIDDEN(400, "conversation is hidden"),
     CONVERSATION_JOIN_CODE_IS_INVALID(400, "conversation join code is invalid"),
+    CONVERSATION_ROLE_ALREADY_EXISTS(400, "conversation role already exists"),
+    CONVERSATION_PARTICIPANT_NOT_EXISTS(400, "conversation participant not exists"),
     ;
 
     private final Integer code;

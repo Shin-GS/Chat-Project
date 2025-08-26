@@ -100,15 +100,49 @@ function subscribeConversation(conversationId) {
         const messageDest = `/user/sub/conversations/${desiredConversationId}`;
         currentSubscription = stompClient.subscribe(messageDest, (frame) => {
             // Guard: drop late frames from a stale subscription
-            if (currentConversationId !== desiredConversationId) return;
+            if (currentConversationId !== desiredConversationId) {
+                return;
+            }
 
             const container = document.getElementById('conversation-message-list');
-            if (!container) return; // Panel may have been swapped out
+            if (!container) { // Panel may have been swapped out
+                return;
+            }
 
             container.insertAdjacentHTML('beforeend', frame.body);
             container.scrollTop = container.scrollHeight;
         });
         console.log("Subscribed:", messageDest);
+
+        const systemMessageDest = `/user/sub/conversations/${desiredConversationId}/system`;
+        currentSubscription = stompClient.subscribe(systemMessageDest, (frame) => {
+            // Guard: drop late frames from a stale subscription
+            if (currentConversationId !== desiredConversationId) {
+                return;
+            }
+
+            const container = document.getElementById('conversation-message-list');
+            if (!container) { // Panel may have been swapped out
+                return;
+            }
+
+            container.insertAdjacentHTML('beforeend', frame.body);
+            container.scrollTop = container.scrollHeight;
+
+            // refresh ui
+            const refreshIdsHeader = frame.headers['user-ui-refresh-ids'] || '';
+            const refreshIds = Array.from(new Set(
+                refreshIdsHeader.split(',').map(s => s.trim()).filter(Boolean)
+            ));
+
+            refreshIds.forEach(id => {
+                const refreshElement = document.getElementById(id);
+                if (refreshElement) {
+                    htmx.trigger(refreshElement, 'refresh');
+                }
+            });
+        });
+        console.log("Subscribed:", systemMessageDest);
     });
 }
 

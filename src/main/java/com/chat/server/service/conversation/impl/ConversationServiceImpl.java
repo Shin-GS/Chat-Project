@@ -37,7 +37,7 @@ public class ConversationServiceImpl implements ConversationService {
 
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
                 .map(conversation -> {
-                    if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
+                    if (conversation.getType() == ConversationType.ONE_TO_ONE) {
                         return ConversationInfoResponse.of(conversation, conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId));
                     }
 
@@ -54,7 +54,7 @@ public class ConversationServiceImpl implements ConversationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
 
         // oneToOne conversation
-        if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
+        if (conversation.getType() == ConversationType.ONE_TO_ONE) {
             return ConversationInfoResponse.of(conversation, conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId));
         }
 
@@ -88,7 +88,7 @@ public class ConversationServiceImpl implements ConversationService {
                       ConversationId conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
-        if (conversation.getType().equals(ConversationType.ONE_TO_ONE)) {
+        if (conversation.getType() == ConversationType.ONE_TO_ONE) {
             conversationOneToOneService.leave(userId, conversationId);
             return;
         }

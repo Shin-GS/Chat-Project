@@ -1,5 +1,6 @@
 package com.chat.server.service.conversation;
 
+import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.response.CustomPageResponse;
@@ -30,4 +31,9 @@ public interface ConversationGroupService {
                                                      UserId userId);
 
     String getGroupTitle(ConversationId conversationId);
+
+    void changeRole(UserId requestUserId,
+                    ConversationId conversationId,
+                    UserId targetUserId,
+                    ConversationUserRole role);
 }

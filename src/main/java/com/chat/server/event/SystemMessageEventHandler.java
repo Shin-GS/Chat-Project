@@ -1,4 +1,4 @@
-package com.chat.server.event.membership;
+package com.chat.server.event;
 
 import com.chat.server.common.constant.Constants;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
@@ -15,21 +15,22 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserMembershipEventHandler {
+public class SystemMessageEventHandler {
     private final ConversationService conversationService;
     private final ConversationMessageRepository conversationMessageRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final SpringTemplateEngine templateEngine;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleUserMembershipEvent(UserMembershipEvent event) {
-        if (event == null || event.conversationId() == null || event.messageId() == null) {
-            log.error("invalid event: UserMembershipEvent: event is empty");
+    public void handleSystemMessageEvent(SystemMessageEvent event) {
+        if (event == null || event.conversationId() == null || event.messageId() == null || event.socketDestination() == null) {
+            log.error("invalid event: SystemMessageEvent: event is empty");
             return;
         }
 
@@ -39,12 +40,18 @@ public class UserMembershipEventHandler {
         }
 
         String senderHtml = renderChatMessageFragment(ConversationMessageResponse.ofSystem(optionalMessage.get()));
+        Map<String, Object> headers = Map.of(
+                "content-type", "text/html; charset=UTF-8",
+                Constants.USER_UI_REFRESH_IDS,
+                event.refreshIds() == null || event.refreshIds().isEmpty() ? "" : String.join(",", event.refreshIds())
+        );
         conversationService.findParticipantUserIds(event.conversationId())
                 .forEach(participantUserId ->
                         messagingTemplate.convertAndSendToUser(
                                 String.valueOf(participantUserId),
-                                Constants.SOCKET_DESTINATION_CONVERSATION_MESSAGE.formatted(event.conversationId()),
-                                senderHtml)
+                                event.socketDestination(),
+                                senderHtml,
+                                headers)
                 );
     }
 

@@ -56,7 +56,7 @@ public class WebSocketControllerV1 {
     private void reJoinOneToOneConversation(ConversationId conversationId,
                                             UserId userId) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, userId);
-        if (!conversation.type().equals(ConversationType.ONE_TO_ONE)) {
+        if (conversation.type() != ConversationType.ONE_TO_ONE) {
             return;
         }
 

@@ -21,10 +21,12 @@
         </div>
 
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
-        <section id="conversation-participant-list"
-                 hx-trigger="load"
-                 th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/participants'"
-                 hx-swap="none"></section>
+        <section id="conversation-participant-list"></section>
+        <div hidden="hidden"
+             id="refresh-conversation-participant-list"
+             hx-trigger="load, refresh from:body"
+             th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/participants'"
+             hx-swap="none"></div>
 
         <div hidden="hidden"
              id="initial-loader"

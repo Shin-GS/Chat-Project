@@ -61,4 +61,18 @@ public class ConversationHistoryServiceImpl implements ConversationHistoryServic
         conversationRoleHistoryRepository.save(ConversationRoleHistory.ofLeave(conversation, user, beforeRole, actor));
         conversationMembershipHistoryRepository.save(ConversationMembershipHistory.ofLeave(conversation, user, actor));
     }
+
+    @Override
+    @Transactional
+    public void changeRole(User user,
+                           Conversation conversation,
+                           ConversationUserRole oldRole,
+                           ConversationUserRole newRole,
+                           User actorUser) {
+        if (user == null || conversation == null || oldRole == null || newRole == null) {
+            return;
+        }
+
+        conversationRoleHistoryRepository.save(ConversationRoleHistory.ofChange(conversation, user, oldRole, newRole, actorUser));
+    }
 }

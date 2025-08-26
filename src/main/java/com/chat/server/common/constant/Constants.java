@@ -53,4 +53,7 @@ public class Constants {
 
     // Socket
     public static final String SOCKET_DESTINATION_CONVERSATION_MESSAGE = "/sub/conversations/%s";
+    public static final String SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE = "/sub/conversations/%s/system";
+
+    public static final String USER_UI_REFRESH_IDS = "user-ui-refresh-ids";
 }

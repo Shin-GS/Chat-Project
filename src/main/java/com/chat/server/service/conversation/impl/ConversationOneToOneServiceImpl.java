@@ -88,7 +88,7 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
 
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_GROUP_NOT_EXISTS));
-        if (!conversation.getType().equals(ONE_TO_ONE)) {
+        if (conversation.getType() != ONE_TO_ONE) {
             throw new CustomException(ErrorCode.CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED);
         }
 
