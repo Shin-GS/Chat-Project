@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <ul th:fragment="guest-menu"
-    class="nav-menu flex items-center gap-6">
+    class="nav-menu flex items-center gap-4 sm:gap-6">
     <li>
         <button type="button"
                 hx-get="/hx/auth/login/modal"
                 hx-swap="none"
-                class="flex items-center gap-2 text-lg hover:text-blue-500">
+                class="flex items-center gap-2 text-base sm:text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors">
             Log In
         </button>
     </li>
@@ -15,33 +15,42 @@
         <button type="button"
                 hx-get="/hx/auth/signup/modal"
                 hx-swap="none"
-                class="flex items-center gap-2 text-lg hover:text-blue-500">
+                class="flex items-center gap-2 text-base sm:text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors">
             Sign Up
         </button>
     </li>
 </ul>
 
 <ul th:fragment="user-menu"
-    class="nav-menu flex items-center gap-6">
+    class="nav-menu flex items-center gap-4 sm:gap-6">
     <li>
-        <a th:href="@{/conversation}" data-icon="📂" class="flex items-center gap-2 text-lg hover:text-blue-500">
+        <a th:href="@{/conversation}"
+           data-icon="📂"
+           class="flex items-center gap-2 text-base sm:text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors">
             Chats
         </a>
     </li>
 
     <li class="relative group">
-        <div class="flex items-center gap-2 cursor-pointer">
+        <div class="flex items-center gap-2 cursor-pointer select-none">
             <!--/*@thymesVar id="member" type="com.chat.server.service.security.JwtMemberInfo"*/-->
-            <span th:text="${member.username}" class="text-lg font-medium"></span>
+            <span th:text="${member.username}" class="text-base sm:text-lg font-medium text-gray-800"></span>
         </div>
-        <ul class="user-submenu absolute hidden bg-white shadow-lg rounded-md overflow-hidden group-hover:block right-0 w-48">
-            <li><a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">Settings</a></li>
-            <li><a href="#"
+        <ul class="user-submenu absolute hidden group-hover:block bg-white shadow-lg rounded-md overflow-hidden right-0 mt-2 w-44 sm:w-48 z-20">
+            <li>
+                <a href="#"
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors">
+                    Settings
+                </a>
+            </li>
+            <li>
+                <a href="#"
                    hx-post="/hx/auth/logout"
                    hx-swap="none"
-                   class="block px-4 py-2 hover:bg-blue-500 hover:text-white">
-                Log Out
-            </a></li>
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors">
+                    Log Out
+                </a>
+            </li>
         </ul>
     </li>
 </ul>

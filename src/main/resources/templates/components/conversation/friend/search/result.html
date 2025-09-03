@@ -3,26 +3,35 @@
 <body>
 <ul th:fragment="friend-list"
     id="search-friend-list"
-    hx-swap-oob="true">
+    hx-swap-oob="true"
+    class="divide-y divide-gray-200 text-sm sm:text-base">
     <!--/*@thymesVar id="searchUsers" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
-    <li th:if="${#lists.isEmpty(searchUsers)}">No results found.</li>
+    <li th:if="${#lists.isEmpty(searchUsers)}"
+        class="py-3 text-center text-gray-500">
+        No results found.
+    </li>
 
-    <li th:each="searchUser : ${searchUsers}">
+    <li th:each="searchUser : ${searchUsers}"
+        class="py-2 flex items-center justify-between">
         <!--/*@thymesVar id="searchUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
         <form th:if="${!searchUser.friend}"
               hx-post="/hx/conversations/friends"
-              hx-swap="none">
+              hx-swap="none"
+              class="w-full">
             <input type="hidden" name="friendUserId" th:value="${searchUser.id}"/>
             <button type="submit"
-                    class="bg-blue-100 hover:bg-blue-200 text-blue-900 font-semibold px-3 py-1 rounded">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|">Add</span>
+                    class="w-full flex justify-between items-center bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-md transition-colors">
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
+                <span class="ml-3 text-sm font-semibold">+ Add</span>
             </button>
         </form>
 
-        <div th:if="${searchUser.friend}">
+        <div th:if="${searchUser.friend}"
+             class="w-full">
             <button type="button" disabled
-                    class="bg-gray-300 text-gray-600 font-semibold px-3 py-1 rounded cursor-not-allowed">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]| + ' (Friend)'">Friend</span>
+                    class="w-full flex justify-between items-center bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed">
+                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
+                <span class="ml-3 text-sm font-semibold">(Friend)</span>
             </button>
         </div>
     </li>

@@ -4,24 +4,27 @@
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
 <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
 <div th:fragment="conversation-panel"
-     class="flex-1 p-4"
+     class="flex-1 p-4 sm:p-6"
      id="conversation-panel"
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
-    <div>
-        <div class="conversation-topbar">
-            <h2 id="conversation-title" th:text="${conversation.title}">Conversation</h2>
+    <div class="space-y-4">
+        <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3">
+            <h2 id="conversation-title"
+                class="text-lg sm:text-xl font-semibold text-gray-900 truncate"
+                th:text="${conversation.title}">Conversation</h2>
             <button id="conversation-leave-button"
                     th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
                     type="button"
                     hx-swap="none"
-                    title="Leave this chat">
+                    title="Leave this chat"
+                    class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md text-sm transition-colors">
                 Leave
             </button>
         </div>
 
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
-        <section id="conversation-participant-list"></section>
+        <section id="conversation-participant-list" class="mt-2"></section>
         <div hidden="hidden"
              id="refresh-conversation-participant-list"
              hx-trigger="load, refresh from:body"
@@ -36,16 +39,20 @@
              hx-swap="afterbegin"></div>
 
         <div id="conversation-message-list"
-             style="height: 400px; overflow-y: auto; border: 1px solid #ccc;"></div>
+             class="h-96 sm:h-[28rem] overflow-y-auto border border-gray-200 rounded-lg bg-white p-3"></div>
 
-        <div class="conversation">
-            <label for="conversation-input">
-                <input type="text"
-                       id="conversation-input"
-                       placeholder="Type a message..."
-                       style="width: 80%;"/>
-            </label>
-            <button id="conversation-send-button" type="button">Send</button>
+        <div class="conversation flex items-center gap-2 sm:gap-3 pt-2">
+            <label for="conversation-input" class="sr-only">Message input</label>
+            <input type="text"
+                   id="conversation-input"
+                   placeholder="Type a message..."
+                   class="flex-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button id="conversation-send-button"
+                    type="button"
+                    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md text-sm sm:text-base transition-colors">
+                Send
+            </button>
         </div>
     </div>
 </div>

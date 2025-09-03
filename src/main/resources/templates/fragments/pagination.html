@@ -4,7 +4,7 @@
 <nav th:fragment="pagination(page, hrefBase, blockSize)"
      id="search-group-pagination"
      hx-swap-oob="true"
-     class="mt-4 flex items-center gap-1"
+     class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3"
      th:with="
         bs=${(blockSize != null && blockSize > 0) ? blockSize : 5},
         tp=${page.totalPages != null ? page.totalPages : 0},
@@ -21,12 +21,14 @@
     <th:block th:if="${page.totalElements == 0}">
         <button th:if="${page.hasPrevious}"
                 th:attr="hx-get=${hrefBase + '&page=' + prev}"
-                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">« Prev
+                class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md text-sm sm:text-base bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            « Prev
         </button>
 
         <button th:if="${page.hasNext}"
                 th:attr="hx-get=${hrefBase + '&page=' + next}"
-                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Next »
+                class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md text-sm sm:text-base bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Next »
         </button>
     </th:block>
 
@@ -34,20 +36,24 @@
         <!-- Prev -->
         <button th:if="${page.hasPrevious}"
                 th:attr="hx-get=${hrefBase + '&page=' + prev}"
-                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">« Prev
+                class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md text-sm sm:text-base bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            « Prev
         </button>
 
         <!-- Numbered Pages -->
         <button th:each="i : ${#numbers.sequence(start, end)}"
                 th:attr="hx-get=${hrefBase + '&page=' + i}"
-                th:class="'px-3 py-1 rounded ' + (i == cur ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200')"
-                th:text="${i + 1}">1
+                class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md text-sm sm:text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                th:classappend="${i == cur} ? ' bg-blue-600 text-white' : ' bg-gray-100 hover:bg-gray-200 text-gray-800'"
+                th:text="${i + 1}">
+            1
         </button>
 
         <!-- Next -->
         <button th:if="${page.hasNext}"
                 th:attr="hx-get=${hrefBase + '&page=' + next}"
-                class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Next »
+                class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md text-sm sm:text-base bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Next »
         </button>
     </th:block>
 </nav>

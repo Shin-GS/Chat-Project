@@ -3,23 +3,29 @@
 <body>
 <ul th:fragment="friend-list"
     id="friend-list"
-    hx-swap-oob="true">
+    hx-swap-oob="true"
+    class="divide-y divide-gray-200 text-sm sm:text-base">
     <!--/*@thymesVar id="friends" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
-    <li th:if="${#lists.isEmpty(friends)}">not exists</li>
-    <li th:each="friend : ${friends}">
+    <li th:if="${#lists.isEmpty(friends)}"
+        class="py-3 text-center text-gray-500">
+        not exists
+    </li>
+
+    <li th:each="friend : ${friends}"
+        class="py-2 px-2 sm:px-3 flex items-center justify-between gap-3">
         <button type="button"
                 th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
                 hx-swap="none"
-                class="text-blue-700 hover:underline text-left w-full text-sm font-medium">
+                class="flex-1 text-left font-medium text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
             <span th:text="${friend.name}">Chat With Friend</span>
         </button>
 
         <form hx-delete="/hx/conversations/friends"
               hx-swap="none"
-              class="ml-2">
+              class="shrink-0">
             <input type="hidden" name="friendUserId" th:value="${friend.id}"/>
             <button type="submit"
-                    class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-2 py-1 rounded text-xs">
+                    class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
                 Delete
             </button>
         </form>

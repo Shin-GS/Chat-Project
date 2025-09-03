@@ -6,10 +6,10 @@
      id="toast-container"
      hx-swap-oob="true">
     <!--/*@thymesVar id="type" type="String"*/-->
-    <div th:class="'fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-white ' +
+    <div th:class="'fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 sm:px-6 py-3 sm:py-4 rounded-lg shadow-xl transition-opacity duration-300 text-sm sm:text-base font-medium text-white pointer-events-auto ' +
                    (${type} == 'success' ? 'bg-green-500' :
                     (${type} == 'error' ? 'bg-red-500' :
-                    (${type} == 'info' ? 'bg-blue-500' : 'bg-gray-500')))">
+                    (${type} == 'info' ? 'bg-blue-500' : 'bg-gray-600')))">
         <!--/*@thymesVar id="message" type="String"*/-->
         <p th:text="${message}"></p>
     </div>

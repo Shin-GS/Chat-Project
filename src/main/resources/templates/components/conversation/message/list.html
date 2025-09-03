@@ -1,8 +1,10 @@
 <!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.conversation.response.ConversationMessageResponse>"*/-->
 <p th:each="message : ${messages}"
-   th:style="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM} ? 'text-align:center' : 'text-align:' + (message.mine ? 'right' : 'left')">
+   th:classappend="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM} ? 'text-center text-gray-500 text-sm italic' : (message.mine ? 'text-right' : 'text-left')"
+   class="mb-2">
     <th:block th:if="${message.type != T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}">
-        <strong th:text="${message.from}">Sender</strong>:
+        <strong th:text="${message.from}"
+                class="font-semibold text-gray-800">Sender</strong>:
     </th:block>
-    <span th:text="${message.message}">Message</span>
+    <span th:text="${message.message}" class="inline-block break-words"></span>
 </p>

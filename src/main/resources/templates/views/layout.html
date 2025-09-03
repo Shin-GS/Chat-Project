@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <link href="/css/globals.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="/script/htmx.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -25,26 +26,26 @@
         });
     </script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
 <header th:fragment="header">
-    <nav class="bg-white border-b px-6 py-4 flex justify-between items-center">
-        <div class="text-2xl font-bold text-blue-500">
-            <a th:href="@{/}">Spring Conversation</a>
+    <nav class="bg-white border-b px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+        <div class="text-xl sm:text-2xl font-bold text-blue-500">
+            <a th:href="@{/}" class="hover:text-blue-600 transition-colors">Spring Conversation</a>
         </div>
 
         <div hidden="hidden" hx-get="/hx/menus" hx-trigger="load" hx-target="#nav-menu" hx-swap="outerHTML"></div>
-        <ul id="nav-menu" class="flex space-x-4 text-lg"></ul>
+        <ul id="nav-menu" class="hidden sm:flex space-x-4 text-base sm:text-lg text-gray-700"></ul>
     </nav>
 
     <div id="modal-container"></div>
-    <div id="toast-container"></div>
+    <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
 </header>
 
-<main class="container mx-auto p-6">
-    <div th:replace="~{::content}"></div>
+<main class="flex-grow container mx-auto px-4 sm:px-6 py-6">
+    <div th:replace="~{::content}" class="bg-white rounded-lg shadow p-4 sm:p-6"></div>
 </main>
 
-<footer th:fragment="footer" class="bg-gray-800 text-white text-center p-6">
+<footer th:fragment="footer" class="bg-gray-800 text-white text-center p-4 sm:p-6 text-sm sm:text-base">
     <p>© 2025 Spring Conversation. All rights reserved.</p>
 </footer>
 

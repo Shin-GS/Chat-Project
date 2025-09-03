@@ -4,20 +4,24 @@
 <div th:fragment="conversation-group-list"
      id="search-group-list"
      hx-swap-oob="true">
-    <ul class="divide-y divide-gray-200">
+    <ul class="divide-y divide-gray-200 text-sm sm:text-base">
         <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.conversation.response.ConversationInfoResponse>"*/-->
-        <li th:if="${#lists.isEmpty(conversations)}" class="py-3 text-gray-500">
+        <li th:if="${#lists.isEmpty(conversations)}"
+            class="py-4 text-center text-gray-500">
             No results found.
         </li>
 
         <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
-        <li th:each="conversation : ${conversations}" class="py-3 flex items-center justify-between">
-            <div class="flex flex-col">
-                <span class="font-semibold" th:text="${conversation.title}">Group title</span>
-                <span th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
+        <li th:each="conversation : ${conversations}"
+            class="py-3 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+            <div class="min-w-0 flex-1">
+                <span class="block font-semibold text-gray-900 truncate"
+                      th:text="${conversation.title}">Group title</span>
+                <span class="block text-xs text-gray-500 mt-0.5"
+                      th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
             </div>
-            <div class="flex items-center">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded"
+            <div class="shrink-0">
+                <button class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow transition-colors"
                         type="button"
                         th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${conversation.id.value()})}"
                         hx-swap="none"
