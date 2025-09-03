@@ -4,12 +4,12 @@
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
 <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
 <div th:fragment="conversation-panel"
-     class="flex-1 p-4 sm:p-6"
+     class="flex-1 p-4 sm:p-6 h-full flex flex-col min-h-0"
      id="conversation-panel"
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
-    <div class="space-y-4">
-        <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3">
+    <div class="flex flex-col gap-4 h-full min-h-0">
+        <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3 shrink-0">
             <h2 id="conversation-title"
                 class="text-lg sm:text-xl font-semibold text-gray-900 truncate"
                 th:text="${conversation.title}">Conversation</h2>
@@ -24,7 +24,7 @@
         </div>
 
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
-        <section id="conversation-participant-list" class="mt-2"></section>
+        <section id="conversation-participant-list" class="mt-2 shrink-0"></section>
         <div hidden="hidden"
              id="refresh-conversation-participant-list"
              hx-trigger="load, refresh from:body"
@@ -39,9 +39,9 @@
              hx-swap="afterbegin"></div>
 
         <div id="conversation-message-list"
-             class="h-96 sm:h-[28rem] overflow-y-auto border border-gray-200 rounded-lg bg-white p-3"></div>
+             class="flex-1 min-h-0 overflow-y-auto border border-gray-200 rounded-lg bg-white p-3"></div>
 
-        <div class="conversation flex items-center gap-2 sm:gap-3 pt-2">
+        <div class="conversation flex items-center gap-2 sm:gap-3 pt-2 shrink-0">
             <label for="conversation-input" class="sr-only">Message input</label>
             <input type="text"
                    id="conversation-input"

@@ -4,7 +4,7 @@
 <ul th:fragment="conversation-list"
     id="conversation-list"
     hx-swap-oob="true"
-    class="divide-y divide-gray-200 text-sm sm:text-base">
+    class="divide-y divide-gray-200 text-sm sm:text-base max-h-64 lg:max-h-[60vh] overflow-y-auto pr-1">
     <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.conversation.response.ConversationInfoResponse>"*/-->
     <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
     <li th:if="${#lists.isEmpty(conversations)}"
