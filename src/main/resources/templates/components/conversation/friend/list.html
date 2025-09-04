@@ -22,6 +22,7 @@
 
         <form hx-delete="/hx/conversations/friends"
               hx-swap="none"
+              hx-confirm="Are you sure you want to delete this friend?"
               class="shrink-0">
             <input type="hidden" name="friendUserId" th:value="${friend.id}"/>
             <button type="submit"

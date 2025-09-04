@@ -84,6 +84,7 @@
         <!-- far-right: Leave button -->
         <button type="button"
                 th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
+                hx-confirm="Are you sure you want to leave this conversation?"
                 hx-swap="none"
                 class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
             Leave
