@@ -221,7 +221,22 @@
             </div>
 
             <!-- Conversation Panel -->
-            <div id="conversation-panel" class="flex-1 h-full min-h-0 overflow-hidden"></div>
+            <div id="conversation-panel"
+                 class="flex-1 h-full min-h-0 overflow-hidden flex items-center justify-center">
+                <!-- Empty state -->
+                <div class="text-center max-w-md px-6">
+                    <div class="mx-auto mb-6 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-500" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M21 12a9 9 0 1 1-9-9"></path>
+                            <path d="M8 12h8M8 9h5M8 15h6"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Welcome</h2>
+                    <p class="mt-2 text-sm text-gray-500">Select a conversation from the list to start chatting</p>
+                    <p class="mt-1 text-xs text-gray-400">Your messages will appear here</p>
+                </div>
+            </div>
         </div>
     </section>
 </main>
