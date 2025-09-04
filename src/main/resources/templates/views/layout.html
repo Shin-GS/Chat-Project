@@ -50,7 +50,7 @@
                         }
 
                         window.location.assign(urlString); // Perform the redirect
-                        
+
                     } catch (e) {
                         console.error('Invalid HX-REDIRECT value:', redirectHeader, e);
                     }
@@ -61,21 +61,15 @@
 </head>
 <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
 <header th:fragment="header">
-    <nav class="bg-white border-b px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-        <div hidden="hidden" hx-get="/hx/menus" hx-trigger="load" hx-target="#nav-menu" hx-swap="outerHTML"></div>
-        <ul id="nav-menu" class="hidden sm:flex space-x-4 text-base sm:text-lg text-gray-700"></ul>
-    </nav>
-
     <div id="modal-container"></div>
-    <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
+    <div id="toast-container"></div>
 </header>
 
 <main class="flex-grow container mx-auto px-4 sm:px-6 py-6">
     <div th:replace="~{::content}" class="bg-white rounded-lg shadow p-4 sm:p-6"></div>
 </main>
 
-<footer th:fragment="footer" class="bg-gray-800 text-white text-center p-4 sm:p-6 text-sm sm:text-base">
-    <p>© 2025 Spring Conversation. All rights reserved.</p>
+<footer th:fragment="footer">
 </footer>
 
 </body>

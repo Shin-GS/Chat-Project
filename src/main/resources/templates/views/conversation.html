@@ -125,10 +125,15 @@
       class="flex-grow flex flex-col items-center py-6 sm:py-8">
     <section class="z-10 border rounded-xl bg-white shadow-sm max-w-5xl w-full h-[80vh] text-sm overflow-hidden">
         <div class="flex flex-col lg:flex-row w-full h-full min-h-0">
-            <!-- Sidebar -->
             <div class="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r bg-gray-50/60 h-full">
-                <div class="p-4 flex flex-col gap-6 h-full overflow-y-auto">
-                    <!-- ===== Actions: Segmented icon bar (dense, with mini labels) ===== -->
+                <div class="p-4 flex flex-col gap-2 h-full overflow-y-auto">
+                    <div id="user-menu"></div>
+                    <div hidden="hidden"
+                         id="refresh-user-menu"
+                         hx-trigger="load, refresh from:body"
+                         hx-get="/hx/conversations/menu"
+                         hx-swap="none"></div>
+
                     <aside class="sidebar sticky top-0 z-10 bg-gray-50/60 pb-2">
                         <nav class="flex items-stretch rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm px-1 py-1 divide-x divide-gray-200">
                             <!-- Search Friends -->
@@ -200,7 +205,6 @@
                             </button>
                         </nav>
                     </aside>
-                    <!-- ===== /Actions ===== -->
 
                     <section>
                         <h2 class="text-sm font-semibold mb-2 text-gray-700 uppercase tracking-wide">My Friends</h2>

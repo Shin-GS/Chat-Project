@@ -45,7 +45,9 @@ public class Constants {
             </html>
             """;
     public static final String UNAUTHORIZED_RESPONSE_HX = """
-            <div id="toast-container" hx-swap-oob="true">
+            <div id="toast-container"
+                class="fixed top-4 right-4 space-y-2 z-50"
+                hx-swap-oob="true">
                 <div class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-white bg-red-500">
                     <p>%s</p>
                 </div>

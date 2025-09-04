@@ -25,6 +25,16 @@ public class ConversationHxController {
     private final ConversationService conversationService;
     private final ConversationGroupService conversationGroupService;
 
+    @Operation(summary = "메뉴")
+    @GetMapping("/menu")
+    public List<ModelAndView> menu(@JwtMember JwtMemberInfo memberInfo) {
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/menu.html",
+                        "components/conversation/menu :: user-menu",
+                        Map.of("user", UserInfoResponse.of(memberInfo)))
+                .build();
+    }
+
     @Operation(summary = "내 대화방 목록 조회")
     @GetMapping
     public List<ModelAndView> myConversations(@JwtMember JwtMemberInfo memberInfo) {
