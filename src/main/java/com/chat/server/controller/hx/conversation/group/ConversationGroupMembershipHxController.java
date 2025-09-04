@@ -54,6 +54,10 @@ public class ConversationGroupMembershipHxController {
                         "components/conversation/panel :: conversation-panel",
                         Map.of("user", UserInfoResponse.of(memberInfo),
                                 "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id())))
+                .addFragment("templates/components/common/modalClose.html",
+                        "components/common/modalClose :: close",
+                        "targetId",
+                        "modal-container")
                 .build();
     }
 }
