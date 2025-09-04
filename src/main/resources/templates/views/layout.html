@@ -22,6 +22,39 @@
                 if (reloadHeader === "true") {
                     window.location.reload();
                 }
+
+                const redirectHeader = event.detail?.xhr?.getResponseHeader('HX-REDIRECT');
+                if (redirectHeader) {
+                    const target = redirectHeader.trim();
+                    try {
+                        let urlString;
+
+                        // Absolute external URL
+                        if (/^https?:\/\//i.test(target)) {
+                            urlString = target;
+                        }
+
+                        // Protocol-relative URL -> prefix current protocol
+                        else if (/^\/\//.test(target)) {
+                            urlString = window.location.protocol + target;
+                        }
+
+                        // Root-relative path on current origin
+                        else if (target.startsWith('/')) {
+                            urlString = window.location.origin + target;
+                        }
+
+                        // Relative path -> resolve against current URL
+                        else {
+                            urlString = new URL(target, window.location.href).toString();
+                        }
+
+                        window.location.assign(urlString); // Perform the redirect
+                        
+                    } catch (e) {
+                        console.error('Invalid HX-REDIRECT value:', redirectHeader, e);
+                    }
+                }
             });
         });
     </script>
@@ -29,10 +62,6 @@
 <body class="bg-gray-100 font-sans min-h-screen flex flex-col">
 <header th:fragment="header">
     <nav class="bg-white border-b px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-        <div class="text-xl sm:text-2xl font-bold text-blue-500">
-            <a th:href="@{/}" class="hover:text-blue-600 transition-colors">Spring Conversation</a>
-        </div>
-
         <div hidden="hidden" hx-get="/hx/menus" hx-trigger="load" hx-target="#nav-menu" hx-swap="outerHTML"></div>
         <ul id="nav-menu" class="hidden sm:flex space-x-4 text-base sm:text-lg text-gray-700"></ul>
     </nav>

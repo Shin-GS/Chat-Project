@@ -5,13 +5,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class ViewController {
-    @GetMapping("/")
-    public String home() {
-        return "views/home";
-    }
-
-    @GetMapping("/conversation")
+    @GetMapping
     public String conversation() {
         return "views/conversation";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "views/login";
+    }
+
+    @GetMapping("/signup")
+    public String signup() {
+        return "views/signup";
     }
 }

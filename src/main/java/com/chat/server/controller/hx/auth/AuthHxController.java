@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,32 +26,16 @@ import java.util.Map;
 public class AuthHxController {
     private final AuthService authService;
 
-    @Operation(summary = "회원가입 모달")
-    @GetMapping("/signup/modal")
-    public List<ModelAndView> signupModal() {
-        return new ModelAndViewBuilder()
-                .addFragment("templates/components/auth/signup.html",
-                        "components/auth/signup :: signup")
-                .build();
-    }
-
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
-    public List<ModelAndView> login(@ModelAttribute @Valid SignupRequest request) {
-        authService.createUser(request);
+    public List<ModelAndView> login(@ModelAttribute @Valid SignupRequest request,
+                                    HttpServletResponse response) {
+        authService.createUser(request, response);
+        response.setHeader(Constants.HX_REDIRECT, "/");
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
                         Map.of("type", "success", "message", "signup success"))
-                .build();
-    }
-
-    @Operation(summary = "로그인 모달")
-    @GetMapping("/login/modal")
-    public List<ModelAndView> loginModal() {
-        return new ModelAndViewBuilder()
-                .addFragment("templates/components/auth/login.html",
-                        "components/auth/login :: login")
                 .build();
     }
 
@@ -61,7 +44,7 @@ public class AuthHxController {
     public List<ModelAndView> login(@ModelAttribute @Valid LoginRequest request,
                                     HttpServletResponse response) {
         authService.login(request, response);
-        response.setHeader(Constants.HX_RELOAD, "true");
+        response.setHeader(Constants.HX_REDIRECT, "/");
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",

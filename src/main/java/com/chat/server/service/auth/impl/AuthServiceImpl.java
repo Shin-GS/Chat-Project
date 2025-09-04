@@ -30,17 +30,19 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProperties jwtProperties;
 
     @Transactional
-    public void createUser(SignupRequest request) {
+    public void createUser(SignupRequest request,
+                           HttpServletResponse response) {
         if (userRepository.existsByAccountId(request.accountId())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         try {
-            userRepository.save(User.ofUser(
+            User savedUser = userRepository.save(User.ofUser(
                     request.accountId(),
                     encryptUtil.encode(request.password()),
                     request.username())
             );
+            login(response, savedUser);
 
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_SAVE_FAILED);
@@ -54,6 +56,14 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         if (!isValidCredentials(user, request.password())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        login(response, user);
+    }
+
+    private void login(HttpServletResponse response, User user) {
+        if(response == null || user == null) {
+            return;
         }
 
         String token = jwtProvider.createToken(user.getId(), user.getAccountId(), user.getUsername(), user.getRole());

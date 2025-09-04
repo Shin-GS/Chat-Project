@@ -26,6 +26,7 @@ public class ResponseUtil {
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().write(Constants.UNAUTHORIZED_RESPONSE_HX.formatted(exception.getMessage()));
+            response.setHeader(Constants.HX_REDIRECT, "/login");
             return;
         }
 

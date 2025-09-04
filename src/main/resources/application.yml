@@ -27,12 +27,10 @@ token:
 security:
   restricted-paths:
     static-path:
-      - /conversation
+      - /
     api-path:
-      - /api/auth/me/**
-      - /api/conversation/**
-      - /api/user/**
     hx-api-path:
+      - /hx/conversations/**
 
 springdoc:
   api-docs:

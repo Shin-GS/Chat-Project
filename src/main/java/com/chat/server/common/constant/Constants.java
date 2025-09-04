@@ -26,6 +26,7 @@ public class Constants {
 
     // Hx
     public static final String HX_RELOAD = "HX-RELOAD";
+    public static final String HX_REDIRECT = "HX-REDIRECT";
 
     // Authorization
     public static final String COOKIE_AUTHORIZATION = "Authorization";
@@ -36,8 +37,8 @@ public class Constants {
             <html>
               <head>
                 <script>
-                  alert('로그인이 필요합니다.');
-                  window.location.href = '/';
+                  alert('Login required.');
+                  window.location.href = '/login';
                 </script>
               </head>
               <body></body>
