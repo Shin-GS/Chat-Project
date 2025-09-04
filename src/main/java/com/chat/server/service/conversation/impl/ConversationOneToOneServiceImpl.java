@@ -63,7 +63,6 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
                         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(existingConversation, user, recentlyMessageId));
                         conversationHistoryService.join(user, existingConversation, ConversationUserRole.SUPER_ADMIN, requestUser);
                     });
-            existingConversation.updateActivity();
             return existingConversation.getConversationId();
         }
 
