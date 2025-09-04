@@ -38,6 +38,7 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Scroll
             let previousScrollHeight = null;
 
             // Safety: disconnect on page unload
@@ -80,6 +81,19 @@
                 // (Re-)observe scroll loader if needed
                 if ((event.target.id === "conversation-scroll-loader" || event.target.id === "conversation-message-list") && container) {
                     observeScrollLoader(container);
+                }
+
+                // Message Send
+                const input = document.getElementById("conversation-input");
+                const sendBtn = document.getElementById("conversation-send-button");
+
+                if (input && sendBtn) {
+                    input.addEventListener("keydown", (event) => {
+                        if (event.key === "Enter" && !event.shiftKey) {
+                            event.preventDefault();
+                            sendBtn.click();
+                        }
+                    });
                 }
             });
 
