@@ -125,30 +125,82 @@
       class="flex-grow flex flex-col items-center py-6 sm:py-8">
     <section class="z-10 border rounded-xl bg-white shadow-sm max-w-5xl w-full h-[80vh] text-sm overflow-hidden">
         <div class="flex flex-col lg:flex-row w-full h-full min-h-0">
+            <!-- Sidebar -->
             <div class="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r bg-gray-50/60 h-full">
                 <div class="p-4 flex flex-col gap-6 h-full overflow-y-auto">
-                    <aside class="sidebar flex flex-col gap-2">
-                        <button type="button"
-                                hx-get="/hx/conversations/friends/search/modal"
-                                hx-swap="none"
-                                class="inline-flex items-center gap-2 text-base sm:text-lg text-gray-700 hover:text-blue-600 transition-colors">
-                            <span aria-hidden="true">🔎👤</span> <span>Search Friends</span>
-                        </button>
+                    <!-- ===== Actions: Segmented icon bar (dense, with mini labels) ===== -->
+                    <aside class="sidebar sticky top-0 z-10 bg-gray-50/60 pb-2">
+                        <nav class="flex items-stretch rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm px-1 py-1 divide-x divide-gray-200">
+                            <!-- Search Friends -->
+                            <button type="button"
+                                    hx-get="/hx/conversations/friends/search/modal"
+                                    hx-swap="none"
+                                    aria-label="Search Friends"
+                                    class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
+                                <!-- magnifying-glass -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="w-5 h-5"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+                                    <circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path>
+                                </svg>
+                              </span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">Friends</span>
+                                <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
+                            </button>
 
-                        <button type="button"
-                                hx-get="/hx/conversations/groups/search/modal"
-                                hx-swap="none"
-                                class="inline-flex items-center gap-2 text-base sm:text-lg text-gray-700 hover:text-blue-600 transition-colors">
-                            <span aria-hidden="true">🔎👥</span> <span>Search Groups</span>
-                        </button>
+                            <!-- Search Groups -->
+                            <button type="button"
+                                    hx-get="/hx/conversations/groups/search/modal"
+                                    hx-swap="none"
+                                    aria-label="Search Groups"
+                                    class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
+                                    <!-- users -->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-5 h-5"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.8">
+                                        <path d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3Z"></path>
+                                        <path d="M7 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Z"></path>
+                                        <path d="M7 15a5 5 0 0 0-5 5"></path>
+                                        <path d="M16 14a5 5 0 0 1 5 5"></path>
+                                    </svg>
+                                </span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">Groups</span>
+                                <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
+                            </button>
 
-                        <button type="button"
-                                hx-get="/hx/conversations/groups/modal"
-                                hx-swap="none"
-                                class="inline-flex items-center gap-2 text-base sm:text-lg text-gray-700 hover:text-blue-600 transition-colors">
-                            <span aria-hidden="true">➕👥</span> <span>Create Group</span>
-                        </button>
+                            <!-- Create Group -->
+                            <button type="button"
+                                    hx-get="/hx/conversations/groups/modal"
+                                    hx-swap="none"
+                                    aria-label="Create Group"
+                                    class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
+                                    <!-- user-plus -->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-5 h-5"
+                                         viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor"
+                                         stroke-width="1.8">
+                                        <path d="M15 8a4 4 0 1 1-4-4 4 4 0 0 1 4 4Z"></path>
+                                        <path d="M3 20a7 7 0 0 1 14 0"></path>
+                                        <path d="M19 8v6"></path>
+                                        <path d="M22 11h-6"></path>
+                                    </svg>
+                                </span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">New Group</span>
+                                <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
+                            </button>
+                        </nav>
                     </aside>
+                    <!-- ===== /Actions ===== -->
 
                     <section>
                         <h2 class="text-sm font-semibold mb-2 text-gray-700 uppercase tracking-wide">My Friends</h2>
@@ -168,6 +220,7 @@
                 </div>
             </div>
 
+            <!-- Conversation Panel -->
             <div id="conversation-panel" class="flex-1 h-full min-h-0 overflow-hidden"></div>
         </div>
     </section>
