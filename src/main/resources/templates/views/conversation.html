@@ -158,8 +158,12 @@
 
                     <section>
                         <h2 class="text-sm font-semibold mb-2 text-gray-700 uppercase tracking-wide">Conversations</h2>
-                        <div hidden="hidden" hx-get="/hx/conversations" hx-trigger="load" hx-swap="none"></div>
                         <ul id="conversation-list" class="space-y-2 text-sm text-gray-800"></ul>
+                        <div hidden="hidden"
+                             id="refresh-conversation-list"
+                             hx-trigger="load, refresh from:body"
+                             hx-get="/hx/conversations"
+                             hx-swap="none"></div>
                     </section>
                 </div>
             </div>

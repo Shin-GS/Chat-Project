@@ -13,9 +13,11 @@ import com.chat.server.domain.repository.conversation.participant.ConversationPa
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
+import com.chat.server.event.ConversationMessageEvent;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +33,13 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationMessageRepository conversationMessageRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional
-    public ConversationMessage saveMessage(UserId userId,
-                                           ConversationId conversationId,
-                                           String message) {
+    public Long saveMessage(UserId userId,
+                            ConversationId conversationId,
+                            String message) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -45,13 +48,21 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
+        ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
+        conversation.updateActivity();
+
+        applicationEventPublisher.publishEvent(ConversationMessageEvent.of(
+                savedMessage.getConversationId(),
+                userId,
+                savedMessage.getId())
+        );
+        return savedMessage.getId();
     }
 
     @Override
-    public ConversationMessage saveSystemMessage(UserId userId,
-                                                 ConversationId conversationId,
-                                                 String message) {
+    public Long saveSystemMessage(UserId userId,
+                                  ConversationId conversationId,
+                                  String message) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -60,7 +71,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message));
+        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message)).getId();
     }
 
     @Override

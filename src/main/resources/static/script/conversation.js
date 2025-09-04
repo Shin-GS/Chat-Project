@@ -111,6 +111,8 @@ function subscribeConversation(conversationId) {
 
             container.insertAdjacentHTML('beforeend', frame.body);
             container.scrollTop = container.scrollHeight;
+
+            refreshUI(frame);
         });
         console.log("Subscribed:", messageDest);
 
@@ -129,20 +131,25 @@ function subscribeConversation(conversationId) {
             container.insertAdjacentHTML('beforeend', frame.body);
             container.scrollTop = container.scrollHeight;
 
-            // refresh ui
-            const refreshIdsHeader = frame.headers['user-ui-refresh-ids'] || '';
-            const refreshIds = Array.from(new Set(
-                refreshIdsHeader.split(',').map(s => s.trim()).filter(Boolean)
-            ));
-
-            refreshIds.forEach(id => {
-                const refreshElement = document.getElementById(id);
-                if (refreshElement) {
-                    htmx.trigger(refreshElement, 'refresh');
-                }
-            });
+            refreshUI(frame);
         });
         console.log("Subscribed:", systemMessageDest);
+    });
+}
+
+// Refresh Ui
+function refreshUI(frame) {
+    const refreshIdsHeader = frame.headers['user-ui-refresh-ids'] || '';
+    const refreshIds = Array.from(new Set(
+        refreshIdsHeader.split(',').map(s => s.trim()).filter(Boolean)
+    ));
+
+    refreshIds.forEach(id => {
+        const refreshElement = document.getElementById(id);
+
+        if (refreshElement) {
+            htmx.trigger(refreshElement, 'refresh');
+        }
     });
 }
 

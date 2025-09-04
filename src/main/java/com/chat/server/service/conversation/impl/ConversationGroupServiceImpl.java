@@ -5,7 +5,6 @@ import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.dto.ConversationDto;
 import com.chat.server.domain.entity.converstaion.Conversation;
-import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
@@ -123,14 +122,14 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
 
         // notice
-        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+        Long conversationMessageId = conversationMessageService.saveSystemMessage(
                 user.getUserId(),
                 conversation.getConversationId(),
                 "%s has joined".formatted(user.getUsername()));
         applicationEventPublisher.publishEvent(
                 SystemMessageEvent.of(
                         conversation.getConversationId(),
-                        conversationMessage.getId(),
+                        conversationMessageId,
                         SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
                         null
                 )
@@ -167,14 +166,14 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationParticipantRepository.delete(participant);
         conversationHistoryService.leave(user, conversation, beforeRole);
 
-        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+        Long conversationMessageId = conversationMessageService.saveSystemMessage(
                 user.getUserId(),
                 conversation.getConversationId(),
                 "%s has leaved".formatted(user.getUsername()));
         applicationEventPublisher.publishEvent(
                 SystemMessageEvent.of(
                         conversation.getConversationId(),
-                        conversationMessage.getId(),
+                        conversationMessageId,
                         SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
                         null
                 )
@@ -260,14 +259,14 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         targetParticipant.changeRole(role);
         conversationHistoryService.changeRole(targetUser, conversation, beforeRole, role, requestUser);
 
-        ConversationMessage conversationMessage = conversationMessageService.saveSystemMessage(
+        Long conversationMessageId = conversationMessageService.saveSystemMessage(
                 requestUser.getUserId(),
                 conversation.getConversationId(),
                 "%s role changed to %s".formatted(targetUser.getUsername(), role));
         applicationEventPublisher.publishEvent(
                 SystemMessageEvent.of(
                         conversation.getConversationId(),
-                        conversationMessage.getId(),
+                        conversationMessageId,
                         SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
                         List.of("refresh-conversation-participant-list")
                 )
