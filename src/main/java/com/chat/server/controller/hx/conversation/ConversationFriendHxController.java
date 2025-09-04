@@ -52,8 +52,8 @@ public class ConversationFriendHxController {
     }
 
     @Operation(summary = "친구 추가")
-    @PostMapping
-    public List<ModelAndView> addFriends(@RequestParam("friendUserId") UserId friendUserId,
+    @PostMapping("/{friendUserId}")
+    public List<ModelAndView> addFriends(@PathVariable("friendUserId") UserId friendUserId,
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.addFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
@@ -71,8 +71,8 @@ public class ConversationFriendHxController {
     }
 
     @Operation(summary = "친구 삭제")
-    @DeleteMapping
-    public List<ModelAndView> removeFriends(@RequestParam("friendUserId") UserId friendUserId,
+    @DeleteMapping("/{friendUserId}")
+    public List<ModelAndView> removeFriends(@PathVariable("friendUserId") UserId friendUserId,
                                             @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.removeFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()

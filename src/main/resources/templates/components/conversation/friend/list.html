@@ -12,24 +12,21 @@
     </li>
 
     <li th:each="friend : ${friends}"
-        class="py-2 px-2 sm:px-3 flex items-center justify-between gap-3">
-        <button type="button"
-                th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
-                hx-swap="none"
-                class="flex-1 text-left font-medium text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
-            <span th:text="${friend.name}">Chat With Friend</span>
-        </button>
+        class="py-2 px-2 sm:px-3 flex items-center justify-between gap-3"
+        th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
+        hx-swap="none">
+        <div class="flex-1 text-left font-medium text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+             th:text="${friend.name}">
+            Chat With Friend
+        </div>
 
-        <form hx-delete="/hx/conversations/friends"
-              hx-swap="none"
-              hx-confirm="Are you sure you want to delete this friend?"
-              class="shrink-0">
-            <input type="hidden" name="friendUserId" th:value="${friend.id}"/>
-            <button type="submit"
-                    class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
-                Delete
-            </button>
-        </form>
+        <button type="submit"
+                class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                th:attr="hx-delete='/hx/conversations/friends/' + ${friend.id}"
+                hx-swap="none"
+                hx-confirm="Are you sure you want to delete this friend?">
+            Delete
+        </button>
     </li>
 </ul>
 </body>
