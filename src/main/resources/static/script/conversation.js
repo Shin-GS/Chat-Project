@@ -1,17 +1,22 @@
 let stompClient = null;
 let currentConversationId = null;
-let currentSubscription = null; // Track active subscription
-let reconnectTimer = null;      // Optional: backoff timer
+let currentSubscriptions = new Map(); // Track multiple subs by key
+let reconnectTimer = null;            // Optional: backoff timer
 
-// Unsubscribe previous topic (keep connection for reuse)
+// Unsubscribe ALL active subs for the current room
 function unsubscribeCurrent() {
     try {
-        if (currentSubscription) {
-            currentSubscription.unsubscribe(); // Stop receiving from previous room
-            currentSubscription = null;
+        for (const [, sub] of currentSubscriptions) {
+            try {
+                sub?.unsubscribe?.(); // Stop receiving from previous room
+            } catch (e) {
+                console.warn(e);
+            }
         }
     } catch (e) {
         console.warn(e);
+    } finally {
+        currentSubscriptions.clear();
     }
 }
 
@@ -22,11 +27,9 @@ function disconnectAll() {
         if (stompClient && stompClient.connected) {
             stompClient.disconnect(() => console.log("STOMP disconnected"));
         }
-
     } catch (e) {
         console.warn(e);
     }
-
     stompClient = null;
     currentConversationId = null;
     if (reconnectTimer) {
@@ -42,9 +45,22 @@ function ensureConnected(cb) {
         return;
     }
 
-    const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
+    // If a client exists but is not connected yet, wait briefly until it connects
+    if (stompClient && !stompClient.connected) {
+        const wait = setInterval(() => {
+            if (stompClient && stompClient.connected) {
+                clearInterval(wait);
+                cb();
+            }
+        }, 50);
+        // Safety: stop waiting after a short time
+        setTimeout(() => clearInterval(wait), 3000);
+        return;
+    }
+
+    const socket = new SockJS("/ws-stomp", null, { transports: ["websocket"], withCredentials: true });
     stompClient = Stomp.over(socket);
-    stompClient.debug = null;          // Silence logs
+    stompClient.debug = null;               // Silence logs
     stompClient.heartbeat.outgoing = 10000; // Send heartbeat every 10s
     stompClient.heartbeat.incoming = 10000; // Expect heartbeat every 10s
 
@@ -79,10 +95,15 @@ function ensureConnected(cb) {
     );
 }
 
-// Subscribe to a conversation (no buttons, purely automatic)
+// Subscribe to a conversation (idempotent per room)
 function subscribeConversation(conversationId) {
-    // Skip if already subscribed to the same room
-    if (stompClient && stompClient.connected && currentConversationId === conversationId && currentSubscription) {
+    // Skip if already subscribed to the same room (has any active subs)
+    if (
+        stompClient &&
+        stompClient.connected &&
+        currentConversationId === conversationId &&
+        currentSubscriptions.size > 0
+    ) {
         return;
     }
 
@@ -97,12 +118,9 @@ function subscribeConversation(conversationId) {
         // Guard: if user switched room before connection finished, bail out
         if (currentConversationId !== desiredConversationId) return;
 
-        const messageDest = `/user/sub/conversations/${desiredConversationId}`;
-        currentSubscription = stompClient.subscribe(messageDest, (frame) => {
+        const mountHandler = (frame) => {
             // Guard: drop late frames from a stale subscription
-            if (currentConversationId !== desiredConversationId) {
-                return;
-            }
+            if (currentConversationId !== desiredConversationId) return;
 
             const container = document.getElementById('conversation-message-list');
             if (!container) { // Panel may have been swapped out
@@ -113,26 +131,18 @@ function subscribeConversation(conversationId) {
             container.scrollTop = container.scrollHeight;
 
             refreshUI(frame);
-        });
+        };
+
+        // Subscribe: user messages
+        const messageDest = `/user/sub/conversations/${desiredConversationId}`;
+        const msgSub = stompClient.subscribe(messageDest, mountHandler);
+        currentSubscriptions.set('messages', msgSub);
         console.log("Subscribed:", messageDest);
 
+        // Subscribe: system messages
         const systemMessageDest = `/user/sub/conversations/${desiredConversationId}/system`;
-        currentSubscription = stompClient.subscribe(systemMessageDest, (frame) => {
-            // Guard: drop late frames from a stale subscription
-            if (currentConversationId !== desiredConversationId) {
-                return;
-            }
-
-            const container = document.getElementById('conversation-message-list');
-            if (!container) { // Panel may have been swapped out
-                return;
-            }
-
-            container.insertAdjacentHTML('beforeend', frame.body);
-            container.scrollTop = container.scrollHeight;
-
-            refreshUI(frame);
-        });
+        const sysSub = stompClient.subscribe(systemMessageDest, mountHandler);
+        currentSubscriptions.set('system', sysSub);
         console.log("Subscribed:", systemMessageDest);
     });
 }
@@ -146,7 +156,6 @@ function refreshUI(frame) {
 
     refreshIds.forEach(id => {
         const refreshElement = document.getElementById(id);
-
         if (refreshElement) {
             htmx.trigger(refreshElement, 'refresh');
         }
