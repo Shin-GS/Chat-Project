@@ -140,7 +140,7 @@
     <section class="z-10 border rounded-xl bg-white shadow-sm max-w-5xl w-full h-[80vh] text-sm overflow-hidden">
         <div class="flex flex-col lg:flex-row w-full h-full min-h-0">
             <div class="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r bg-gray-50/60 h-full">
-                <div class="p-4 flex flex-col gap-2 h-full overflow-y-auto">
+                <div class="p-4 flex flex-col h-full overflow-y-auto">
                     <div id="user-menu"></div>
                     <div hidden="hidden"
                          id="refresh-user-menu"
@@ -220,20 +220,68 @@
                         </nav>
                     </aside>
 
-                    <section>
-                        <h2 class="text-sm font-semibold mb-2 text-gray-700 uppercase tracking-wide">My Friends</h2>
-                        <div hidden="hidden" hx-get="/hx/conversations/friends" hx-trigger="load" hx-swap="none"></div>
-                        <ul id="friend-list" class="space-y-2 text-sm text-gray-800"></ul>
-                    </section>
+                    <!-- Sidebar secondary block: header (buttons) + scrollable content -->
+                    <section aria-label="Sidebar secondary menu"
+                             class="mt-2 flex-1 min-h-0 flex flex-col">
+                        <div class="flex-1 min-h-0 rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden flex flex-col">
+                            <div class="flex items-center justify-center gap-1 px-1 py-1 border-b border-gray-200">
+                                <!-- Friends button -->
+                                <button type="button"
+                                        class="flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                                        title="Friends"
+                                        hx-get="/hx/conversations/friends"
+                                        hx-swap="none"
+                                        hx-indicator="#sidebar-secondary-loading">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-4 h-4 text-gray-700 group-hover:text-blue-600"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3Z"></path>
+                                        <path d="M7 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Z"></path>
+                                        <path d="M7 15a5 5 0 0 0-5 5"></path>
+                                        <path d="M16 14a5 5 0 0 1 5 5"></path>
+                                    </svg>
+                                    <span class="text-xs">Friends</span>
+                                </button>
 
-                    <section>
-                        <h2 class="text-sm font-semibold mb-2 text-gray-700 uppercase tracking-wide">Conversations</h2>
-                        <ul id="conversation-list" class="space-y-2 text-sm text-gray-800"></ul>
-                        <div hidden="hidden"
-                             id="refresh-conversation-list"
-                             hx-trigger="load, refresh from:body"
-                             hx-get="/hx/conversations"
-                             hx-swap="none"></div>
+                                <!-- Conversations button -->
+                                <button type="button"
+                                        class="flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg
+                 text-gray-700 hover:bg-gray-50 transition"
+                                        title="Conversations"
+                                        hx-get="/hx/conversations"
+                                        hx-swap="none"
+                                        hx-indicator="#sidebar-secondary-loading">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="w-4 h-4 text-gray-700 group-hover:text-blue-600"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"></path>
+                                    </svg>
+                                    <span class="text-xs">Conversations</span>
+                                </button>
+
+                                <!-- loading spinner -->
+                                <div id="sidebar-secondary-loading"
+                                     class="ml-auto mr-1 h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent hidden"
+                                     aria-hidden="true"></div>
+                            </div>
+
+                            <!-- scrollable content wrapper -->
+                            <div id="sidebar-secondary-content-wrap"
+                                 class="flex-1 min-h-0 overflow-y-auto">
+                                <div hidden="hidden"
+                                     id="refresh-friend-list"
+                                     hx-trigger="load"
+                                     hx-get="/hx/conversations/friends"
+                                     hx-swap="none"></div>
+
+                                <div id="sidebar-secondary-content" class="p-2 h-full">
+                                    <!-- placeholder -->
+                                    <div class="flex items-center justify-center h-full text-xs text-gray-400">
+                                        No content loaded
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </section>
                 </div>
             </div>

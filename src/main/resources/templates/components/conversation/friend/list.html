@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <body>
-<ul th:fragment="friend-list"
-    id="friend-list"
-    hx-swap-oob="true"
-    class="divide-y divide-gray-200 text-sm sm:text-base">
-    <!--/*@thymesVar id="friends" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
-    <li th:if="${#lists.isEmpty(friends)}"
-        class="py-3 text-center text-gray-500">
-        not exists
-    </li>
+<div th:fragment="friend-list"
+     hx-swap-oob="true"
+     id="sidebar-secondary-content">
+    <div hidden="hidden"
+         id="refresh-friend-list"
+         hx-trigger="refresh from:body"
+         hx-get="/hx/conversations/friends"
+         hx-swap="none"></div>
 
-    <li th:each="friend : ${friends}"
-        class="py-2 px-2 sm:px-3 flex items-center justify-between gap-3"
-        th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
-        hx-swap="none">
-        <div class="flex-1 text-left font-medium text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-             th:text="${friend.name}">
-            Chat With Friend
-        </div>
+    <ul class="divide-y divide-gray-200 text-sm sm:text-base">
+        <!--/*@thymesVar id="friends" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
+        <li th:if="${#lists.isEmpty(friends)}"
+            class="py-3 text-center text-gray-500">
+            not exists
+        </li>
 
-        <button type="submit"
-                class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
-                th:attr="hx-delete='/hx/conversations/friends/' + ${friend.id}"
-                hx-swap="none"
-                hx-confirm="Are you sure you want to delete this friend?">
-            Delete
-        </button>
-    </li>
-</ul>
+        <li th:each="friend : ${friends}"
+            class="py-2 px-2 sm:px-3 flex items-center justify-between gap-3"
+            th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
+            hx-swap="none">
+            <div class="flex-1 text-left font-medium text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                 th:text="${friend.name}">
+                Chat With Friend
+            </div>
+
+            <button type="submit"
+                    class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                    th:attr="hx-delete='/hx/conversations/friends/' + ${friend.id}"
+                    hx-swap="none"
+                    hx-confirm="Are you sure you want to delete this friend?">
+                Delete
+            </button>
+        </li>
+    </ul>
+</div>
 </body>
 </html>
