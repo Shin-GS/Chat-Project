@@ -5,7 +5,7 @@
 <section th:fragment="participant"
          id="conversation-participant-list"
          hx-swap-oob="true"
-         class="mt-4">
+         class="mt-2">
     <th:block th:if="${type != null && type == T(com.chat.server.common.constant.conversation.ConversationType).GROUP}">
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
         <div class="flex items-center justify-between mb-2">
