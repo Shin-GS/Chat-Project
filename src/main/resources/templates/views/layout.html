@@ -10,12 +10,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.body.addEventListener('htmx:afterRequest', (event) => {
-                const toast = document.querySelector('#toast-success') || document.querySelector('#toast-error');
-                if (toast) {
+                const container = document.querySelector('#toast-container');
+                if (container) {
                     setTimeout(() => {
-                        toast.classList.add('opacity-0');
-                        setTimeout(() => toast.remove(), 300);
-                    }, 3000);
+                        [...container.children].forEach(child => child.classList.add('opacity-0'));
+                        setTimeout(() => {
+                            while (container.firstChild) {
+                                container.removeChild(container.firstChild);
+                            }
+                        }, 300);
+                    }, 2500);
                 }
 
                 const reloadHeader = event.detail?.xhr?.getResponseHeader("HX-RELOAD");
