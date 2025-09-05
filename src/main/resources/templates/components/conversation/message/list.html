@@ -1,10 +1,69 @@
 <!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.conversation.response.ConversationMessageResponse>"*/-->
-<p th:each="message : ${messages}"
-   th:classappend="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM} ? 'text-center text-gray-500 text-sm italic' : (message.mine ? 'text-right' : 'text-left')"
-   class="mb-2">
-    <th:block th:if="${message.type != T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}">
-        <strong th:text="${message.from}"
-                class="font-semibold text-gray-800">Sender</strong>:
-    </th:block>
-    <span th:text="${message.message}" class="inline-block break-words"></span>
-</p>
+
+<ul class="space-y-2">
+    <!-- loop messages -->
+    <li th:each="message, iter : ${messages}">
+        <!-- System message (centered, subtle) -->
+        <p th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
+           class="text-center text-gray-500 text-xs italic my-2 px-3">
+            <span th:text="${message.message}">System message</span>
+        </p>
+
+        <!-- User messages -->
+        <div th:if="${message.type != T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
+             class="flex items-end gap-2"
+             th:classappend="${message.mine} ? ' justify-end' : ''">
+
+            <!-- Left avatar for others -->
+            <div th:if="${!message.mine}" class="shrink-0">
+                <!-- simple initial avatar -->
+                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 text-xs font-medium flex items-center justify-center select-none">
+                    <span th:text="${#strings.substring(message.from,0,1)}">A</span>
+                </div>
+            </div>
+
+            <!-- Bubble + time wrapper -->
+            <div class="flex items-end gap-1 max-w-[75%]"
+                 th:classappend="${message.mine} ? ' flex-row-reverse text-right' : ' text-left'">
+
+                <!-- Message bubble -->
+                <div th:classappend="${message.mine} ? ' bg-blue-500 text-white' : ' bg-gray-100 text-gray-900'"
+                     class="relative rounded-2xl px-3 py-2 leading-relaxed break-words">
+                    <!-- sender name (others only) -->
+                    <div th:if="${!message.mine}" class="text-[11px] text-gray-500 mb-0.5" th:text="${message.from}">
+                        Sender
+                    </div>
+                    <div th:text="${message.message}">Message text...</div>
+                </div>
+
+                <!-- Sent time -->
+                <span class="text-[10px] sm:text-[11px] text-gray-400 whitespace-nowrap select-none"
+                      th:with="
+                     now=${#temporals.createNow()},
+                     target=${message.createdAt},
+                     isToday=${#temporals.day(now) == #temporals.day(target) and #temporals.month(now) == #temporals.month(target) and #temporals.year(now) == #temporals.year(target)},
+                     yesterday=${now.minusDays(1)},
+                     isYesterday=${#temporals.day(yesterday) == #temporals.day(target) and #temporals.month(yesterday) == #temporals.month(target) and #temporals.year(yesterday) == #temporals.year(target)},
+                     sameYear=${#temporals.year(now) == #temporals.year(target)}
+                  ">
+                    <!-- today: HH:mm -->
+                    <span th:if="${isToday}"
+                          th:text="${#temporals.format(target, 'HH:mm')}">14:35</span>
+
+                    <!-- yesterday: 'Yesterday HH:mm' -->
+                    <span th:if="${!isToday and isYesterday}"
+                          th:text="${'Yesterday ' + #temporals.format(target, 'HH:mm')}">Yesterday 14:35</span>
+
+
+                    <!-- same year (not today/yesterday): M/d HH:mm -->
+                    <span th:if="${!isToday and !isYesterday and sameYear}"
+                          th:text="${#temporals.format(target, 'M/d HH:mm')}">8/25 14:35</span>
+
+                    <!-- different year: yyyy/M/d HH:mm -->
+                    <span th:if="${!isToday and !isYesterday and !sameYear}"
+                          th:text="${#temporals.format(target, 'yyyy/M/d HH:mm')}">2024/8/25 14:35</span>
+                </span>
+            </div>
+        </div>
+    </li>
+</ul>
