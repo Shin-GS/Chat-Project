@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ConversationMessageRepository extends JpaRepository<ConversationMessage, Long> {
@@ -35,4 +36,13 @@ public interface ConversationMessageRepository extends JpaRepository<Conversatio
             where conversationMessage.conversationId.value = :#{#conversationId.value}
             """)
     Long findMaxMessageIdByConversation(@Param("conversationId") ConversationId conversationId);
+
+    @Query("""
+            select conversationMessage
+            from ConversationMessage conversationMessage
+            where conversationMessage.conversationId.value = :#{#conversationId.value}
+            order by conversationMessage.id desc
+            limit 1
+            """)
+    Optional<ConversationMessage> findMaxMessageByConversation(@Param("conversationId") ConversationId conversationId);
 }

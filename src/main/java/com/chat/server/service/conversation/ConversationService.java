@@ -2,13 +2,14 @@ package com.chat.server.service.conversation;
 
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
+import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.conversation.response.ConversationParticipantInfoResponse;
 
 import java.util.List;
 
 public interface ConversationService {
-    List<ConversationInfoResponse> findConversations(UserId userId);
+    List<ConversationInfoAndMessageResponse> findConversations(UserId userId);
 
     ConversationInfoResponse getAccessibleConversation(ConversationId conversationId,
                                                        UserId userId);

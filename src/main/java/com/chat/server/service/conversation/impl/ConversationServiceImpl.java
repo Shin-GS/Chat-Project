@@ -7,12 +7,14 @@ import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
+import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.conversation.response.ConversationParticipantInfoResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,21 +31,34 @@ public class ConversationServiceImpl implements ConversationService {
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationOneToOneService conversationOneToOneService;
     private final ConversationGroupService conversationGroupService;
+    private final ConversationMessageRepository conversationMessageRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConversationInfoResponse> findConversations(UserId userId) {
+    public List<ConversationInfoAndMessageResponse> findConversations(UserId userId) {
         if (userId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
                 .map(conversation -> {
+                    String lastMessage = conversationMessageRepository.findMaxMessageByConversation(conversation.getConversationId())
+                            .map(message -> switch (message.getType()) {
+                                case TEXT, SYSTEM -> message.getMessage();
+                                case IMAGE -> "Sent a photo";
+                                case FILE -> "Sent a file";
+                            })
+                            .orElse("");
+
                     if (conversation.getType() == ConversationType.ONE_TO_ONE) {
-                        return ConversationInfoResponse.of(conversation, conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId));
+                        return ConversationInfoAndMessageResponse.of(conversation,
+                                conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId),
+                                lastMessage);
                     }
 
-                    return ConversationInfoResponse.of(conversation, conversationGroupService.getGroupTitle(conversation.getConversationId()));
+                    return ConversationInfoAndMessageResponse.of(conversation,
+                            conversationGroupService.getGroupTitle(conversation.getConversationId()),
+                            lastMessage);
                 })
                 .toList();
     }
