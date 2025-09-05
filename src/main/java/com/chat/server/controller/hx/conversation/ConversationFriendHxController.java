@@ -59,7 +59,7 @@ public class ConversationFriendHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "request success"))
+                        Map.of("type", "success", "message", "New friend added successfully"))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
@@ -74,7 +74,7 @@ public class ConversationFriendHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "request success"))
+                        Map.of("type", "success", "message", "Friend deleted successfully"))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))

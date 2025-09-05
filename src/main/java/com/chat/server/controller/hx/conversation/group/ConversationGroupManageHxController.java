@@ -61,7 +61,7 @@ public class ConversationGroupManageHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "request success"))
+                        Map.of("type", "success", "message", "Chat room created successfully"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

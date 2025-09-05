@@ -46,7 +46,7 @@ public class ConversationGroupMembershipHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "You joined the chat"))
+                        Map.of("type", "success", "message", "Entered chat room successfully"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

@@ -82,7 +82,7 @@ public class ConversationHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "You left the chat"))
+                        Map.of("type", "success", "message", "Left chat room successfully"))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

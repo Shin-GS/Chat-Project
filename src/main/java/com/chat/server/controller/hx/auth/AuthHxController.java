@@ -35,7 +35,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "signup success"))
+                        Map.of("type", "success", "message", "Account created successfully"))
                 .build();
     }
 
@@ -48,7 +48,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "login success"))
+                        Map.of("type", "success", "message", "Logged in successfully"))
                 .build();
     }
 
@@ -60,7 +60,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "logout success"))
+                        Map.of("type", "success", "message", "Logged out successfully"))
                 .build();
     }
 }

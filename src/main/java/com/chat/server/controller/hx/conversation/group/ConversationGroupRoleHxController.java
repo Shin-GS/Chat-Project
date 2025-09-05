@@ -47,7 +47,7 @@ public class ConversationGroupRoleHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Role Change success"))
+                        Map.of("type", "success", "message", "Group chat room user rules updated successfully"))
                 .build();
     }
 }
