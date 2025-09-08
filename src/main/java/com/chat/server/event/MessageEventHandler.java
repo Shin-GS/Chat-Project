@@ -96,4 +96,28 @@ public class MessageEventHandler {
         context.setVariable("messages", List.of(conversationMessageResponse));
         return templateEngine.process("components/conversation/message/list", context);
     }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleRefreshConversationUiEvent(RefreshConversationUiEvent event) {
+        if (event == null || event.conversationId() == null) {
+            log.error("invalid event: RefreshConversationUiEvent: event is empty");
+            return;
+        }
+
+        List<String> refreshIds = List.of("refresh-conversation-list");
+        Map<String, Object> headers = Map.of(
+                "content-type", "text/html; charset=UTF-8",
+                Constants.USER_UI_REFRESH_IDS,
+                String.join(",", refreshIds)
+        );
+
+        conversationService.findParticipantUserIds(event.conversationId())
+                .forEach(participantUserId ->
+                        messagingTemplate.convertAndSendToUser(
+                                String.valueOf(participantUserId),
+                                Constants.SOCKET_DESTINATION_CONVERSATION_USER_QUEUE_UI,
+                                "",
+                                headers)
+                );
+    }
 }

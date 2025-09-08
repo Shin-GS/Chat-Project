@@ -28,10 +28,10 @@ public class WebSocketControllerV1 {
                                 Principal principal) {
         UserId userId = UserId.of(Long.parseLong(principal.getName()));
         ConversationId conversationId = message.conversationId();
+        log.info("Message saved -> From: {}, to: {}, msg: {}", userId, conversationId, message.message());
 
         reJoinOneToOneConversation(conversationId, userId);
-        Long conversationMessageId = conversationMessageService.saveMessage(userId, message.conversationId(), message.message());
-        log.info("Message saved -> From: {}, to: {}, msg: {}", userId, conversationId, conversationMessageId);
+        conversationMessageService.handleMessage(userId, message.conversationId(), message.message());
     }
 
     private void reJoinOneToOneConversation(ConversationId conversationId,

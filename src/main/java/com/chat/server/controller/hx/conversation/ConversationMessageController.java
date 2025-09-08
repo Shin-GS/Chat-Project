@@ -52,8 +52,7 @@ public class ConversationMessageController {
     @PostMapping("/{conversationId}/read")
     public List<ModelAndView> read(@PathVariable("conversationId") ConversationId conversationId,
                                    @JwtMember JwtMemberInfo memberInfo) {
-        conversationMessageService.read(memberInfo.id(), conversationId);
-
+        conversationMessageService.readMessage(memberInfo.id(), conversationId);
         ConversationInfoAndMessageResponse conversation = conversationService.findConversation(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/conversation/read.html",

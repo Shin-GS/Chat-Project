@@ -1,14 +1,19 @@
 let stompClient = null;
 let currentConversationId = null;
-let currentSubscriptions = new Map(); // Track multiple subs by key
-let reconnectTimer = null;            // Optional: backoff timer
 
-// Unsubscribe ALL active subs for the current room
-function unsubscribeCurrent() {
+// Separate maps: keep global vs. per-conversation subs apart
+const globalSubscriptions = new Map();      // e.g. key: 'ui'
+const conversationSubscriptions = new Map(); // keys: 'messages', 'system'
+
+let reconnectTimer = null; // backoff timer
+
+// --- Helpers ---------------------------------------------------------------
+// Unsubscribe ONLY per-conversation subscriptions (keep global alive)
+function unsubscribeConversationSubs() {
     try {
-        for (const [, sub] of currentSubscriptions) {
+        for (const [, sub] of conversationSubscriptions) {
             try {
-                sub?.unsubscribe?.(); // Stop receiving from previous room
+                sub?.unsubscribe?.();
             } catch (e) {
                 console.warn(e);
             }
@@ -16,13 +21,31 @@ function unsubscribeCurrent() {
     } catch (e) {
         console.warn(e);
     } finally {
-        currentSubscriptions.clear();
+        conversationSubscriptions.clear();
     }
 }
 
-// Fully disconnect (use when panel disappears or leaving the page)
+// Unsubscribe ALL (global + conversation) and disconnect socket
 function disconnectAll() {
-    unsubscribeCurrent();
+    // 1) per-conversation
+    unsubscribeConversationSubs();
+
+    // 2) global
+    try {
+        for (const [, sub] of globalSubscriptions) {
+            try {
+                sub?.unsubscribe?.();
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+    } catch (e) {
+        console.warn(e);
+    } finally {
+        globalSubscriptions.clear();
+    }
+
+    // 3) socket
     try {
         if (stompClient && stompClient.connected) {
             stompClient.disconnect(() => console.log("STOMP disconnected"));
@@ -32,6 +55,7 @@ function disconnectAll() {
     }
     stompClient = null;
     currentConversationId = null;
+
     if (reconnectTimer) {
         clearTimeout(reconnectTimer);
         reconnectTimer = null;
@@ -41,6 +65,8 @@ function disconnectAll() {
 // Ensure STOMP connection (create if missing), then run callback
 function ensureConnected(cb) {
     if (stompClient && stompClient.connected) {
+        // Make sure global subscription exists even if connection was created elsewhere
+        ensureGlobalSubscribed();
         cb();
         return;
     }
@@ -50,6 +76,7 @@ function ensureConnected(cb) {
         const wait = setInterval(() => {
             if (stompClient && stompClient.connected) {
                 clearInterval(wait);
+                ensureGlobalSubscribed();
                 cb();
             }
         }, 50);
@@ -58,102 +85,129 @@ function ensureConnected(cb) {
         return;
     }
 
-    const socket = new SockJS("/ws-stomp", null, { transports: ["websocket"], withCredentials: true });
+    const socket = new SockJS("/ws-stomp", null, {transports: ["websocket"], withCredentials: true});
     stompClient = Stomp.over(socket);
     stompClient.debug = null;               // Silence logs
     stompClient.heartbeat.outgoing = 10000; // Send heartbeat every 10s
     stompClient.heartbeat.incoming = 10000; // Expect heartbeat every 10s
 
-    // Optional: basic backoff reconnect on close
+    // Basic backoff reconnect on close
     socket.onclose = () => {
         console.warn("SockJS closed");
-        if (reconnectTimer) return;
-        reconnectTimer = setTimeout(() => {
-            reconnectTimer = null;
-            if (currentConversationId) {
-                // Try to re-subscribe to current conversation
-                subscribeConversation(currentConversationId);
-            }
-        }, 2000); // basic backoff; tune as needed
+        scheduleReconnect();
     };
 
     stompClient.connect(
         {},
-        () => cb(),
+        () => {
+            // On connect: restore global and current conversation subs
+            ensureGlobalSubscribed();
+            if (currentConversationId) {
+                // Re-subscribe current conversation if any
+                actuallySubscribeConversation(currentConversationId);
+            }
+            cb();
+        },
         (err) => {
             console.error("STOMP error:", err);
-            // Optional: schedule reconnect attempt
-            if (!reconnectTimer) {
-                reconnectTimer = setTimeout(() => {
-                    reconnectTimer = null;
-                    if (currentConversationId) {
-                        subscribeConversation(currentConversationId);
-                    }
-                }, 2000);
-            }
+            scheduleReconnect();
         }
     );
 }
 
-// Subscribe to a conversation (idempotent per room)
+function scheduleReconnect() {
+    if (reconnectTimer) return;
+    reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        if (stompClient && stompClient.connected) return; // already back
+        // Attempt to reconnect; restoring subs happens in onConnect
+        ensureConnected(() => {
+        });
+    }, 2000);
+}
+
+// --- Global (always-on) subscription --------------------------------------
+// Subscribe to user-scoped UI channel once and keep it alive
+function ensureGlobalSubscribed() {
+    if (!stompClient || !stompClient.connected) return;
+    if (globalSubscriptions.has('ui')) return; // already subscribed
+
+    const uiDest = "/user/queue/ui";
+    const uiHandler = (frame) => {
+        // Headers carry refresh ids; dispatch namespaced events to body
+        refreshUI(frame);
+    };
+    const sub = stompClient.subscribe(uiDest, uiHandler);
+    globalSubscriptions.set('ui', sub);
+    console.log("Subscribed (global):", uiDest);
+}
+
+// --- Conversation subscription (created on panel mount) --------------------
 function subscribeConversation(conversationId) {
-    // Skip if already subscribed to the same room (has any active subs)
+    // If already on this room and have subs, do nothing
     if (
         stompClient &&
         stompClient.connected &&
         currentConversationId === conversationId &&
-        currentSubscriptions.size > 0
+        conversationSubscriptions.size > 0
     ) {
         return;
     }
 
-    // Unsubscribe previous room first
-    unsubscribeCurrent();
+    // Unsubscribe previous conversation subs (keep global!)
+    unsubscribeConversationSubs();
 
     // Capture the intended conversation for this subscription (guard against races)
-    const desiredConversationId = conversationId;
     currentConversationId = conversationId;
 
     ensureConnected(() => {
-        // Guard: if user switched room before connection finished, bail out
-        if (currentConversationId !== desiredConversationId) return;
-
-        const mountHandler = (frame) => {
-            // Guard: drop late frames from a stale subscription
-            if (currentConversationId !== desiredConversationId) return;
-
-            const container = document.getElementById('conversation-message-list');
-            if (!container) { // Panel may have been swapped out
-                return;
-            }
-
-            container.insertAdjacentHTML('beforeend', frame.body);
-            container.scrollTop = container.scrollHeight;
-
-            refreshUI(frame);
-        };
-
-        // Subscribe: user messages
-        const messageDest = `/user/sub/conversations/${desiredConversationId}`;
-        const msgSub = stompClient.subscribe(messageDest, mountHandler);
-        currentSubscriptions.set('messages', msgSub);
-        console.log("Subscribed:", messageDest);
-
-        // Subscribe: system messages
-        const systemMessageDest = `/user/sub/conversations/${desiredConversationId}/system`;
-        const sysSub = stompClient.subscribe(systemMessageDest, mountHandler);
-        currentSubscriptions.set('system', sysSub);
-        console.log("Subscribed:", systemMessageDest);
+        actuallySubscribeConversation(conversationId);
     });
 }
 
-// Refresh Ui
+function actuallySubscribeConversation(conversationId) {
+    // Guard: connection can drop before here; ensure connected and correct room
+    if (!stompClient || !stompClient.connected) return;
+    if (currentConversationId !== conversationId) return;
+
+    const desiredConversationId = conversationId;
+
+    const mountHandler = (frame) => {
+        // Guard: drop late frames from a stale subscription
+        if (currentConversationId !== desiredConversationId) return;
+
+        const container = document.getElementById('conversation-message-list');
+        if (!container) { // Panel may have been swapped out
+            return;
+        }
+
+        container.insertAdjacentHTML('beforeend', frame.body);
+        container.scrollTop = container.scrollHeight;
+
+        refreshUI(frame);
+    };
+
+    // Subscribe: user messages
+    const messageDest = `/user/sub/conversations/${desiredConversationId}`;
+    const msgSub = stompClient.subscribe(messageDest, mountHandler);
+    conversationSubscriptions.set('messages', msgSub);
+    console.log("Subscribed (conv):", messageDest);
+
+    // Subscribe: system messages
+    const systemMessageDest = `/user/sub/conversations/${desiredConversationId}/system`;
+    const sysSub = stompClient.subscribe(systemMessageDest, mountHandler);
+    conversationSubscriptions.set('system', sysSub);
+    console.log("Subscribed (conv):", systemMessageDest);
+}
+
+// --- UI refresh dispatcher -------------------------------------------------
 function refreshUI(frame) {
     const refreshIdsHeader = frame.headers['user-ui-refresh-ids'] || '';
     const refreshIds = Array.from(new Set(
         refreshIdsHeader.split(',').map(s => s.trim()).filter(Boolean)
     ));
 
+    // Fire namespaced events on <body>; HTMX listeners use "refresh:{id} from:body"
     refreshIds.forEach(id => {
         const refreshElement = document.getElementById(id);
         if (refreshElement) {
@@ -162,7 +216,7 @@ function refreshUI(frame) {
     });
 }
 
-// Send message (existing implementation; unchanged)
+// --- Send message (unchanged) ---------------------------------------------
 function sendMessage() {
     const input = document.getElementById('conversation-input');
     const text = input?.value?.trim();

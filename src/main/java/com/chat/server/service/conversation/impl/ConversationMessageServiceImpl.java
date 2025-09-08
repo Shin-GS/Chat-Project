@@ -14,6 +14,8 @@ import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.event.ConversationMessageEvent;
+import com.chat.server.event.RefreshConversationUiEvent;
+import com.chat.server.event.SystemMessageEvent;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.chat.server.common.constant.Constants.SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class ConversationMessageServiceImpl implements ConversationMessageService {
@@ -37,9 +41,9 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
 
     @Override
     @Transactional
-    public Long saveMessage(UserId userId,
-                            ConversationId conversationId,
-                            String message) {
+    public void handleMessage(UserId userId,
+                              ConversationId conversationId,
+                              String message) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -51,20 +55,22 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
         conversation.updateActivity();
 
-        read(sender.getUserId(), conversation.getConversationId());
+        readMessage(sender.getUserId(), conversation.getConversationId());
+
         applicationEventPublisher.publishEvent(ConversationMessageEvent.of(
                 savedMessage.getConversationId(),
                 userId,
                 savedMessage.getId())
         );
-        return savedMessage.getId();
+        applicationEventPublisher.publishEvent(RefreshConversationUiEvent.of(savedMessage.getConversationId()));
     }
 
     @Override
     @Transactional
-    public Long saveSystemMessage(UserId userId,
-                                  ConversationId conversationId,
-                                  String message) {
+    public void handleSystemMessage(UserId userId,
+                                    ConversationId conversationId,
+                                    String message,
+                                    List<String> refreshIds) {
         if (userId == null || conversationId == null || message == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
@@ -73,7 +79,18 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        return conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message)).getId();
+        ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message));
+        readMessage(sender.getUserId(), conversation.getConversationId());
+
+        applicationEventPublisher.publishEvent(
+                SystemMessageEvent.of(
+                        conversation.getConversationId(),
+                        savedMessage.getId(),
+                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
+                        refreshIds
+                )
+        );
+        applicationEventPublisher.publishEvent(RefreshConversationUiEvent.of(savedMessage.getConversationId()));
     }
 
     @Override
@@ -104,10 +121,9 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         return conversationMessageRepository.findMaxMessageIdByConversation(conversationId);
     }
 
-    @Override
     @Transactional
-    public void read(UserId userId,
-                     ConversationId conversationId) {
+    public void readMessage(UserId userId,
+                            ConversationId conversationId) {
         if (userId == null || conversationId == null) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }

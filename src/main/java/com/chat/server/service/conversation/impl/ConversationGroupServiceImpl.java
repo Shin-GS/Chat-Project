@@ -12,7 +12,6 @@ import com.chat.server.domain.repository.conversation.participant.ConversationPa
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
-import com.chat.server.event.SystemMessageEvent;
 import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
@@ -20,7 +19,6 @@ import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.chat.server.common.constant.Constants.SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE;
 import static com.chat.server.common.constant.conversation.ConversationType.GROUP;
 import static com.chat.server.common.constant.conversation.ConversationUserRole.SUPER_ADMIN;
 
@@ -43,7 +40,6 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationHistoryService conversationHistoryService;
     private final ConversationMessageService conversationMessageService;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional
@@ -122,18 +118,11 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationHistoryService.join(user, conversation, ConversationUserRole.MEMBER);
 
         // notice
-        Long conversationMessageId = conversationMessageService.saveSystemMessage(
+        conversationMessageService.handleSystemMessage(
                 user.getUserId(),
                 conversation.getConversationId(),
-                "%s has joined".formatted(user.getUsername()));
-        applicationEventPublisher.publishEvent(
-                SystemMessageEvent.of(
-                        conversation.getConversationId(),
-                        conversationMessageId,
-                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
-                        null
-                )
-        );
+                "%s has joined".formatted(user.getUsername()),
+                null);
         return conversation.getConversationId();
     }
 
@@ -166,18 +155,11 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         conversationParticipantRepository.delete(participant);
         conversationHistoryService.leave(user, conversation, beforeRole);
 
-        Long conversationMessageId = conversationMessageService.saveSystemMessage(
+        conversationMessageService.handleSystemMessage(
                 user.getUserId(),
                 conversation.getConversationId(),
-                "%s has leaved".formatted(user.getUsername()));
-        applicationEventPublisher.publishEvent(
-                SystemMessageEvent.of(
-                        conversation.getConversationId(),
-                        conversationMessageId,
-                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
-                        null
-                )
-        );
+                "%s has leaved".formatted(user.getUsername()),
+                null);
     }
 
     @Override
@@ -259,18 +241,11 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         targetParticipant.changeRole(role);
         conversationHistoryService.changeRole(targetUser, conversation, beforeRole, role, requestUser);
 
-        Long conversationMessageId = conversationMessageService.saveSystemMessage(
+        conversationMessageService.handleSystemMessage(
                 requestUser.getUserId(),
                 conversation.getConversationId(),
-                "%s role changed to %s".formatted(targetUser.getUsername(), role));
-        applicationEventPublisher.publishEvent(
-                SystemMessageEvent.of(
-                        conversation.getConversationId(),
-                        conversationMessageId,
-                        SOCKET_DESTINATION_CONVERSATION_SYSTEM_MESSAGE.formatted(conversation.getConversationId()),
-                        List.of("refresh-conversation-participant-list")
-                )
-        );
+                "%s role changed to %s".formatted(targetUser.getUsername(), role),
+                List.of("refresh-conversation-participant-list"));
     }
 
     @Override

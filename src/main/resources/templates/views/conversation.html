@@ -38,6 +38,9 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Establish connection immediately
+            ensureConnected(() => {});
+
             // Scroll
             let previousScrollHeight = null;
 
