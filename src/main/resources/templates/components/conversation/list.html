@@ -61,11 +61,14 @@
 
                 <!-- First row: title + time + (read checks) -->
                 <div class="flex items-center gap-2">
-                    <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}"
-                          class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base"
-                          th:classappend="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read} ? ' font-extrabold' : ''">
-                        Untitled conversation
-                    </span>
+                    <!-- Replace inline title with fragment (id becomes: sidebar-content-{conversationId}-title) -->
+                    <div class="flex-1 min-w-0"
+                         th:replace="~{components/conversation/read :: title(${conversation})}">
+                        <!-- fallback -->
+                        <span class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base">
+                            Untitled conversation
+                        </span>
+                    </div>
 
                     <div class="flex items-center gap-1">
                         <div class="text-[11px] sm:text-xs text-gray-400 whitespace-nowrap tabular-nums shrink-0">
@@ -86,15 +89,10 @@
                             </span>
                         </div>
 
-                        <!-- Read double-check icon (shown only when there is a last message and it is read) -->
-                        <svg th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and conversation.read}"
-                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2"
-                             class="w-4 h-4 text-blue-500" aria-label="Read">
-                            <!-- simple double check -->
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l4 4 6-6"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l4 4 8-8"/>
-                        </svg>
+                        <!-- Replace inline read-check icon with fragment (id: sidebar-content-{conversationId}-read) -->
+                        <div th:replace="~{components/conversation/read :: read-check(${conversation})}">
+                            <!-- fallback empty -->
+                        </div>
                     </div>
                 </div>
 
@@ -106,12 +104,9 @@
                         Last message preview goes here...
                     </span>
 
-                    <!-- Unread badge (dot). Shown only when there is a last message and it is unread -->
-                    <span th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read}"
-                          class="shrink-0 relative inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-blue-500"
-                          aria-label="Unread">
-                        <!-- screen-reader text -->
-                        <span class="sr-only">Unread</span>
+                    <!-- Replace inline unread dot with fragment (id: sidebar-content-{conversationId}-unread) -->
+                    <span th:replace="~{components/conversation/read :: unread-dot(${conversation})}">
+                        <!-- fallback empty -->
                     </span>
 
                     <button type="button"

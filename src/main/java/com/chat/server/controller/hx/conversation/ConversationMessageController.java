@@ -4,6 +4,7 @@ import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -52,10 +53,18 @@ public class ConversationMessageController {
     public List<ModelAndView> read(@PathVariable("conversationId") ConversationId conversationId,
                                    @JwtMember JwtMemberInfo memberInfo) {
         conversationMessageService.read(memberInfo.id(), conversationId);
+
+        ConversationInfoAndMessageResponse conversation = conversationService.findConversation(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/list.html",
-                        "components/conversation/list :: conversation-list",
-                        Map.of("conversations", List.of(conversationService.findConversation(memberInfo.id(), conversationId))))
+                .addFragment("templates/components/conversation/read.html",
+                        "components/conversation/read :: title",
+                        Map.of("conversation", conversation))
+                .addFragment("templates/components/conversation/read.html",
+                        "components/conversation/read :: read-check",
+                        Map.of("conversation", conversation))
+                .addFragment("templates/components/conversation/read.html",
+                        "components/conversation/read :: unread-dot",
+                        Map.of("conversation", conversation))
                 .build();
     }
 }

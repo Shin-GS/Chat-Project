@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse"*/-->
+<!-- Title (bold when unread) -->
+<div th:fragment="title(conversation)"
+     th:id="'sidebar-content-' + ${conversation.id} + '-title'"
+     hx-swap-oob="true">
+    <!-- Render conversation title; bold only when there is a last message and it is unread -->
+    <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}"
+          class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base"
+          th:classappend="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read} ? ' font-extrabold' : ''">
+        Untitled conversation
+    </span>
+</div>
+<!-- Read double-check icon (show only when last message exists and is read) -->
+<div th:fragment="read-check(conversation)"
+     th:id="'sidebar-content-' + ${conversation.id} + '-read'"
+     hx-swap-oob="true"
+     class="flex items-center gap-1">
+    <!-- Show check only when the last message exists and is read -->
+    <svg th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and conversation.read}"
+         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         class="w-4 h-4 text-blue-500" aria-label="Read">
+        <!-- simple double check -->
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l4 4 6-6"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l4 4 8-8"/>
+    </svg>
+</div>
+<!-- Unread dot badge (hidden when read or no last message) -->
+<span th:fragment="unread-dot(conversation)"
+      th:id="'sidebar-content-' + ${conversation.id} + '-unread'"
+      class="shrink-0 relative inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-blue-500"
+      th:classappend="${conversation.lastMessage == null or conversation.lastMessage == '' or conversation.read} ? ' hidden' : ''"
+      hx-swap-oob="true"
+      aria-label="Unread">
+    <!-- screen-reader text -->
+    <span class="sr-only">Unread</span>
+</span>
+</body>
+</html>
