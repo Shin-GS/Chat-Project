@@ -7,6 +7,7 @@ import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionPhase;
@@ -14,6 +15,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,10 +42,12 @@ public class MessageEventHandler {
         }
 
         String senderHtml = renderChatMessageFragment(ConversationMessageResponse.ofSystem(optionalMessage.get()));
+        List<String> refreshIds = ObjectUtils.isEmpty(event.refreshIds()) ? new ArrayList<>() : new ArrayList<>(event.refreshIds());
+        refreshIds.add("conversation-" + event.conversationId() + "-read");
         Map<String, Object> headers = Map.of(
                 "content-type", "text/html; charset=UTF-8",
                 Constants.USER_UI_REFRESH_IDS,
-                event.refreshIds() == null || event.refreshIds().isEmpty() ? "" : String.join(",", event.refreshIds())
+                String.join(",", refreshIds)
         );
         conversationService.findParticipantUserIds(event.conversationId())
                 .forEach(participantUserId ->
@@ -70,10 +74,11 @@ public class MessageEventHandler {
         ConversationMessage conversationMessage = optionalMessage.get();
         String senderHtml = renderChatMessageFragment(ConversationMessageResponse.ofSender(conversationMessage));
         String receiverHtml = renderChatMessageFragment(ConversationMessageResponse.ofReceiver(conversationMessage));
+        List<String> refreshIds = List.of("refresh-conversation-list", "conversation-" + conversationMessage.getConversationId() + "-read");
         Map<String, Object> headers = Map.of(
                 "content-type", "text/html; charset=UTF-8",
                 Constants.USER_UI_REFRESH_IDS,
-                String.join(",", List.of("refresh-conversation-list"))
+                String.join(",", refreshIds)
         );
 
         conversationService.findParticipantUserIds(conversationMessage.getConversationId())

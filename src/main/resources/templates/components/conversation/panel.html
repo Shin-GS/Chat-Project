@@ -9,9 +9,9 @@
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
     <div hidden="hidden"
-         id="read-conversation-message"
-         hx-trigger="load, refresh:read-conversation-message from:body"
-         th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
+         th:id="'conversation-' + ${conversation.id} + '-read'"
+         th:attr="hx-trigger='load, refresh:' + ('conversation-' + ${conversation.id} + '-read') + ' from:body',
+              hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
          hx-swap="none"></div>
 
     <div class="flex flex-col gap-4 h-full min-h-0">

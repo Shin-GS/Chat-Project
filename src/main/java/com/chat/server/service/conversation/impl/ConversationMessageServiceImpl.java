@@ -51,6 +51,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
         conversation.updateActivity();
 
+        read(sender.getUserId(), conversation.getConversationId());
         applicationEventPublisher.publishEvent(ConversationMessageEvent.of(
                 savedMessage.getConversationId(),
                 userId,
