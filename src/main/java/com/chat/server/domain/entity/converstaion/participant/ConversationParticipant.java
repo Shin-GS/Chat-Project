@@ -3,6 +3,7 @@ package com.chat.server.domain.entity.converstaion.participant;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.entity.BaseTimeEntity;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
@@ -88,7 +89,8 @@ public class ConversationParticipant extends BaseTimeEntity {
         this.role = newRole;
     }
 
-    public void updateJoinMessageId(Long messageId) {
-        this.joinMessageId = messageId;
+    public void readMessage(ConversationMessage message) {
+        this.lastReadMessageId = message.getId();
+        this.lastReadAt = LocalDateTime.now();
     }
 }

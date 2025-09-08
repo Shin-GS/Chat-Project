@@ -24,7 +24,7 @@
             th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/panel'"
             hx-swap="none">
 
-            <!-- LEFT: badge (sticks across both rows) -->
+            <!-- LEFT: type badge -->
             <span class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 self-start sm:self-center"
                   th:classappend="${
                     conversation.type.name() == 'ONE_TO_ONE' ? ' bg-blue-50 text-blue-700 border-blue-200' :
@@ -59,35 +59,61 @@
             <!-- RIGHT: 2-row layout -->
             <div class="flex flex-col flex-1 min-w-0">
 
-                <!-- First row: title + time -->
+                <!-- First row: title + time + (read checks) -->
                 <div class="flex items-center gap-2">
                     <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}"
-                          class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base">
+                          class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base"
+                          th:classappend="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read} ? ' font-extrabold' : ''">
                         Untitled conversation
                     </span>
-                    <div class="text-[11px] sm:text-xs text-gray-400 whitespace-nowrap tabular-nums shrink-0">
-                        <span th:with="
-                                now=${#temporals.createNow()},
-                                target=${conversation.lastActivityAt},
-                                isToday=${#temporals.day(now) == #temporals.day(target) and #temporals.month(now) == #temporals.month(target) and #temporals.year(now) == #temporals.year(target)},
-                                yesterday=${now.minusDays(1)},
-                                isYesterday=${#temporals.day(yesterday) == #temporals.day(target) and #temporals.month(yesterday) == #temporals.month(target) and #temporals.year(yesterday) == #temporals.year(target)},
-                                sameYear=${#temporals.year(now) == #temporals.year(target)}
-                             ">
-                            <span th:if="${isToday}" th:text="${#temporals.format(target, 'HH:mm')}">14:35</span>
-                            <span th:if="${!isToday and isYesterday}">Yesterday</span>
-                            <span th:if="${!isToday and !isYesterday and sameYear}" th:text="${#temporals.format(target, 'MMM d')}">Aug 25</span>
-                            <span th:if="${!isToday and !isYesterday and !sameYear}" th:text="${#temporals.format(target, 'yy MMM d')}">25 Aug 25</span>
-                        </span>
+
+                    <div class="flex items-center gap-1">
+                        <div class="text-[11px] sm:text-xs text-gray-400 whitespace-nowrap tabular-nums shrink-0">
+                            <span th:with="
+                                    now=${#temporals.createNow()},
+                                    target=${conversation.lastActivityAt},
+                                    isToday=${#temporals.day(now) == #temporals.day(target) and #temporals.month(now) == #temporals.month(target) and #temporals.year(now) == #temporals.year(target)},
+                                    yesterday=${now.minusDays(1)},
+                                    isYesterday=${#temporals.day(yesterday) == #temporals.day(target) and #temporals.month(yesterday) == #temporals.month(target) and #temporals.year(yesterday) == #temporals.year(target)},
+                                    sameYear=${#temporals.year(now) == #temporals.year(target)}
+                                 ">
+                                <span th:if="${isToday}" th:text="${#temporals.format(target, 'HH:mm')}">14:35</span>
+                                <span th:if="${!isToday and isYesterday}">Yesterday</span>
+                                <span th:if="${!isToday and !isYesterday and sameYear}"
+                                      th:text="${#temporals.format(target, 'MMM d')}">Aug 25</span>
+                                <span th:if="${!isToday and !isYesterday and !sameYear}"
+                                      th:text="${#temporals.format(target, 'yy MMM d')}">25 Aug 25</span>
+                            </span>
+                        </div>
+
+                        <!-- Read double-check icon (shown only when there is a last message and it is read) -->
+                        <svg th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and conversation.read}"
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             class="w-4 h-4 text-blue-500" aria-label="Read">
+                            <!-- simple double check -->
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l4 4 6-6"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l4 4 8-8"/>
+                        </svg>
                     </div>
                 </div>
 
-                <!-- Second row: last message + leave -->
+                <!-- Second row: last message + unread badge + leave -->
                 <div class="flex items-center gap-2 mt-0.5">
                     <span th:text="${conversation.lastMessage}"
-                          class="flex-1 min-w-0 truncate text-gray-600 text-[13px] sm:text-[14px] leading-snug">
+                          class="flex-1 min-w-0 truncate text-gray-600 text-[13px] sm:text-[14px] leading-snug"
+                          th:classappend="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read} ? ' text-gray-900 font-medium' : ''">
                         Last message preview goes here...
                     </span>
+
+                    <!-- Unread badge (dot). Shown only when there is a last message and it is unread -->
+                    <span th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read}"
+                          class="shrink-0 relative inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-blue-500"
+                          aria-label="Unread">
+                        <!-- screen-reader text -->
+                        <span class="sr-only">Unread</span>
+                    </span>
+
                     <button type="button"
                             th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
                             hx-confirm="Are you sure you want to leave this conversation?"

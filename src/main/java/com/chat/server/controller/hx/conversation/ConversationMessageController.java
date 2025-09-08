@@ -3,6 +3,7 @@ package com.chat.server.controller.hx.conversation;
 import com.chat.server.common.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationMessageService;
+import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/hx/conversations")
 public class ConversationMessageController {
     private final ConversationMessageService conversationMessageService;
+    private final ConversationService conversationService;
 
     @Operation(summary = "messageId 이전 이전 메시지 리스트 조회")
     @GetMapping("/{conversationId}/before")
@@ -42,6 +44,18 @@ public class ConversationMessageController {
                                 "firstMessageId", messages.isEmpty() ? 0L : messages.stream().findFirst().map(ConversationMessageResponse::id).orElse(0L),
                                 "messages", messages)
                 )
+                .build();
+    }
+
+    @Operation(summary = "메시지 읽음 처리")
+    @PostMapping("/{conversationId}/read")
+    public List<ModelAndView> read(@PathVariable("conversationId") ConversationId conversationId,
+                                   @JwtMember JwtMemberInfo memberInfo) {
+        conversationMessageService.read(memberInfo.id(), conversationId);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/list.html",
+                        "components/conversation/list :: conversation-list",
+                        Map.of("conversations", List.of(conversationService.findConversation(memberInfo.id(), conversationId))))
                 .build();
     }
 }

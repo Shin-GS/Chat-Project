@@ -60,6 +60,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     }
 
     @Override
+    @Transactional
     public Long saveSystemMessage(UserId userId,
                                   ConversationId conversationId,
                                   String message) {
@@ -97,7 +98,26 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long findRecentlyMessageId(ConversationId conversationId) {
         return conversationMessageRepository.findMaxMessageIdByConversation(conversationId);
+    }
+
+    @Override
+    @Transactional
+    public void read(UserId userId,
+                     ConversationId conversationId) {
+        if (userId == null || conversationId == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        Optional<ConversationParticipant> optionalParticipant = conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId);
+        if (optionalParticipant.isEmpty()) {
+            throw new CustomException(ErrorCode.CONVERSATION_NOT_JOINED);
+        }
+
+        ConversationParticipant participant = optionalParticipant.get();
+        conversationMessageRepository.findMaxMessageByConversation(conversationId)
+                .ifPresent(participant::readMessage);
     }
 }

@@ -5,6 +5,7 @@ import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
@@ -41,26 +42,63 @@ public class ConversationServiceImpl implements ConversationService {
         }
 
         return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
-                .map(conversation -> {
-                    String lastMessage = conversationMessageRepository.findMaxMessageByConversation(conversation.getConversationId())
-                            .map(message -> switch (message.getType()) {
-                                case TEXT, SYSTEM -> message.getMessage();
-                                case IMAGE -> "Sent a photo";
-                                case FILE -> "Sent a file";
-                            })
-                            .orElse("");
-
-                    if (conversation.getType() == ConversationType.ONE_TO_ONE) {
-                        return ConversationInfoAndMessageResponse.of(conversation,
-                                conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId),
-                                lastMessage);
-                    }
-
-                    return ConversationInfoAndMessageResponse.of(conversation,
-                            conversationGroupService.getGroupTitle(conversation.getConversationId()),
-                            lastMessage);
-                })
+                .map(conversation -> convertConversationInfoAndMessageResponse(userId, conversation))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConversationInfoAndMessageResponse findConversation(UserId userId,
+                                                               ConversationId conversationId) {
+        if (userId == null || conversationId == null) {
+            throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        }
+
+        Conversation conversation = conversationRepository.findById(conversationId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
+        return convertConversationInfoAndMessageResponse(userId, conversation);
+    }
+
+    private ConversationInfoAndMessageResponse convertConversationInfoAndMessageResponse(UserId userId,
+                                                                                         Conversation conversation) {
+        ConversationParticipant participant = conversationParticipantRepository.findByConversationIdAndUserId(conversation.getConversationId(), userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_JOINED));
+        ConversationMessage lastConversationMessage = conversationMessageRepository.findMaxMessageByConversation(conversation.getConversationId())
+                .orElse(null);
+        String lastMessage = lastConversationMessage == null ? "" : switch (lastConversationMessage.getType()) {
+            case TEXT, SYSTEM -> lastConversationMessage.getMessage();
+            case IMAGE -> "Sent a photo";
+            case FILE -> "Sent a file";
+        };
+
+        if (conversation.getType() == ConversationType.ONE_TO_ONE) {
+            return ConversationInfoAndMessageResponse.of(conversation,
+                    conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId),
+                    lastMessage,
+                    isReadMessage(participant, lastConversationMessage));
+        }
+
+        return ConversationInfoAndMessageResponse.of(conversation,
+                conversationGroupService.getGroupTitle(conversation.getConversationId()),
+                lastMessage,
+                isReadMessage(participant, lastConversationMessage));
+    }
+
+    private boolean isReadMessage(ConversationParticipant participant,
+                                  ConversationMessage lastConversationMessage) {
+        if (lastConversationMessage == null) {
+            // No messages in this conversation -> nothing to read
+            return true;
+        }
+
+        // Treat messages before join point as irrelevant/read
+        Long joinMessageId = participant.getJoinMessageId();
+        if (joinMessageId != null && lastConversationMessage.getId() < joinMessageId) {
+            return true;
+        }
+
+        long participantReadMessageId = participant.getLastReadMessageId() == null ? 0L : participant.getLastReadMessageId();
+        return participantReadMessageId >= lastConversationMessage.getId();
     }
 
     @Override

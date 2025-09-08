@@ -11,6 +11,8 @@ import java.util.List;
 public interface ConversationService {
     List<ConversationInfoAndMessageResponse> findConversations(UserId userId);
 
+    ConversationInfoAndMessageResponse findConversation(UserId userId, ConversationId conversationId);
+
     ConversationInfoResponse getAccessibleConversation(ConversationId conversationId,
                                                        UserId userId);
 

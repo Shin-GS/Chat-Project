@@ -25,6 +25,12 @@
         </div>
 
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
+        <div hidden="hidden"
+             id="read-conversation-message"
+             hx-trigger="load, refresh from:body"
+             th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
+             hx-swap="none"></div>
+
         <section id="conversation-participant-list" class="mt-2 shrink-0"></section>
         <div hidden="hidden"
              id="refresh-conversation-participant-list"

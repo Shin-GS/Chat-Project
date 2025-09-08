@@ -11,15 +11,18 @@ public record ConversationInfoAndMessageResponse(ConversationId id,
                                                  ConversationType type,
                                                  boolean hasCode,
                                                  LocalDateTime lastActivityAt,
-                                                 String lastMessage) {
+                                                 String lastMessage,
+                                                 boolean read) {
     public static ConversationInfoAndMessageResponse of(Conversation conversation,
                                                         String title,
-                                                        String lastMessage) {
+                                                        String lastMessage,
+                                                        boolean read) {
         return new ConversationInfoAndMessageResponse(conversation.getConversationId(),
                 title,
                 conversation.getType(),
                 conversation.hasCode(),
                 conversation.getLastActivityAt(),
-                lastMessage);
+                lastMessage,
+                read);
     }
 }

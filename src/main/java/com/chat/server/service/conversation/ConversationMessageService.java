@@ -22,4 +22,7 @@ public interface ConversationMessageService {
                                                         Pageable pageable);
 
     Long findRecentlyMessageId(ConversationId conversationId);
+
+    void read(UserId userId,
+              ConversationId conversationId);
 }
