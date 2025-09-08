@@ -157,7 +157,7 @@ function refreshUI(frame) {
     refreshIds.forEach(id => {
         const refreshElement = document.getElementById(id);
         if (refreshElement) {
-            htmx.trigger(refreshElement, 'refresh');
+            htmx.trigger(document.body, 'refresh:' + id);
         }
     });
 }

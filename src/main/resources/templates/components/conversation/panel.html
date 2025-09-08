@@ -8,6 +8,12 @@
      id="conversation-panel"
      hx-swap-oob="true"
      th:attr="data-user-id=${user.id}, data-conversation-id=${conversation.id}">
+    <div hidden="hidden"
+         id="read-conversation-message"
+         hx-trigger="load, refresh:read-conversation-message from:body"
+         th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
+         hx-swap="none"></div>
+
     <div class="flex flex-col gap-4 h-full min-h-0">
         <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3 shrink-0">
             <h2 id="conversation-title"
@@ -25,16 +31,10 @@
         </div>
 
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
-        <div hidden="hidden"
-             id="read-conversation-message"
-             hx-trigger="load, refresh from:body"
-             th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
-             hx-swap="none"></div>
-
         <section id="conversation-participant-list" class="mt-2 shrink-0"></section>
         <div hidden="hidden"
              id="refresh-conversation-participant-list"
-             hx-trigger="load, refresh from:body"
+             hx-trigger="load, refresh:refresh-conversation-participant-list from:body"
              th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/participants'"
              hx-swap="none"></div>
 
