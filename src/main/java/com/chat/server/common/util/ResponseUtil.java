@@ -1,6 +1,7 @@
 package com.chat.server.common.util;
 
-import com.chat.server.common.Response;
+import com.chat.server.common.response.CustomResponseBuilder;
+import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.service.auth.AuthService;
@@ -17,15 +18,17 @@ import java.io.IOException;
 public class ResponseUtil {
     private final ObjectMapper objectMapper;
     private final AuthService authService;
+    private final CustomResponseBuilder responseBuilder;
+    private final CodeMessageGetter messageGetter;
 
     public void unAuthorizationResponse(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Exception exception) throws IOException {
+                                        HttpServletResponse response) throws IOException {
+        String message = messageGetter.getMessage(ErrorCode.UNAUTHORIZED, responseBuilder.currentLocale());
         if (RequestUtil.isHxRequest(request)) {
             authService.logout(response);
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().write(Constants.UNAUTHORIZED_RESPONSE_HX.formatted(exception.getMessage()));
+            response.getWriter().write(Constants.UNAUTHORIZED_RESPONSE_HX.formatted(message));
             response.setHeader(Constants.HX_REDIRECT, "/login");
             return;
         }
@@ -33,13 +36,13 @@ public class ResponseUtil {
         if (RequestUtil.isApiRequest(request.getRequestURI())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json; charset=UTF-8");
-            String jsonResponse = objectMapper.writeValueAsString(Response.of(ErrorCode.UNAUTHORIZED));
+            String jsonResponse = objectMapper.writeValueAsString(responseBuilder.of(ErrorCode.UNAUTHORIZED));
             response.getWriter().write(jsonResponse);
             return;
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("text/html; charset=UTF-8");
-        response.getWriter().write(Constants.UNAUTHORIZED_RESPONSE_HTML);
+        response.getWriter().write(Constants.UNAUTHORIZED_RESPONSE_HTML.formatted(message));
     }
 }

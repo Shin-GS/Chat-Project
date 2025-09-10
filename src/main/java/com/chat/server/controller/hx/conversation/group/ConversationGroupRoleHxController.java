@@ -1,6 +1,6 @@
 package com.chat.server.controller.hx.conversation.group;
 
-import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;

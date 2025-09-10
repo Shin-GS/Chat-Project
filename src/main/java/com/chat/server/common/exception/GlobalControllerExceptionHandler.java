@@ -1,7 +1,9 @@
 package com.chat.server.common.exception;
 
-import com.chat.server.common.Response;
+import com.chat.server.common.response.Response;
+import com.chat.server.common.response.CustomResponseBuilder;
 import com.chat.server.common.code.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -13,14 +15,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 @Order(2)
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalControllerExceptionHandler {
+    private final CustomResponseBuilder responseBuilder;
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response<ErrorCode>> handleException(Exception e) {
+    public ResponseEntity<Response<Void>> handleException(Exception e) {
         log.error("handle error: ", e);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(
-                Response.of(ErrorCode.INTERNAL_SERVER_ERROR),
+                responseBuilder.of(ErrorCode.INTERNAL_SERVER_ERROR),
                 headers,
                 HttpStatus.INTERNAL_SERVER_ERROR
         );

@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (CustomTokenException e) {
-            responseUtil.unAuthorizationResponse(request, response, e);
+            responseUtil.unAuthorizationResponse(request, response);
         }
     }
 }

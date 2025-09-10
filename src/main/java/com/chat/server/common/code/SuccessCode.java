@@ -2,19 +2,19 @@ package com.chat.server.common.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
 public enum SuccessCode implements Code {
-    SUC(200, "Success"),
+    SUC(HttpStatus.OK),
 
-    USER_CREATED(201, "User registration successful"),
-    USER_LOGGED_IN(200, "Login successful"),
-    USER_INFO_RETRIEVED(200, "User information retrieved successfully"),
+    USER_CREATED(HttpStatus.CREATED),
+    USER_LOGGED_IN(HttpStatus.OK),
+    USER_INFO_RETRIEVED(HttpStatus.OK),
 
-    CONVERSATION_MESSAGE_RETRIEVED(200, "Conversation messages retrieved successfully"),
+    CONVERSATION_MESSAGE_RETRIEVED(HttpStatus.OK),
     ;
 
-    private final Integer code;
-    private final String message;
+    private final HttpStatus httpStatus;
 }

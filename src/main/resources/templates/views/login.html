@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
 <head>
     <th:block th:insert="~{views/layout :: head}"/>
     <title>Log In</title>
 </head>
 <body class="flex flex-col min-h-screen bg-white text-gray-900 antialiased">
-<header></header>
+<header th:replace="~{views/layout :: header}"></header>
 
 <main class="flex-grow flex items-center justify-center p-4 sm:py-10">
     <div class="bg-white w-full max-w-md rounded-xl shadow-2xl relative px-6 py-8 sm:px-8 sm:py-10">

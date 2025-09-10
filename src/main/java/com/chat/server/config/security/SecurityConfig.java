@@ -1,6 +1,7 @@
 package com.chat.server.config.security;
 
 import com.chat.server.filter.JwtAuthenticationFilter;
+import com.chat.server.filter.LocaleCookieBindingFilter;
 import com.chat.server.filter.UnauthorizedEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,9 @@ public class SecurityConfig {
     private final UnauthorizedEntryPoint unauthorizedEntryPoint;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           JwtAuthenticationFilter jwtFilter,
+                                           LocaleCookieBindingFilter localeCookieBindingFilter) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -28,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers(toArray(restrictedPaths.getHxApiPath())).authenticated()
                         .anyRequest().permitAll()
                 )
+                .addFilterBefore(localeCookieBindingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

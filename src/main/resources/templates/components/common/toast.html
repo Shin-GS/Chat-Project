@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      lang="ko">
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
 <body>
 <div th:fragment="message"
      id="toast-container"

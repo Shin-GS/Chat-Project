@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:hx-on="http://www.w3.org/1999/xhtml"
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
 <body>
 <div th:fragment="role-modal"
      id="modal-container"

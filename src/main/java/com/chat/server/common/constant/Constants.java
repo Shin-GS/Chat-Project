@@ -2,6 +2,8 @@ package com.chat.server.common.constant;
 
 import lombok.NoArgsConstructor;
 
+import java.util.Locale;
+
 @NoArgsConstructor
 public class Constants {
     // USER
@@ -37,7 +39,7 @@ public class Constants {
             <html>
               <head>
                 <script>
-                  alert('Login required.');
+                  alert('%s');
                   window.location.href = '/login';
                 </script>
               </head>
@@ -60,4 +62,8 @@ public class Constants {
     public static final String SOCKET_DESTINATION_CONVERSATION_USER_QUEUE_UI = "/queue/ui";
 
     public static final String USER_UI_REFRESH_IDS = "user-ui-refresh-ids";
+
+    // Cookie
+    public static final String COOKIE_LOCALE_NAME = "lang";
+    public static final Locale COOKIE_LOCALE_DEFAULT_VALUE = Locale.ENGLISH;
 }

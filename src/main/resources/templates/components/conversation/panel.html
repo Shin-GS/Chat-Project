@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
 <body>
 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
 <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->

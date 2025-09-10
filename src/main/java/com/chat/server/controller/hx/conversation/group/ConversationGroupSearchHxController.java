@@ -1,6 +1,6 @@
 package com.chat.server.controller.hx.conversation.group;
 
-import com.chat.server.common.ModelAndViewBuilder;
+import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.service.common.request.CustomPageRequest;
 import com.chat.server.service.common.request.CustomPageRequestDefault;
 import com.chat.server.service.common.response.CustomPageResponse;

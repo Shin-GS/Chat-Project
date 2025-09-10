@@ -2,51 +2,51 @@ package com.chat.server.common.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
 public enum ErrorCode implements Code {
-    INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Domain
-    ENTITY_DELETE_FORBIDDEN(400, "Entity Delete Forbidden"),
+    ENTITY_DELETE_FORBIDDEN(HttpStatus.BAD_REQUEST),
 
     // Request
-    UNAUTHORIZED(401, "Unauthorized"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED),
 
     // User
-    USER_NOT_EXISTS(400, "User not exists"),
-    INVALID_PASSWORD(400, "Invalid password"),
-    USER_ALREADY_EXISTS(400, "User already exists"),
-    USER_SAVE_FAILED(400, "User save failed"),
+    USER_NOT_EXISTS(HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST),
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST),
+    USER_SAVE_FAILED(HttpStatus.BAD_REQUEST),
 
     // Token
-    TOKEN_EMPTY(400, "Token empty"),
-    TOKEN_INVALID(400, "Token invalid"),
-    TOKEN_EXPIRED(400, "Token expired"),
-    TOKEN_NOT_EXPIRED(400, "Token not expired"),
+    TOKEN_EMPTY(HttpStatus.BAD_REQUEST),
+    TOKEN_INVALID(HttpStatus.BAD_REQUEST),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST),
+    TOKEN_NOT_EXPIRED(HttpStatus.BAD_REQUEST),
 
     // Conversation
-    CONVERSATION_NOT_EXISTS(400, "Conversation not exists"),
-    CONVERSATION_REQUEST_INVALID(400, "conversation request invalid"),
-    CONVERSATION_FRIEND_ALREADY_EXISTS(400, "conversation friend already exists"),
-    CONVERSATION_FRIEND_NOT_EXISTS(400, "conversation friend not exists"),
-    CONVERSATION_GROUP_NOT_EXISTS(400, "conversation group not exists"),
-    CONVERSATION_NOT_GROUP(400, "conversation is not a group"),
-    CONVERSATION_ALREADY_JOINED(400, "already joined the conversation"),
-    CONVERSATION_NOT_MEMBER(400, "conversation is not a member"),
-    CONVERSATION_TYPE_NOT_SUPPORTED(400, "conversation type is not supported"),
-    CONVERSATION_NAME_REQUIRED(400, "conversation title is required"),
-    CONVERSATION_SUPER_ADMIN_REQUIRED(400, "conversation super admin is required"),
-    CONVERSATION_NOT_JOINED(400, "conversation is not joined"),
-    CONVERSATION_GROUP_ONLY_ALLOWED(400, "conversation group is only allowed"),
-    CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED(400, "conversation one to one is only allowed"),
-    CONVERSATION_IS_HIDDEN(400, "conversation is hidden"),
-    CONVERSATION_JOIN_CODE_IS_INVALID(400, "conversation join code is invalid"),
-    CONVERSATION_ROLE_ALREADY_EXISTS(400, "conversation role already exists"),
-    CONVERSATION_PARTICIPANT_NOT_EXISTS(400, "conversation participant not exists"),
+    CONVERSATION_NOT_EXISTS(HttpStatus.BAD_REQUEST),
+    CONVERSATION_REQUEST_INVALID(HttpStatus.BAD_REQUEST),
+    CONVERSATION_FRIEND_ALREADY_EXISTS(HttpStatus.BAD_REQUEST),
+    CONVERSATION_FRIEND_NOT_EXISTS(HttpStatus.BAD_REQUEST),
+    CONVERSATION_GROUP_NOT_EXISTS(HttpStatus.BAD_REQUEST),
+    CONVERSATION_NOT_GROUP(HttpStatus.BAD_REQUEST),
+    CONVERSATION_ALREADY_JOINED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_NOT_MEMBER(HttpStatus.BAD_REQUEST),
+    CONVERSATION_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_NAME_REQUIRED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_SUPER_ADMIN_REQUIRED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_NOT_JOINED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_GROUP_ONLY_ALLOWED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_ONE_TO_ONE_ONLY_ALLOWED(HttpStatus.BAD_REQUEST),
+    CONVERSATION_IS_HIDDEN(HttpStatus.BAD_REQUEST),
+    CONVERSATION_JOIN_CODE_IS_INVALID(HttpStatus.BAD_REQUEST),
+    CONVERSATION_ROLE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST),
+    CONVERSATION_PARTICIPANT_NOT_EXISTS(HttpStatus.BAD_REQUEST),
     ;
 
-    private final Integer code;
-    private final String message;
+    private final HttpStatus httpStatus;
 }

@@ -1,7 +1,8 @@
 package com.chat.server.common.exception;
 
-import com.chat.server.common.Response;
+import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.response.CustomResponseBuilder;
 import com.chat.server.common.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,19 +19,23 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalApiExceptionHandler {
+    private final CustomResponseBuilder responseBuilder;
+    private final CodeMessageGetter codeMessageGetter;
+
     @ExceptionHandler(CustomException.class)
     public Object handleCustomException(HttpServletRequest request,
                                         CustomException e) {
         log.error("handle CustomException: ", e);
         if (RequestUtil.isHxRequest(request)) {
-            return toastFragmentView(e.getMessage());
+            String errorMessage = codeMessageGetter.getMessage(e.getCode(), responseBuilder.currentLocale());
+            return toastFragmentView(errorMessage);
         }
 
         if (e.getCode() instanceof ErrorCode errorCode) {
-            return Response.of(errorCode);
+            return responseBuilder.of(errorCode);
         }
 
-        return new ResponseEntity<>(Response.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(responseBuilder.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
@@ -41,7 +46,7 @@ public class GlobalApiExceptionHandler {
             return toastFragmentView(e.getMessage());
         }
 
-        return new ResponseEntity<>(Response.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(responseBuilder.of(ErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ModelAndView toastFragmentView(String message) {

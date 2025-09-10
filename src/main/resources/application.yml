@@ -12,6 +12,10 @@ spring:
     url: jdbc:mysql://localhost:3306/CONVERSATION?serverTimezone=Asia/Seoul&characterEncoding=utf8
     username: root
     password: qwer!0842
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
 
 app:
   audit:
