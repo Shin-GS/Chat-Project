@@ -11,6 +11,7 @@ public enum SuccessCode implements Code {
 
     USER_CREATED(HttpStatus.CREATED),
     USER_LOGGED_IN(HttpStatus.OK),
+    USER_LOGGED_OUT(HttpStatus.OK),
     USER_INFO_RETRIEVED(HttpStatus.OK),
 
     CONVERSATION_MESSAGE_RETRIEVED(HttpStatus.OK),

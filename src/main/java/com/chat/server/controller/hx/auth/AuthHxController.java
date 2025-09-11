@@ -1,7 +1,9 @@
 package com.chat.server.controller.hx.auth;
 
-import com.chat.server.common.response.ModelAndViewBuilder;
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.constant.Constants;
+import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.service.auth.AuthService;
 import com.chat.server.service.auth.request.LoginRequest;
 import com.chat.server.service.auth.request.SignupRequest;
@@ -25,6 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthHxController {
     private final AuthService authService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
@@ -35,7 +38,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Account created successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.USER_CREATED)))
                 .build();
     }
 
@@ -48,7 +51,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Logged in successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_IN)))
                 .build();
     }
 
@@ -60,7 +63,7 @@ public class AuthHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Logged out successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_OUT)))
                 .build();
     }
 }
