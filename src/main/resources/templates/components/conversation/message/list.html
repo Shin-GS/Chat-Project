@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
 <!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.conversation.response.ConversationMessageResponse>"*/-->
 
 <ul class="space-y-2">
@@ -6,7 +10,7 @@
         <!-- System message (centered, subtle) -->
         <p th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
            class="text-center text-gray-500 text-xs italic my-2 px-3">
-            <span th:text="${message.message}">System message</span>
+            <span th:text="${message.message}">[[#{ui.conversation.system_message}]]</span>
         </p>
 
         <!-- User messages -->
@@ -30,10 +34,11 @@
                 <div th:classappend="${message.mine} ? ' bg-blue-500 text-white' : ' bg-gray-100 text-gray-900'"
                      class="relative rounded-2xl px-3 py-2 leading-relaxed break-words">
                     <!-- sender name (others only) -->
-                    <div th:if="${!message.mine}" class="text-[11px] text-gray-500 mb-0.5" th:text="${message.from}">
-                        Sender
+                    <div th:if="${!message.mine}" class="text-[11px] text-gray-500 mb-0.5"
+                         th:text="${message.from}">
+                        [[#{ui.conversation.sender}]]
                     </div>
-                    <div th:text="${message.message}">Message text...</div>
+                    <div th:text="${message.message}">[[#{ui.conversation.message_placeholder}]]</div>
                 </div>
 
                 <!-- Sent time -->
@@ -52,8 +57,9 @@
 
                     <!-- yesterday: 'Yesterday HH:mm' -->
                     <span th:if="${!isToday and isYesterday}"
-                          th:text="${'Yesterday ' + #temporals.format(target, 'HH:mm')}">Yesterday 14:35</span>
-
+                          th:text="${#messages.msg('ui.conversation.yesterday') + ' ' + #temporals.format(target, 'HH:mm')}">
+                        Yesterday 14:35
+                    </span>
 
                     <!-- same year (not today/yesterday): M/d HH:mm -->
                     <span th:if="${!isToday and !isYesterday and sameYear}"
@@ -67,3 +73,4 @@
         </div>
     </li>
 </ul>
+</html>
