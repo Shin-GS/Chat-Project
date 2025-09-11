@@ -11,9 +11,12 @@
     <th:block th:if="${type != null && type == T(com.chat.server.common.constant.conversation.ConversationType).GROUP}">
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
         <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm sm:text-base font-semibold text-gray-900">Participants</h3>
+            <h3 class="text-sm sm:text-base font-semibold text-gray-900"
+                th:text="#{ui.participants.title}">
+                Participants
+            </h3>
             <span class="text-xs sm:text-sm text-gray-500"
-                  th:text="${#lists.size(participants)} + ' members'">
+                  th:text="#{ui.participants.count(${#lists.size(participants)})}">
                 0 members
             </span>
         </div>
@@ -31,10 +34,11 @@
                 <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
                 <div th:if="${nowRole == T(com.chat.server.common.constant.conversation.ConversationUserRole).SUPER_ADMIN && user.id != participant.userId}">
                     <button type="button"
-                            th:attr="hx-get=@{|/hx/conversations/groups/role/${conversationId}/${participant.userId}/modal|}"
+                            th:attr="hx-get=@{|/hx/conversations/groups/role/${conversationId}/${participant.userId}/modal|},
+                                     aria-label=#{aria.participants.change_role_for(${participant.name})}"
                             hx-swap="none"
                             class="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1 transition-colors"
-                            th:attrappend="aria-label=|Change role for ${participant.name}|">
+                            th:text="#{button.change_role}">
                         Change Role
                     </button>
                 </div>
