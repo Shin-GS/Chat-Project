@@ -10,7 +10,8 @@
     <!-- Empty state -->
     <!--/*@thymesVar id="friends" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
     <li th:if="${#lists.isEmpty(friends)}"
-        class="py-2 text-center text-gray-500 text-xs sm:text-sm">
+        class="py-2 text-center text-gray-500 text-xs sm:text-sm"
+        th:text="#{ui.create_group_friend_list.empty}">
         No friends available to add.
     </li>
 

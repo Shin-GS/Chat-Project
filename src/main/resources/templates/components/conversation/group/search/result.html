@@ -9,7 +9,8 @@
     <ul class="divide-y divide-gray-200 text-sm sm:text-base">
         <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.conversation.response.ConversationInfoResponse>"*/-->
         <li th:if="${#lists.isEmpty(conversations)}"
-            class="py-4 text-center text-gray-500">
+            class="py-4 text-center text-gray-500"
+            th:text="#{ui.group_search.no_results}">
             No results found.
         </li>
 
@@ -25,9 +26,9 @@
             <div class="shrink-0">
                 <button class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow transition-colors"
                         type="button"
-                        th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${conversation.id.value()})}"
-                        hx-swap="none"
-                        aria-label="Join this group">
+                        th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${conversation.id.value()})},aria-label=#{aria.group.join}"
+                        aria-label="Join this group"
+                        th:text="#{button.join}">
                     Join
                 </button>
             </div>
