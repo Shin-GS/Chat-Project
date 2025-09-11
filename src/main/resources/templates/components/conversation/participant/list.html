@@ -25,8 +25,9 @@
             <li th:each="participant : ${participants}"
                 class="px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between gap-3">
                 <span class="font-medium text-gray-800 truncate"
-                      th:text="|${participant.name}[${#strings.defaultString(participant.role.getRoleName(), participant.role.getRoleName())}]|">
-                    Name[MEMBER]
+                      th:title="${#messages.msgOrNull('conversation.user.role.' + participant.role.name() + '.description') ?: participant.role.getDescription()}"
+                      th:text="|${participant.name}[${#messages.msgOrNull('conversation.user.role.' + participant.role.name()) ?: participant.role.name()}]|">
+                  Name[MEMBER]
                 </span>
 
                 <!--/*@thymesVar id="nowRole" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->

@@ -44,8 +44,15 @@
                                class="mt-1 h-4 w-4 accent-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div>
                             <!--/*@thymesVar id="roleName" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
-                            <div class="font-semibold text-gray-900" th:text="${role.getRoleName()}">Role Name</div>
-                            <div class="text-xs text-gray-500" th:text="${role.getDescription()}">Description</div>
+                            <!-- Render role name and description using i18n message codes -->
+                            <div class="font-semibold text-gray-900"
+                                 th:text="${#messages.msgOrNull('conversation.user.role.' + role.name()) ?: role.name()}">
+                                Role Name
+                            </div>
+                            <div class="text-xs text-gray-500"
+                                 th:text="${#messages.msgOrNull('conversation.user.role.' + role.name() + '.description') ?: role.getDescription()}">
+                                Description
+                            </div>
                             <div class="text-xs text-red-500 mt-1"
                                  th:if="${role == nowRole}"
                                  th:text="#{ui.role_modal.current_role}">
