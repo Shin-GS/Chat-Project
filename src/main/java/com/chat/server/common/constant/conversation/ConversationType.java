@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum ConversationType {
     ONE_TO_ONE("1:1 Chat"),
-    GROUP("Group Chat");
+    GROUP("Group Chat")
     // Additional types may be added, e.g., Inquiry, Advertisement, etc.
     ;
 
