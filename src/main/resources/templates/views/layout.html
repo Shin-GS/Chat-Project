@@ -69,6 +69,33 @@
 <header th:fragment="header">
     <div id="modal-container"></div>
     <div id="toast-container"></div>
+
+    <!-- Top bar with language selector -->
+    <div class="w-full bg-white/80 backdrop-blur border-b border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="text-sm sm:text-base font-semibold text-gray-800">
+                <!-- App title or logo area -->
+                <a href="/" class="hover:opacity-80 transition">Chat App</a>
+            </div>
+
+            <!-- Language selector -->
+            <div class="flex items-center gap-2">
+                <label for="lang-select" class="sr-only">Select language</label>
+                <select id="lang-select"
+                        name="lang"
+                        class="block rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-sm sm:text-base text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+                        hx-post="/hx/common/locale"
+                        hx-trigger="change"
+                        hx-headers='{"Accept":"application/json"}'>
+                    <option th:each="loc : ${T(com.chat.server.common.constant.SupportedLocale).values()}"
+                            th:value="${loc.code}"
+                            th:text="${loc.label}"
+                            th:selected="${#locale.toLanguageTag() == loc.code}">
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
 </header>
 
 <main class="flex-grow container mx-auto px-4 sm:px-6 py-6">
