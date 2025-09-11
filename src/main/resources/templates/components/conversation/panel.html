@@ -22,12 +22,14 @@
                 class="text-lg sm:text-xl font-semibold text-gray-900 truncate"
                 th:text="${conversation.title}">Conversation</h2>
             <button id="conversation-leave-button"
-                    th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
-                    hx-confirm="Are you sure you want to leave this conversation?"
+                    th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave',
+                             hx-confirm=#{confirm.leave_conversation},
+                             title=#{title.leave_chat}"
                     type="button"
                     hx-swap="none"
                     title="Leave this chat"
-                    class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md text-sm transition-colors">
+                    class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md text-sm transition-colors"
+                    th:text="#{button.leave}">
                 Leave
             </button>
         </div>
@@ -51,15 +53,18 @@
              class="flex-1 min-h-0 overflow-y-auto border border-gray-200 rounded-lg bg-white p-3"></div>
 
         <div class="conversation flex items-center gap-2 sm:gap-3 pt-2 shrink-0">
-            <label for="conversation-input" class="sr-only">Message input</label>
+            <label for="conversation-input" class="sr-only"
+                   th:text="#{aria.message_input}">Message input</label>
             <input type="text"
                    id="conversation-input"
+                   th:placeholder="#{placeholder.conversation.input}"
                    placeholder="Type a message..."
                    class="flex-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button id="conversation-send-button"
                     type="button"
-                    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md text-sm sm:text-base transition-colors">
+                    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md text-sm sm:text-base transition-colors"
+                    th:text="#{button.send}">
                 Send
             </button>
         </div>
