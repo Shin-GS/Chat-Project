@@ -5,7 +5,7 @@
 <head>
     <th:block th:insert="~{views/layout :: head}"/>
 
-    <title>Conversation Room</title>
+    <title th:text="#{title.conversation_room}">Conversation Room</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="/script/conversation.js"></script>
@@ -159,6 +159,7 @@
                             <button type="button"
                                     hx-get="/hx/conversations/friends/search/modal"
                                     hx-swap="none"
+                                    th:attr="aria-label=#{aria.search_friends}"
                                     aria-label="Search Friends"
                                     class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
                                 <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
@@ -172,7 +173,8 @@
                                     <circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path>
                                 </svg>
                               </span>
-                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">Friends</span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900"
+                                      th:text="#{tab.friends}">Friends</span>
                                 <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
                             </button>
 
@@ -180,6 +182,7 @@
                             <button type="button"
                                     hx-get="/hx/conversations/groups/search/modal"
                                     hx-swap="none"
+                                    th:attr="aria-label=#{aria.search_groups}"
                                     aria-label="Search Groups"
                                     class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
                                 <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
@@ -196,7 +199,8 @@
                                         <path d="M16 14a5 5 0 0 1 5 5"></path>
                                     </svg>
                                 </span>
-                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">Groups</span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900"
+                                      th:text="#{tab.groups}">Groups</span>
                                 <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
                             </button>
 
@@ -204,6 +208,7 @@
                             <button type="button"
                                     hx-get="/hx/conversations/groups/modal"
                                     hx-swap="none"
+                                    th:attr="aria-label=#{aria.create_group}"
                                     aria-label="Create Group"
                                     class="group relative flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-2 hover:bg-gray-50 rounded-xl transition">
                                 <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm text-gray-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors">
@@ -219,20 +224,23 @@
                                         <path d="M22 11h-6"></path>
                                     </svg>
                                 </span>
-                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900">New Group</span>
+                                <span class="text-[11px] leading-none text-gray-500 group-hover:text-gray-900"
+                                      th:text="#{tab.new_group}">New Group</span>
                                 <span class="pointer-events-none absolute left-2 right-2 bottom-0 h-0.5 bg-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center"></span>
                             </button>
                         </nav>
                     </aside>
 
                     <!-- Sidebar secondary block: header (buttons) + scrollable content -->
-                    <section aria-label="Sidebar secondary menu"
+                    <section th:attr="aria-label=#{aria.sidebar_secondary}"
+                             aria-label="Sidebar secondary menu"
                              class="mt-2 flex-1 min-h-0 flex flex-col">
                         <div class="flex-1 min-h-0 rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden flex flex-col">
                             <div class="flex items-center justify-center gap-1 px-1 py-1 border-b border-gray-200">
                                 <!-- Friends button -->
                                 <button type="button"
                                         class="flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                                        th:attr="title=#{title.friends}"
                                         title="Friends"
                                         hx-get="/hx/conversations/friends"
                                         hx-swap="none"
@@ -245,12 +253,13 @@
                                         <path d="M7 15a5 5 0 0 0-5 5"></path>
                                         <path d="M16 14a5 5 0 0 1 5 5"></path>
                                     </svg>
-                                    <span class="text-xs">Friends</span>
+                                    <span class="text-xs" th:text="#{tab.friends}">Friends</span>
                                 </button>
 
                                 <!-- Conversations button -->
                                 <button type="button"
                                         class="flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                                        th:attr="title=#{title.conversations}"
                                         title="Conversations"
                                         hx-get="/hx/conversations"
                                         hx-swap="none"
@@ -279,7 +288,8 @@
                                      hx-swap="none"></div>
 
                                 <div id="sidebar-secondary-content">
-                                    <div class="flex items-center justify-center h-full text-xs text-gray-400">
+                                    <div class="flex items-center justify-center h-full text-xs text-gray-400"
+                                         th:text="#{ui.sidebar.no_content}">
                                         No content loaded
                                     </div>
                                 </div>
@@ -301,9 +311,16 @@
                             <path d="M8 12h8M8 9h5M8 15h6"></path>
                         </svg>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Welcome</h2>
-                    <p class="mt-2 text-sm text-gray-500">Select a conversation from the list to start chatting</p>
-                    <p class="mt-1 text-xs text-gray-400">Your messages will appear here</p>
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-900"
+                        th:text="#{ui.empty.welcome_title}">Welcome</h2>
+                    <p class="mt-2 text-sm text-gray-500"
+                       th:text="#{ui.empty.welcome_body}">
+                        Select a conversation from the list to start chatting
+                    </p>
+                    <p class="mt-1 text-xs text-gray-400"
+                       th:text="#{ui.empty.welcome_hint}">
+                        Your messages will appear here
+                    </p>
                 </div>
             </div>
         </div>
