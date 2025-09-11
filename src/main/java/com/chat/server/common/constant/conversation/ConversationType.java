@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ConversationType {
-    ONE_TO_ONE("1:1 채팅"),
-    GROUP("그룹 채팅")
-    // 문의, 광고 등도 추가 가능성 있음
+    ONE_TO_ONE("1:1 Chat"),
+    GROUP("Group Chat");
+    // Additional types may be added, e.g., Inquiry, Advertisement, etc.
     ;
 
     private final String description;

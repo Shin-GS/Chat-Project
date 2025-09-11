@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ConversationMembershipAction {
-    JOIN("참가"),
-    LEAVE("나가기")
+    JOIN("Join"),
+    LEAVE("Leave")
     ;
 
     private final String description;
