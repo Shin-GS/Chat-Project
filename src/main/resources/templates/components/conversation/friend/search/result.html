@@ -9,7 +9,8 @@
     class="divide-y divide-gray-200 text-sm sm:text-base">
     <!--/*@thymesVar id="searchUsers" type="java.util.List<com.chat.server.service.user.response.UserInfoResponse>"*/-->
     <li th:if="${#lists.isEmpty(searchUsers)}"
-        class="py-3 text-center text-gray-500">
+        class="py-3 text-center text-gray-500"
+        th:text="#{ui.friend_search.no_results}">
         No results found.
     </li>
 
@@ -23,7 +24,8 @@
                     th:attr="hx-post='/hx/conversations/friends/' + ${searchUser.id}"
                     hx-swap="none">
                 <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
-                <span class="ml-3 text-sm font-semibold">+ Add</span>
+                <span class="ml-3 text-sm font-semibold"
+                      th:text="#{button.add_friend}">+ Add</span>
             </button>
         </div>
 
@@ -32,7 +34,8 @@
             <button type="button" disabled
                     class="w-full flex justify-between items-center bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed">
                 <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
-                <span class="ml-3 text-sm font-semibold">(Friend)</span>
+                <span class="ml-3 text-sm font-semibold"
+                      th:text="|(${#messages.msg('label.friend')})|">(Friend)</span>
             </button>
         </div>
     </li>
