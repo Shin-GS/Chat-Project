@@ -75,12 +75,12 @@
         <div class="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
             <div class="text-sm sm:text-base font-semibold text-gray-800">
                 <!-- App title or logo area -->
-                <a href="/" class="hover:opacity-80 transition">Chat App</a>
+                <a href="/" class="hover:opacity-80 transition" th:text="#{app.title}">Chat App</a>
             </div>
 
             <!-- Language selector -->
             <div class="flex items-center gap-2">
-                <label for="lang-select" class="sr-only">Select language</label>
+                <label for="lang-select" class="sr-only" th:text="#{aria.select_language}">Select language</label>
                 <select id="lang-select"
                         name="lang"
                         class="block rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-sm sm:text-base text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
