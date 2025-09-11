@@ -17,7 +17,8 @@
         <!--/*@thymesVar id="conversations" type="java.util.List<com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse>"*/-->
         <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse"*/-->
         <li th:if="${#lists.isEmpty(conversations)}"
-            class="py-4 text-center text-gray-500">
+            class="py-4 text-center text-gray-500"
+            th:text="#{ui.conversation_list.empty}">
             No conversations yet
         </li>
 
@@ -46,7 +47,7 @@
                      stroke-width="2" stroke="currentColor"
                      class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378m12 0v-.378a4.5 4.5 0 014.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378m0 0V21m0-1.872V21m-6-8.25a3 3 0 100-6 3 3 0 000 6zm12 0a3 3 0 100-6 3 3 0 000 6z"/>
+                          d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378m12 0v-.378a4.5 4.5 0 014.5-4.5h-3a4.5 4.5 0 014.5 4.5v.378m0 0V21m0-1.872V21m-6-8.25a3 3 0 100-6 3 3 0 000 6zm12 0a3 3 0 100-6 3 3 0 000 6z"/>
                 </svg>
                 <!-- OTHER -->
                 <svg th:if="${conversation.type.name() != 'ONE_TO_ONE' and conversation.type.name() != 'GROUP'}"
@@ -67,7 +68,8 @@
                     <div class="flex-1 min-w-0"
                          th:replace="~{components/conversation/read :: title(${conversation})}">
                         <!-- fallback -->
-                        <span class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base">
+                        <span class="flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base"
+                              th:text="#{ui.conversation_list.untitled}">
                             Untitled conversation
                         </span>
                     </div>
@@ -83,7 +85,8 @@
                                     sameYear=${#temporals.year(now) == #temporals.year(target)}
                                  ">
                                 <span th:if="${isToday}" th:text="${#temporals.format(target, 'HH:mm')}">14:35</span>
-                                <span th:if="${!isToday and isYesterday}">Yesterday</span>
+                                <span th:if="${!isToday and isYesterday}"
+                                      th:text="#{ui.conversation_list.yesterday}">Yesterday</span>
                                 <span th:if="${!isToday and !isYesterday and sameYear}"
                                       th:text="${#temporals.format(target, 'MMM d')}">Aug 25</span>
                                 <span th:if="${!isToday and !isYesterday and !sameYear}"
@@ -103,7 +106,7 @@
                     <span th:text="${conversation.lastMessage}"
                           class="flex-1 min-w-0 truncate text-gray-600 text-[13px] sm:text-[14px] leading-snug"
                           th:classappend="${conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read} ? ' text-gray-900 font-medium' : ''">
-                        Last message preview goes here...
+                        [[#{ui.conversation_list.last_message_placeholder}]]
                     </span>
 
                     <!-- Replace inline unread dot with fragment (id: sidebar-content-{conversationId}-unread) -->
@@ -112,10 +115,10 @@
                     </span>
 
                     <button type="button"
-                            th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave'"
-                            hx-confirm="Are you sure you want to leave this conversation?"
+                            class="shrink-0 inline-flex items-center justify-center rounded-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 px-2 sm:px-3 py-1 text-[11px] sm:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-400/40 transition"
+                            th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave', hx-confirm=#{confirm.leave_conversation}"
                             hx-swap="none"
-                            class="shrink-0 inline-flex items-center justify-center rounded-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 px-2 sm:px-3 py-1 text-[11px] sm:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-400/40 transition">
+                            th:text="#{button.leave}">
                         Leave
                     </button>
                 </div>
