@@ -20,10 +20,11 @@ public class ResponseUtil {
     private final AuthService authService;
     private final CustomResponseBuilder responseBuilder;
     private final CodeMessageGetter messageGetter;
+    private final CodeMessageGetter codeMessageGetter;
 
     public void unAuthorizationResponse(HttpServletRequest request,
                                         HttpServletResponse response) throws IOException {
-        String message = messageGetter.getMessage(ErrorCode.UNAUTHORIZED, responseBuilder.currentLocale());
+        String message = messageGetter.getMessage(ErrorCode.UNAUTHORIZED, codeMessageGetter.currentLocale());
         if (RequestUtil.isHxRequest(request)) {
             authService.logout(response);
             response.setStatus(HttpServletResponse.SC_OK);

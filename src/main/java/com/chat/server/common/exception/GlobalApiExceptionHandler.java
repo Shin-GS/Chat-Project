@@ -27,7 +27,7 @@ public class GlobalApiExceptionHandler {
                                         CustomException e) {
         log.error("handle CustomException: ", e);
         if (RequestUtil.isHxRequest(request)) {
-            String errorMessage = codeMessageGetter.getMessage(e.getCode(), responseBuilder.currentLocale());
+            String errorMessage = codeMessageGetter.getMessage(e.getCode(), codeMessageGetter.currentLocale());
             return toastFragmentView(errorMessage);
         }
 
