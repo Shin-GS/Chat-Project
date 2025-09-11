@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
@@ -22,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/hx/conversations/groups/role")
 public class ConversationGroupRoleHxController {
     private final ConversationGroupService conversationGroupService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "그룹 대화방 사용자 룰 변경 모달")
     @GetMapping("/{conversationId}/{userId}/modal")
@@ -47,7 +50,7 @@ public class ConversationGroupRoleHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Group chat room user rules updated successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_ROLE_UPDATED)))
                 .build();
     }
 }

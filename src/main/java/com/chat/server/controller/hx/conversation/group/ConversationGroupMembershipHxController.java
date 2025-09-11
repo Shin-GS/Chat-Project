@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationGroupService;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class ConversationGroupMembershipHxController {
     private final ConversationGroupService conversationGroupService;
     private final ConversationService conversationService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "그룹 대화방 들어가기 모달")
     @GetMapping("/{conversationId}/join")
@@ -46,7 +49,7 @@ public class ConversationGroupMembershipHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Entered chat room successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_JOINED)))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

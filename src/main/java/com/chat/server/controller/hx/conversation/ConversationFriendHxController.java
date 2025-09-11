@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationFriendService;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/hx/conversations/friends")
 public class ConversationFriendHxController {
     private final ConversationFriendService conversationFriendService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "친구 검색 모달")
     @GetMapping("/search/modal")
@@ -59,7 +62,7 @@ public class ConversationFriendHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "New friend added successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.FRIEND_ADDED)))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
@@ -74,7 +77,7 @@ public class ConversationFriendHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Friend deleted successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.FRIEND_DELETED)))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))

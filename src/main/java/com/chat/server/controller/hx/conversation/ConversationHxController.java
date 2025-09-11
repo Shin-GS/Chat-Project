@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationGroupService;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class ConversationHxController {
     private final ConversationService conversationService;
     private final ConversationGroupService conversationGroupService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "메뉴")
     @GetMapping("/menu")
@@ -82,7 +85,7 @@ public class ConversationHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Left chat room successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_LEFT)))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

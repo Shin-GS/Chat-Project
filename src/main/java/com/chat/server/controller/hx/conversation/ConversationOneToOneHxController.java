@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class ConversationOneToOneHxController {
     private final ConversationOneToOneService conversationOneToOneService;
     private final ConversationService conversationService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "1:1 대화방 들어가기")
     @PostMapping("/{friendUserId}/join")
@@ -36,7 +39,7 @@ public class ConversationOneToOneHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Entered 1:1 chat room successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_ONE_TO_ONE_JOINED)))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

@@ -1,5 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
+import com.chat.server.common.code.CodeMessageGetter;
+import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationFriendService;
@@ -27,6 +29,7 @@ public class ConversationGroupManageHxController {
     private final ConversationService conversationService;
     private final ConversationGroupService conversationGroupService;
     private final ConversationFriendService conversationFriendService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Operation(summary = "그룹 대화방 생성 모달")
     @GetMapping("/modal")
@@ -61,7 +64,7 @@ public class ConversationGroupManageHxController {
         return new ModelAndViewBuilder()
                 .addFragment("templates/components/common/toast.html",
                         "components/common/toast :: message",
-                        Map.of("type", "success", "message", "Chat room created successfully"))
+                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_CREATED)))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
