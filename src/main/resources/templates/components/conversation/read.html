@@ -8,7 +8,7 @@
 <div th:fragment="title(conversation)"
      th:id="'sidebar-content-' + ${conversation.id} + '-title'"
      hx-swap-oob="true">
-  <span th:text="${conversation.title != null ? conversation.title : 'Untitled conversation'}"
+  <span th:text="${conversation.title} ?: #{ui.conversation_list.untitled}"
         th:class="${(conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read)
                    ? 'flex-1 min-w-0 truncate font-extrabold text-gray-900 text-[15px] sm:text-base'
                    : 'flex-1 min-w-0 truncate font-semibold text-gray-900 text-[15px] sm:text-base'}">
@@ -25,7 +25,9 @@
     <svg th:if="${conversation.lastMessage != null and conversation.lastMessage != '' and conversation.read}"
          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
          fill="none" stroke="currentColor" stroke-width="2"
-         class="w-4 h-4 text-blue-500" aria-label="Read">
+         class="w-4 h-4 text-blue-500"
+         th:attr="aria-label=#{aria.read}"
+         aria-label="Read">
         <!-- simple double check -->
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l4 4 6-6"/>
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l4 4 8-8"/>
@@ -40,8 +42,9 @@
       th:class="${(conversation.lastMessage != null and conversation.lastMessage != '' and !conversation.read)
                  ? 'shrink-0 relative inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-blue-500'
                  : 'shrink-0 relative hidden w-2.5 h-2.5 rounded-full bg-blue-500'}"
+      th:attr="aria-label=#{aria.unread}"
       aria-label="Unread">
-  <span class="sr-only">Unread</span>
+  <span class="sr-only" th:text="#{aria.unread}">Unread</span>
 </span>
 </body>
 </html>
