@@ -29,7 +29,6 @@
             <form class="space-y-4"
                   method="post"
                   th:attr="hx-post=@{/hx/conversations/groups/{id}/join(id=${conversation.id.value()})}"
-                  hx-target="body"
                   hx-swap="none"
                   hx-on="htmx:afterOnLoad: document.getElementById('modal-container').innerHTML='';">
                 <div th:if="${conversation.hasCode}">

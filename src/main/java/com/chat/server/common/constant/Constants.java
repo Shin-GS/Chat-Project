@@ -7,9 +7,12 @@ import java.util.Locale;
 @NoArgsConstructor
 public class Constants {
     // USER
-    public static final int USER_ID_MAX_LENGTH = 255;
+    public static final int USER_ID_MAX_LENGTH = 512;
     public static final int USER_NAME_MAX_LENGTH = 128;
     public static final int USER_HASHED_PASSWORD_MAX_LENGTH = 512;
+    public static final int USER_ROLE_MAX_LENGTH = 50;
+    public static final int USER_IMAGE_MAX_LENGTH = 512;
+    public static final int USER_STATUS_MESSAGE_MAX_LENGTH = 512;
 
     // CONVERSATION
     public static final int CONVERSATION_TITLE_MIN_LENGTH = 1;

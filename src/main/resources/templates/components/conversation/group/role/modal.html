@@ -27,7 +27,6 @@
             <form class="space-y-4"
                   th:with="roles=${T(com.chat.server.common.constant.conversation.ConversationUserRole).values()}"
                   th:attr="hx-put=@{|/hx/conversations/groups/role/${conversationId}/${userId}|}"
-                  hx-target="body"
                   hx-swap="none"
                   hx-on::after-request="if (event.detail.successful) { document.getElementById('modal-container').innerHTML=''; }">
                 <div role="radiogroup"
