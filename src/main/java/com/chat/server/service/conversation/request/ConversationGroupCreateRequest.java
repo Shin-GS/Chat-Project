@@ -11,6 +11,8 @@ public record ConversationGroupCreateRequest(@NotBlank
                                              @Size(min = Constants.CONVERSATION_TITLE_MIN_LENGTH, max = Constants.CONVERSATION_TITLE_MAX_LENGTH)
                                              String title,
 
+                                             String imageUrl,
+
                                              String joinCode,
 
                                              Boolean hidden,

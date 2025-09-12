@@ -10,6 +10,7 @@ import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -74,12 +75,14 @@ public class Conversation extends BaseTimeEntity {
     }
 
     public static Conversation ofGroup(User creator,
-                                       String name,
+                                       String title,
+                                       String imageUrl,
                                        String joinCode,
                                        boolean hidden) {
         Conversation conversation = new Conversation();
         conversation.type = ConversationType.GROUP;
-        conversation.title = name;
+        conversation.title = title;
+        conversation.imageUrl = StringUtils.hasText(imageUrl) ? imageUrl : null;
         conversation.createdUserId = creator.getUserId();
         conversation.joinCode = hidden ? null : joinCode;
         conversation.hidden = hidden;

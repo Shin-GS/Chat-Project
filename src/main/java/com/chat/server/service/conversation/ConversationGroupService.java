@@ -13,6 +13,7 @@ public interface ConversationGroupService {
     ConversationId create(UserId requestUserId,
                           Set<UserId> targetUserIds,
                           String title,
+                          String imageUrl,
                           String joinCode,
                           boolean hidden);
 

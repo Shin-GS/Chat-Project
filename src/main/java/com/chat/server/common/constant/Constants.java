@@ -75,7 +75,10 @@ public class Constants {
     // Upload
     public static final String UPLOAD_BASE_PATH = "/files";
     public static final String UPLOAD_BASE_DIR = "C:/chat" + UPLOAD_BASE_PATH;
-    public static final String UPLOAD_SUB_DIR_USER_PROFILE_IMAGE = "/user/profile/%s";
-    public static final Set<String> UPLOAD_ALLOWED_EXT_USER_PROFILE = Set.of("jpg", "jpeg", "png", "webp");
-    public static final long UPLOAD_MAX_BYTES_USER_PROFILE = 2L * 1024 * 1024; // 2MB
+    public static final String UPLOAD_USER_PROFILE_IMAGE_SUB_DIR = "/user/profile/%s";
+    public static final Set<String> UPLOAD_USER_PROFILE_IMAGE_ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
+    public static final long UPLOAD_USER_PROFILE_IMAGE_MAX_BYTES = 2L * 1024 * 1024; // 2MB
+    public static final String UPLOAD_CONVERSATION_IMAGE_SUB_DIR = "/user/conversation/%s";
+    public static final Set<String> UPLOAD_CONVERSATION_IMAGE_ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
+    public static final long UPLOAD_CONVERSATION_IMAGE_MAX_BYTES = 2L * 1024 * 1024; // 2MB
 }

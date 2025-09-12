@@ -5,6 +5,7 @@ import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.conversation.response.ConversationParticipantInfoResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,4 +24,7 @@ public interface ConversationService {
 
     void leave(UserId userId,
                ConversationId conversationId);
+
+    String uploadImage(UserId userId,
+                       MultipartFile file);
 }

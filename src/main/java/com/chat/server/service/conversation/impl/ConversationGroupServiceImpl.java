@@ -46,6 +46,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     public ConversationId create(UserId requestUserId,
                                  Set<UserId> targetUserIds,
                                  String title,
+                                 String imageUrl,
                                  String joinCode,
                                  boolean hidden) {
         if (requestUserId == null) {
@@ -58,7 +59,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
 
         User requestUser = userRepository.findById(requestUserId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
-        Conversation newConversation = conversationRepository.save(Conversation.ofGroup(requestUser, title, joinCode, hidden));
+        Conversation newConversation = conversationRepository.save(Conversation.ofGroup(requestUser, title, imageUrl, joinCode, hidden));
 
         // requestUser
         conversationParticipantRepository.save(ConversationParticipant.ofSuperAdmin(newConversation, requestUser, null));

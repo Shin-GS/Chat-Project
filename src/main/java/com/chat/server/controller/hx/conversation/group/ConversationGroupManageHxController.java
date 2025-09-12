@@ -14,8 +14,11 @@ import com.chat.server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -51,6 +54,32 @@ public class ConversationGroupManageHxController {
                 .build();
     }
 
+    @Operation(summary = "그룹 대화방 이미지 업로드")
+    @PostMapping(path = "/modal/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<ModelAndView> uploadImage(@RequestPart("file") @NotNull MultipartFile file,
+                                          @JwtMember JwtMemberInfo memberInfo) {
+        String imageUrl = conversationService.uploadImage(memberInfo.id(), file);
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/create/image.html",
+                        "components/conversation/group/create/image :: conversation-image-upload",
+                        Map.of("imageUrl", imageUrl))
+                .addFragment("templates/components/conversation/group/create/image.html",
+                        "components/conversation/group/create/image :: conversation-image-url",
+                        Map.of("imageUrl", imageUrl))
+                .build();
+    }
+
+    @Operation(summary = "그룹 대화방 이미지 삭제")
+    @DeleteMapping("/modal/image")
+    public List<ModelAndView> deleteImage() {
+        return new ModelAndViewBuilder()
+                .addFragment("templates/components/conversation/group/create/image.html",
+                        "components/conversation/group/create/image :: conversation-image-upload")
+                .addFragment("templates/components/conversation/group/create/image.html",
+                        "components/conversation/group/create/image :: conversation-image-url")
+                .build();
+    }
+
     @Operation(summary = "그룹 대화방 생성")
     @PostMapping
     public List<ModelAndView> createGroup(@ModelAttribute @Valid ConversationGroupCreateRequest request,
@@ -59,6 +88,7 @@ public class ConversationGroupManageHxController {
                 memberInfo.id(),
                 request.userIds(),
                 request.title(),
+                request.imageUrl(),
                 request.joinCode(),
                 Boolean.TRUE.equals(request.hidden())
         );

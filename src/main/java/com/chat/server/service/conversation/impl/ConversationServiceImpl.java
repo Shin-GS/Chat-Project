@@ -1,9 +1,11 @@
 package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.common.util.Base64Util;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
@@ -12,6 +14,7 @@ import com.chat.server.domain.repository.conversation.message.ConversationMessag
 import com.chat.server.domain.repository.conversation.participant.ConversationParticipantRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
+import com.chat.server.service.common.CommonFileUploadService;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
@@ -21,9 +24,11 @@ import com.chat.server.service.conversation.response.ConversationParticipantInfo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class ConversationServiceImpl implements ConversationService {
     private final ConversationOneToOneService conversationOneToOneService;
     private final ConversationGroupService conversationGroupService;
     private final ConversationMessageRepository conversationMessageRepository;
+    private final CommonFileUploadService commonFileUploadService;
 
     @Override
     @Transactional(readOnly = true)
@@ -156,5 +162,18 @@ public class ConversationServiceImpl implements ConversationService {
         }
 
         conversationGroupService.leave(userId, conversationId);
+    }
+
+    @Override
+    public String uploadImage(UserId userId,
+                              MultipartFile file) {
+        String userIdBase64 = Base64Util.encode(userId.toString());
+        String filename = UUID.randomUUID().toString().replace("-", "");
+        return commonFileUploadService.uploadFile(
+                Constants.UPLOAD_CONVERSATION_IMAGE_SUB_DIR.formatted(userIdBase64),
+                file,
+                filename,
+                Constants.UPLOAD_CONVERSATION_IMAGE_ALLOWED_EXT,
+                Constants.UPLOAD_CONVERSATION_IMAGE_MAX_BYTES);
     }
 }

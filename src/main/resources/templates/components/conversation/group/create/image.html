@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:lang="${#locale.toLanguageTag()}">
+<body>
+<div th:fragment="conversation-image-upload (imageUrl)"
+     id="conversation-image-upload"
+     class="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36"
+     hx-swap-oob="true">
+
+    <div class="group relative w-full h-full overflow-hidden border border-gray-200 bg-gray-100">
+        <!-- Placeholder -->
+        <svg th:if="${imageUrl == null}"
+             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             class="absolute inset-0 m-auto w-12 h-12 text-gray-400"
+             fill="currentColor" aria-hidden="true">
+            <path d="M4 6a2 2 0 0 1 2-2h3l1.5 2H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm8 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+        </svg>
+
+        <!-- Actual image -->
+        <img th:if="${imageUrl != null}"
+             id="conversation-img"
+             th:src="${imageUrl}"
+             class="w-full h-full object-cover"
+             alt="Conversation image preview"/>
+
+        <!-- Overlay: click to open file chooser (no JS; htmx only) -->
+        <label class="absolute inset-0 z-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 focus:bg-black/40 transition-colors cursor-pointer"
+               aria-label="Change conversation image">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 class="pointer-events-none opacity-0 group-hover:opacity-100 w-8 h-8 text-white transition-opacity"
+                 fill="currentColor" aria-hidden="true">
+                <path d="M9 2l1.5 2H14l1.5-2H18a2 2 0 0 1 2 2v2H4V4a2 2 0 0 1 2-2h3zM4 8h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8zm8 2.5A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5z"/>
+            </svg>
+            <input type="file"
+                   name="file"
+                   accept="image/*"
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                   hx-post="/hx/conversations/groups/modal/image"
+                   hx-encoding="multipart/form-data"
+                   hx-trigger="change"
+                   hx-swap="none"/>
+        </label>
+
+        <!-- Top-right Remove (X) button; only when image exists -->
+        <button th:if="${imageUrl != null}"
+                type="button"
+                aria-label="Remove conversation image"
+                class="absolute top-0 right-0 z-10 m-1 w-7 h-7 rounded-full bg-white/90 hover:bg-white border border-gray-300 shadow-sm
+                   flex items-center justify-center text-gray-500 hover:text-gray-700
+                   focus:outline-none focus:ring-2 focus:ring-blue-500"
+                hx-delete="/hx/conversations/groups/modal/image"
+                hx-swap="none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" class="w-4 h-4" aria-hidden="true">
+                <path fill-rule="evenodd"
+                      d="M10 8.586l3.536-3.536a1 1 0 111.415 1.415L11.414 10l3.536 3.536a1 1 0 01-1.415 1.415L10 11.414l-3.536 3.536a1 1 0 01-1.415-1.415L8.586 10 5.05 6.464A1 1 0 116.464 5.05L10 8.586z"
+                      clip-rule="evenodd"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<input th:fragment="conversation-image-url (imageUrl)"
+       id="imageUrl"
+       name="imageUrl"
+       type="hidden"
+       th:value="${imageUrl}"
+       hx-swap-oob="true"/>
+</body>
+</html>

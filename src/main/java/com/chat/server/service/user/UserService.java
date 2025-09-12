@@ -15,5 +15,6 @@ public interface UserService {
                        String profileImageUrl,
                        String statusMessage);
 
-    String uploadProfileImage(UserId userId, MultipartFile file);
+    String uploadProfileImage(UserId userId,
+                              MultipartFile file);
 }

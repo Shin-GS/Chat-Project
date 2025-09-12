@@ -58,10 +58,10 @@ public class UserServiceImpl implements UserService {
         String userIdBase64 = Base64Util.encode(userId.toString());
         String filename = UUID.randomUUID().toString().replace("-", "");
         return commonFileUploadService.uploadFile(
-                Constants.UPLOAD_SUB_DIR_USER_PROFILE_IMAGE.formatted(userIdBase64),
+                Constants.UPLOAD_USER_PROFILE_IMAGE_SUB_DIR.formatted(userIdBase64),
                 file,
                 filename,
-                Constants.UPLOAD_ALLOWED_EXT_USER_PROFILE,
-                Constants.UPLOAD_MAX_BYTES_USER_PROFILE);
+                Constants.UPLOAD_USER_PROFILE_IMAGE_ALLOWED_EXT,
+                Constants.UPLOAD_USER_PROFILE_IMAGE_MAX_BYTES);
     }
 }
