@@ -23,4 +23,12 @@ public class FragmentConstants {
     public static final String CONVERSATION_PANEL_FRAGMENT = "components/conversation/panel :: conversation-panel";
     public static final String CONVERSATION_PANEL_USER_INFO = "user";
     public static final String CONVERSATION_PANEL_CONVERSATION_INFO = "conversation";
+
+    public static final String CONVERSATION_PARTICIPANT_LIST_PATH = "templates/components/conversation/participant/list.html";
+    public static final String CONVERSATION_PARTICIPANT_LIST_FRAGMENT = "components/conversation/participant/list :: participant";
+    public static final String CONVERSATION_PARTICIPANT_CONVERSATION_ID = "conversationId";
+    public static final String CONVERSATION_PARTICIPANT_CONVERSATION_TYPE = "type";
+    public static final String CONVERSATION_PARTICIPANT_CONVERSATION_USER_INFO = "user";
+    public static final String CONVERSATION_PARTICIPANT_PARTICIPANT_ROLE = "nowRole";
+    public static final String CONVERSATION_PARTICIPANT_CONVERSATION_PARTICIPANT_LIST = "participants";
 }

@@ -69,13 +69,13 @@ public class ConversationHxController {
                                            @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/participant/list.html",
-                        "components/conversation/participant/list :: participant",
-                        Map.of("conversationId", conversationId,
-                                "type", conversation.type(),
-                                "user", userService.getUserInfo(memberInfo.id()),
-                                "nowRole", conversationGroupService.getRole(conversationId, memberInfo.id()),
-                                "participants", conversationService.findParticipants(conversationId, memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_PARTICIPANT_LIST_PATH,
+                        FragmentConstants.CONVERSATION_PARTICIPANT_LIST_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_ID, conversationId,
+                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_TYPE, conversation.type(),
+                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                FragmentConstants.CONVERSATION_PARTICIPANT_PARTICIPANT_ROLE, conversationGroupService.getRole(conversationId, memberInfo.id()),
+                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_PARTICIPANT_LIST, conversationService.findParticipants(conversationId, memberInfo.id())))
                 .build();
     }
 
