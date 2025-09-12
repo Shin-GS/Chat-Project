@@ -72,7 +72,8 @@ public class Constants {
     public static final Locale COOKIE_LOCALE_DEFAULT_VALUE = Locale.ENGLISH;
 
     // Upload
-    public static final String UPLOAD_BASE_DIR = "C:/chat/files";
+    public static final String UPLOAD_BASE_PATH = "/files";
+    public static final String UPLOAD_BASE_DIR = "C:/chat" + UPLOAD_BASE_PATH;
     public static final String UPLOAD_SUB_DIR_USER_PROFILE_IMAGE = "/user/profile/%s";
     public static final Set<String> UPLOAD_ALLOWED_EXT_USER_PROFILE = Set.of("jpg", "jpeg", "png", "webp");
     public static final long UPLOAD_MAX_BYTES_USER_PROFILE = 2L * 1024 * 1024; // 2MB

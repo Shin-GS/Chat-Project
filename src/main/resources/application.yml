@@ -17,12 +17,16 @@ spring:
     encoding: UTF-8
     fallback-to-system-locale: false
 
+server:
+  address: 0.0.0.0
+  port: 8080
+
 app:
   audit:
     zone: Asia/Seoul # UTC 또는 Asia/Seoul
     temporal-type: local # instant | offset | local
   upload:
-    base-url: http://localhost:8080/files
+    base-url: http://${HOST_IP:localhost}:8080/files
 
 token:
   secret-key: "Yt@3kL#9zP!qR1uS^dM7vWxE@zB5hNpT"

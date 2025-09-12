@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(toArray(restrictedPaths.getStaticPath())).authenticated()
                         .requestMatchers(toArray(restrictedPaths.getApiPath())).authenticated()
                         .requestMatchers(toArray(restrictedPaths.getHxApiPath())).authenticated()
+                        .requestMatchers("/files/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(localeCookieBindingFilter, UsernamePasswordAuthenticationFilter.class)
