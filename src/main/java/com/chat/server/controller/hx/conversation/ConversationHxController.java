@@ -92,10 +92,10 @@ public class ConversationHxController {
                 .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
                         FragmentConstants.CONVERSATION_LIST_FRAGMENT,
                         Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
-                .addFragment("templates/components/common/modalClose.html",
-                        "components/common/modalClose :: close",
-                        "targetId",
-                        "conversation-panel")
+                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
+                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_CONVERSATION_PANEL)
                 .build();
     }
 }

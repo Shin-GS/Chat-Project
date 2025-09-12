@@ -11,6 +11,13 @@ public class FragmentConstants {
     public static final String COMMON_TOAST_TYPE_ERROR = "error";
     public static final String COMMON_TOAST_MESSAGE = "message";
 
+    public static final String COMMON_MODAL_CLOSE_PATH = "templates/components/common/modalClose.html";
+    public static final String COMMON_MODAL_CLOSE_FRAGMENT = "components/common/modalClose :: close";
+    public static final String COMMON_MODAL_CLOSE_TARGET_ID = "targetId";
+    public static final String COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER = "modal-container";
+    public static final String COMMON_MODAL_CLOSE_TARGET_CONVERSATION_PANEL = "conversation-panel";
+    public static final String COMMON_MODAL_CLOSE_TARGET_SEARCH_FRIEND_LIST =  "search-friend-list";
+
     public static final String CONVERSATION_USER_MENU_PATH = "templates/components/conversation/menu.html";
     public static final String CONVERSATION_USER_MENU_FRAGMENT = "components/conversation/menu :: user-menu";
     public static final String CONVERSATION_USER_MENU_USER_INFO = "user";

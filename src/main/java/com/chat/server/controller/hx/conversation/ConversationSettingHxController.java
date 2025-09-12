@@ -58,10 +58,10 @@ public class ConversationSettingHxController {
                 .addFragment("templates/components/conversation/menu.html",
                         "components/conversation/menu :: user-menu",
                         Map.of("user", userService.getUserInfo(memberInfo.id())))
-                .addFragment("templates/components/common/modalClose.html",
-                        "components/common/modalClose :: close",
-                        "targetId",
-                        "modal-container")
+                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
+                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .build();
     }
 

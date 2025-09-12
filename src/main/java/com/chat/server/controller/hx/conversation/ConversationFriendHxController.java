@@ -84,10 +84,10 @@ public class ConversationFriendHxController {
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
-                .addFragment("templates/components/common/modalClose.html",
-                        "components/common/modalClose :: close",
-                        "targetId",
-                        "search-friend-list")
+                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
+                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
+                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_SEARCH_FRIEND_LIST)
                 .build();
     }
 }
