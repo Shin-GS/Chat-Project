@@ -10,5 +10,10 @@ public interface UserService {
 
     UserProfileResponse getUserProfile(UserId userId);
 
+    void updateProfile(UserId userId,
+                       String username,
+                       String profileImageUrl,
+                       String statusMessage);
+
     String uploadProfileImage(UserId userId, MultipartFile file);
 }

@@ -31,7 +31,7 @@
                 <!-- ===== Profile form fields (this form submits the final values) ===== -->
                 <form id="profile-form"
                       class="space-y-6"
-                      hx-post="/hx/conversations/setting/profile"
+                      hx-put="/hx/conversations/settings/profile"
                       hx-swap="none"
                       hx-indicator="#profile-form-indicator">
                     <input id="profileImageUrl" name="profileImageUrl" type="hidden"

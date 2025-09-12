@@ -4,6 +4,7 @@ import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.common.util.Base64Util;
+import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.CommonFileUploadService;
@@ -37,6 +38,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId.value())
                 .map(UserProfileResponse::of)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(UserId userId,
+                              String username,
+                              String profileImageUrl,
+                              String statusMessage) {
+        User user = userRepository.findById(userId.value())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
+        user.updateProfile(username, profileImageUrl, statusMessage);
+        userRepository.save(user);
     }
 
     @Override
