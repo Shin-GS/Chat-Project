@@ -103,6 +103,10 @@ public class ConversationGroupManageHxController {
                         "components/conversation/panel :: conversation-panel",
                         Map.of("user", userService.getUserInfo(memberInfo.id()),
                                 "conversation", conversationService.getAccessibleConversation(conversationId, memberInfo.id())))
+                .addFragment("templates/components/common/modalClose.html",
+                        "components/common/modalClose :: close",
+                        "targetId",
+                        "modal-container")
                 .build();
     }
 
