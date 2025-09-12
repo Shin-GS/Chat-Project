@@ -10,8 +10,20 @@
     <div class="flex items-center justify-between gap-2 px-2 py-2 rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm">
         <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
         <div class="flex items-center gap-2 min-w-0">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center text-xs font-semibold">
-                <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(user?.name, 'U'), 0, 1))}">U</span>
+            <!-- Avatar: show image if profileImageUrl exists; otherwise show gradient initial badge -->
+            <div class="shrink-0">
+                <!-- Image avatar -->
+                <img th:if="${user.profileImageUrl != null and !#strings.isEmpty(user.profileImageUrl)}"
+                     th:src="${user.profileImageUrl}"
+                     alt="User avatar"
+                     loading="lazy"
+                     decoding="async"
+                     class="w-8 h-8 rounded-full object-cover border border-gray-200"/>
+                <!-- Fallback initial badge -->
+                <div th:if="${user.profileImageUrl == null or #strings.isEmpty(user.profileImageUrl)}"
+                     class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center text-xs font-semibold">
+                    <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(user?.name, 'U'), 0, 1))}">U</span>
+                </div>
             </div>
             <span class="text-sm font-medium text-gray-900 truncate"
                   th:text="${user.name}">
