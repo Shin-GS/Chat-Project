@@ -62,19 +62,8 @@ public class User extends BaseTimeEntity {
     public void updateProfile(String username,
                               String profileImageUrl,
                               String statusMessage) {
-        // updated only if text is present (not null/blank).
-        if (StringUtils.hasText(username)) {
-            this.username = username;
-        }
-
-        // nullable, will overwrite with given value (can be null).
-        if (profileImageUrl != null) {
-            this.profileImageUrl = profileImageUrl;
-        }
-
-        // nullable, will overwrite with given value (can be null).
-        if (statusMessage != null) {
-            this.statusMessage = statusMessage;
-        }
+        this.username = StringUtils.hasText(username) ? username : this.username;
+        this.profileImageUrl = StringUtils.hasText(profileImageUrl) ? profileImageUrl : null;
+        this.statusMessage = StringUtils.hasText(statusMessage) ? statusMessage : null;
     }
 }
