@@ -98,9 +98,9 @@ public class ConversationGroupManageHxController {
                         FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
                         Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
                                 FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_CREATED)))
-                .addFragment("templates/components/conversation/list.html",
-                        "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
+                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
                 .addFragment("templates/components/conversation/panel.html",
                         "components/conversation/panel :: conversation-panel",
                         Map.of("user", userService.getUserInfo(memberInfo.id()),

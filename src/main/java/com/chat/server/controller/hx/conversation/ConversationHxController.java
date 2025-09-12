@@ -44,9 +44,9 @@ public class ConversationHxController {
     @GetMapping
     public List<ModelAndView> myConversations(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/list.html",
-                        "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
+                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
                 .build();
     }
 
@@ -89,9 +89,9 @@ public class ConversationHxController {
                         FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
                         Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
                                 FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_LEFT)))
-                .addFragment("templates/components/conversation/list.html",
-                        "components/conversation/list :: conversation-list",
-                        Map.of("conversations", conversationService.findConversations(memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
+                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
                 .addFragment("templates/components/common/modalClose.html",
                         "components/common/modalClose :: close",
                         "targetId",
