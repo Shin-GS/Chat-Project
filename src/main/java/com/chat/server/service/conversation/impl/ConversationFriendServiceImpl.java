@@ -2,9 +2,9 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
-import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.entity.user.UserFriend;
 import com.chat.server.domain.repository.user.UserFriendRepository;
+import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.user.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
     @Transactional(readOnly = true)
     public List<UserInfoResponse> findFriendsByKeyword(String keyword,
                                                        UserId userId) {
-        if (keyword == null || userId == null) {
+        if (keyword == null || keyword.isEmpty() || userId == null) {
             return new ArrayList<>();
         }
 
