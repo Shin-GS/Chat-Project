@@ -75,14 +75,14 @@
                     <button type="button"
                             class="mt-3 inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                             onclick="
-                    // clear hidden value
-                    document.getElementById('profileImageUrl').value='';
-                    // hide image, show placeholder
-                    var img=document.getElementById('avatar-img');
-                    var ph=document.getElementById('avatar-placeholder');
-                    if(img){ img.classList.add('hidden'); img.removeAttribute('src'); }
-                    if(ph){ ph.classList.remove('hidden'); }
-                  ">
+                                // clear hidden value
+                                document.getElementById('profileImageUrl').value='';
+                                // hide image, show placeholder
+                                var img=document.getElementById('avatar-img');
+                                var ph=document.getElementById('avatar-placeholder');
+                                if(img){ img.classList.add('hidden'); img.removeAttribute('src'); }
+                                if(ph){ ph.classList.remove('hidden'); }
+                              ">
                         <span th:text="#{button.remove}">Remove</span>
                     </button>
                 </div>
@@ -124,17 +124,18 @@
                                   th:placeholder="#{placeholder.profile.status_message}"
                                   placeholder="Set your status…"></textarea>
                         <div class="mt-1 flex items-center justify-between">
-              <span class="text-xs text-gray-500" th:text="#{helper.profile.status_hint}">
-                Keep it short and friendly. This appears to your contacts.
-              </span>
+                            <span class="text-xs text-gray-500" th:text="#{helper.profile.status_hint}">
+                                Keep it short and friendly. This appears to your contacts.
+                            </span>
                             <span id="status-counter" class="text-xs text-gray-400">0 / 0</span>
                         </div>
                     </div>
 
                     <!-- Actions -->
                     <div class="pt-2 flex items-center justify-end gap-3">
-            <span id="profile-form-indicator" class="htmx-indicator text-sm text-gray-500"
-                  th:text="#{ui.indicator.saving}">Saving…</span>
+                        <span id="profile-form-indicator" class="htmx-indicator text-sm text-gray-500"
+                              th:text="#{ui.indicator.saving}">Saving…
+                        </span>
                         <button type="button"
                                 class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onclick="document.getElementById('modal-container').innerHTML=''"
