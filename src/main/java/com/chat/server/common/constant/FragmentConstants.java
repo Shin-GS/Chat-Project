@@ -10,4 +10,8 @@ public class FragmentConstants {
     public static final String COMMON_TOAST_TYPE_SUCCESS = "success";
     public static final String COMMON_TOAST_TYPE_ERROR = "error";
     public static final String COMMON_TOAST_MESSAGE = "message";
+
+    public static final String CONVERSATION_USER_MENU_PATH = "templates/components/conversation/menu.html";
+    public static final String CONVERSATION_USER_MENU_FRAGMENT = "components/conversation/menu :: user-menu";
+    public static final String CONVERSATION_USER_MENU_USER_INFO = "user";
 }

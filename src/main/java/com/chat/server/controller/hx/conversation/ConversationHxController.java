@@ -34,9 +34,9 @@ public class ConversationHxController {
     @GetMapping("/menu")
     public List<ModelAndView> menu(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/menu.html",
-                        "components/conversation/menu :: user-menu",
-                        Map.of("user", userService.getUserInfo(memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_USER_MENU_PATH,
+                        FragmentConstants.CONVERSATION_USER_MENU_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_USER_MENU_USER_INFO, userService.getUserInfo(memberInfo.id())))
                 .build();
     }
 
