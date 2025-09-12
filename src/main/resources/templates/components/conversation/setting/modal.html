@@ -26,7 +26,68 @@
                 <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6"
                     th:text="#{ui.profile_settings.title}">Profile Settings</h2>
 
-                <!-- Profile form -->
+                <!-- ===== Avatar block (no label; click to change) ===== -->
+                <div class="w-full flex flex-col items-center mb-6">
+                    <!-- Hidden URL actually submitted with the main profile form -->
+                    <input id="profileImageUrl" name="profileImageUrl" type="hidden"
+                           th:value="${profile.profileImageUrl}"/>
+
+                    <!-- Avatar wrapper with hover overlay -->
+                    <div class="relative group w-24 h-24 rounded-full overflow-hidden border border-gray-200 bg-gray-100">
+                        <!-- Placeholder icon (visible when no image) -->
+                        <svg id="avatar-placeholder"
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             class="absolute inset-0 m-auto w-10 h-10 text-gray-400"
+                             fill="currentColor" aria-hidden="true"
+                             th:classappend="${profile.profileImageUrl != null} ? ' hidden' : ''">
+                            <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-3.53 0-10 1.77-10 5.3V22h20v-2.7C22 15.77 15.53 14 12 14Z"/>
+                        </svg>
+
+                        <!-- Actual image (hidden when null) -->
+                        <img id="avatar-img"
+                             th:src="${profile.profileImageUrl}"
+                             class="w-full h-full object-cover"
+                             th:classappend="${profile.profileImageUrl == null} ? ' hidden' : ''"
+                             th:attr="alt=#{ui.profile_settings.image_preview_alt}"
+                             alt="Profile image preview"/>
+
+                        <!-- Hover overlay (camera icon) -->
+                        <button type="button"
+                                class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 focus:bg-black/40 transition-colors outline-none"
+                                onclick="document.getElementById('avatar-file').click()"
+                                aria-label="Change profile image">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                 class="opacity-0 group-hover:opacity-100 w-7 h-7 text-white transition-opacity"
+                                 fill="currentColor" aria-hidden="true">
+                                <path d="M9 2l1.5 2H14l1.5-2H18a2 2 0 0 1 2 2v2H4V4a2 2 0 0 1 2-2h3zM4 8h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8zm8 2.5A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5zm0-1.5a5 5 0 1 1-5 5 5 5 0 0 1 5-5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Hidden file input; auto-post to hx API on change -->
+                    <input id="avatar-file" type="file" name="file" accept="image/*" class="hidden"
+                           hx-post="/hx/conversations/setting/upload/profile-image"
+                           hx-encoding="multipart/form-data"
+                           hx-trigger="change"
+                           hx-swap="none"/>
+
+                    <!-- Remove button under avatar -->
+                    <button type="button"
+                            class="mt-3 inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onclick="
+                    // clear hidden value
+                    document.getElementById('profileImageUrl').value='';
+                    // hide image, show placeholder
+                    var img=document.getElementById('avatar-img');
+                    var ph=document.getElementById('avatar-placeholder');
+                    if(img){ img.classList.add('hidden'); img.removeAttribute('src'); }
+                    if(ph){ ph.classList.remove('hidden'); }
+                  ">
+                        <span th:text="#{button.remove}">Remove</span>
+                    </button>
+                </div>
+
+                <!-- ===== Profile form fields ===== -->
                 <form id="profile-form"
                       class="space-y-6"
                       hx-post="/hx/conversations/setting/profile"
@@ -48,70 +109,9 @@
                                    th:placeholder="#{placeholder.profile.username}"
                                    placeholder="Enter your username"/>
                         </div>
-
-                        <!-- Profile Image (upload via hx API) -->
-                        <label class="col-span-1 text-sm font-medium text-gray-700 pt-2"
-                               th:text="#{label.profile_image_url}">Profile Image URL</label>
-                        <div class="col-span-2 min-w-0">
-                            <!-- Hidden URL actually submitted with the main profile form -->
-                            <input id="profileImageUrl" name="profileImageUrl" type="hidden"
-                                   th:value="${profile.profileImageUrl}"/>
-
-                            <!-- Preview (left) + File/Buttons stack (right) -->
-                            <div class="flex items-start gap-3">
-                                <!-- Preview circle; placeholder icon when no src -->
-                                <div class="w-14 h-14 rounded-full border border-gray-200 bg-gray-100 flex items-center justify-center overflow-hidden shrink-0">
-                                    <img th:if="${profile.profileImageUrl != null}"
-                                         th:src="${profile.profileImageUrl}"
-                                         id="avatar-preview-img"
-                                         class="w-full h-full object-cover"
-                                         th:attr="alt=#{ui.profile_settings.image_preview_alt}"
-                                         alt="Profile image preview"/>
-                                    <svg th:if="${profile.profileImageUrl == null}"
-                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                         class="w-6 h-6 text-gray-400" fill="currentColor" aria-hidden="true">
-                                        <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-3.53 0-10 1.77-10 5.3V22h20v-2.7C22 15.77 15.53 14 12 14Z"/>
-                                    </svg>
-                                </div>
-
-                                <!-- Right column: file input full width, buttons on the next line -->
-                                <div class="flex-1 min-w-0">
-                                    <!-- File + Upload (hx API) -->
-                                    <form hx-post="/hx/conversations/setting/upload/profile-image"
-                                          hx-encoding="multipart/form-data"
-                                          hx-swap="none"
-                                          class="w-full">
-                                        <input type="file"
-                                               name="file"
-                                               accept="image/*"
-                                               class="block w-full text-sm text-gray-700 file:mr-3 file:px-3 file:py-1.5 file:text-sm file:font-medium file:bg-gray-100 file:border-0 file:rounded-md hover:file:bg-gray-200 focus:outline-none"
-                                               aria-label="Upload profile image"/>
-                                        <div class="mt-2 flex flex-col sm:flex-row sm:flex-wrap items-start gap-2">
-                                            <button type="submit"
-                                                    class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                <span th:text="#{button.upload}">Upload</span>
-                                            </button>
-                                            <button type="button"
-                                                    class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    onclick="
-                                                        document.getElementById('profileImageUrl').value='';
-                                                        var prev=document.getElementById('avatar-preview-img');
-                                                        if(prev){ prev.remove(); }
-                                                      ">
-                                                <span th:text="#{button.remove}">Remove</span>
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                    <p class="mt-2 text-xs text-gray-500" th:text="#{helper.profile.image_upload_hint}">
-                                        JPG/PNG, up to 2MB. Your image will be resized and optimized.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    <!-- Status Message (fixed 3 lines, show (current / max)) -->
+                    <!-- Status Message (fixed 3 lines, current / max) -->
                     <div>
                         <label for="statusMessage" class="block text-sm font-medium text-gray-700 mb-1"
                                th:text="#{label.status_message}">Status Message</label>
@@ -124,15 +124,14 @@
                                   th:placeholder="#{placeholder.profile.status_message}"
                                   placeholder="Set your status…"></textarea>
                         <div class="mt-1 flex items-center justify-between">
-                            <span class="text-xs text-gray-500" th:text="#{helper.profile.status_hint}">
-                                Keep it short and friendly. This appears to your contacts.
-                            </span>
-                            <!-- Live counter: (current / max) -->
+              <span class="text-xs text-gray-500" th:text="#{helper.profile.status_hint}">
+                Keep it short and friendly. This appears to your contacts.
+              </span>
                             <span id="status-counter" class="text-xs text-gray-400">0 / 0</span>
                         </div>
                     </div>
 
-                    <!-- Actions: same row -->
+                    <!-- Actions -->
                     <div class="pt-2 flex items-center justify-end gap-3">
             <span id="profile-form-indicator" class="htmx-indicator text-sm text-gray-500"
                   th:text="#{ui.indicator.saving}">Saving…</span>
@@ -151,9 +150,10 @@
         </div>
     </div>
 
-    <!-- Character counter script -->
+    <!-- Small helpers -->
     <script>
         (function () {
+            // Live character counter for status message
             var ta = document.getElementById('statusMessage');
             var counter = document.getElementById('status-counter');
             if (!ta || !counter) return;
@@ -165,7 +165,7 @@
             }
 
             ta.addEventListener('input', update);
-            update(); // initialize on open
+            update(); // initialize
         })();
     </script>
 </div>
