@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
@@ -48,9 +49,10 @@ public class ConversationGroupRoleHxController {
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationGroupService.changeRole(memberInfo.id(), conversationId, userId, role);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_ROLE_UPDATED)))
+                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
+                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
+                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_ROLE_UPDATED)))
                 .build();
     }
 }

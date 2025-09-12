@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
@@ -38,9 +39,10 @@ public class ConversationOneToOneHxController {
                                    @JwtMember JwtMemberInfo memberInfo) {
         ConversationId oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.CONVERSATION_ONE_TO_ONE_JOINED)))
+                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
+                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
+                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_ONE_TO_ONE_JOINED)))
                 .addFragment("templates/components/conversation/list.html",
                         "components/conversation/list :: conversation-list",
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))

@@ -2,6 +2,7 @@ package com.chat.server.common.exception;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.CustomResponseBuilder;
 import com.chat.server.common.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,9 +51,9 @@ public class GlobalApiExceptionHandler {
     }
 
     private ModelAndView toastFragmentView(String message) {
-        ModelAndView mv = new ModelAndView("components/common/toast :: message");
-        mv.addObject("type", "error");
-        mv.addObject("message", message);
+        ModelAndView mv = new ModelAndView(FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT);
+        mv.addObject(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_ERROR);
+        mv.addObject(FragmentConstants.COMMON_TOAST_MESSAGE, message);
         return mv;
     }
 }

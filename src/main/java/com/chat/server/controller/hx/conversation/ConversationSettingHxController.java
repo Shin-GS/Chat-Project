@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -47,9 +48,10 @@ public class ConversationSettingHxController {
         userService.updateProfile(memberInfo.id(), request.username(), request.profileImageUrl(), request.statusMessage());
         UserProfileResponse userProfile = userService.getUserProfile(memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.USER_PROFILE_UPDATED)))
+                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
+                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
+                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_PROFILE_UPDATED)))
                 .addFragment("templates/components/conversation/setting/modal.html",
                         "components/conversation/setting/modal :: setting-modal",
                         Map.of("profile", userProfile))

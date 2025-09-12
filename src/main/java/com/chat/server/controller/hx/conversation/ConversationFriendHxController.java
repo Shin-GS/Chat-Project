@@ -2,6 +2,7 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
+import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationFriendService;
@@ -60,9 +61,10 @@ public class ConversationFriendHxController {
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.addFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.FRIEND_ADDED)))
+                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
+                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
+                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.FRIEND_ADDED)))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
@@ -75,9 +77,10 @@ public class ConversationFriendHxController {
                                             @JwtMember JwtMemberInfo memberInfo) {
         conversationFriendService.removeFriend(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/common/toast.html",
-                        "components/common/toast :: message",
-                        Map.of("type", "success", "message", codeMessageGetter.getMessage(SuccessCode.FRIEND_DELETED)))
+                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
+                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
+                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.FRIEND_DELETED)))
                 .addFragment("templates/components/conversation/friend/list.html",
                         "components/conversation/friend/list :: friend-list",
                         Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
