@@ -46,10 +46,10 @@ public class ConversationOneToOneHxController {
                 .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
                         FragmentConstants.CONVERSATION_LIST_FRAGMENT,
                         Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
-                .addFragment("templates/components/conversation/panel.html",
-                        "components/conversation/panel :: conversation-panel",
-                        Map.of("user", userService.getUserInfo(memberInfo.id()),
-                                "conversation", conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
+                .addFragment(FragmentConstants.CONVERSATION_PANEL_PATH,
+                        FragmentConstants.CONVERSATION_PANEL_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                FragmentConstants.CONVERSATION_PANEL_CONVERSATION_INFO, conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
                 .build();
     }
 }

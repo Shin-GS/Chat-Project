@@ -56,10 +56,10 @@ public class ConversationHxController {
                                     @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/panel.html",
-                        "components/conversation/panel :: conversation-panel",
-                        Map.of("user", userService.getUserInfo(memberInfo.id()),
-                                "conversation", conversation))
+                .addFragment(FragmentConstants.CONVERSATION_PANEL_PATH,
+                        FragmentConstants.CONVERSATION_PANEL_FRAGMENT,
+                        Map.of(FragmentConstants.CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                FragmentConstants.CONVERSATION_PANEL_CONVERSATION_INFO, conversation))
                 .build();
     }
 

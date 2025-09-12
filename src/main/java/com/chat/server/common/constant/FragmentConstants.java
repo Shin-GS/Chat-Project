@@ -18,4 +18,9 @@ public class FragmentConstants {
     public static final String CONVERSATION_LIST_PATH = "templates/components/conversation/list.html";
     public static final String CONVERSATION_LIST_FRAGMENT = "components/conversation/list :: conversation-list";
     public static final String CONVERSATION_LIST_CONVERSATION_LIST = "conversations";
+
+    public static final String CONVERSATION_PANEL_PATH = "templates/components/conversation/panel.html";
+    public static final String CONVERSATION_PANEL_FRAGMENT = "components/conversation/panel :: conversation-panel";
+    public static final String CONVERSATION_PANEL_USER_INFO = "user";
+    public static final String CONVERSATION_PANEL_CONVERSATION_INFO = "conversation";
 }
