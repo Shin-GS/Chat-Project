@@ -53,6 +53,9 @@ public class ConversationSettingHxController {
                 .addFragment("templates/components/conversation/setting/modal.html",
                         "components/conversation/setting/modal :: setting-modal",
                         Map.of("profile", userProfile))
+                .addFragment("templates/components/conversation/menu.html",
+                        "components/conversation/menu :: user-menu",
+                        Map.of("user", userService.getUserInfo(memberInfo.id())))
                 .build();
     }
 
