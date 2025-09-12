@@ -10,7 +10,7 @@ import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.request.ConversationGroupCreateRequest;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.user.response.UserInfoResponse;
+import com.chat.server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,6 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupManageHxController {
+    private final UserService userService;
     private final ConversationService conversationService;
     private final ConversationGroupService conversationGroupService;
     private final ConversationFriendService conversationFriendService;
@@ -70,7 +71,7 @@ public class ConversationGroupManageHxController {
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
                 .addFragment("templates/components/conversation/panel.html",
                         "components/conversation/panel :: conversation-panel",
-                        Map.of("user", UserInfoResponse.of(memberInfo),
+                        Map.of("user", userService.getUserInfo(memberInfo.id()),
                                 "conversation", conversationService.getAccessibleConversation(conversationId, memberInfo.id())))
                 .build();
     }

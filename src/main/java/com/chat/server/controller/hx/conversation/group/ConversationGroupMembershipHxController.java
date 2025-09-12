@@ -9,7 +9,7 @@ import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.user.response.UserInfoResponse;
+import com.chat.server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupMembershipHxController {
+    private final UserService userService;
     private final ConversationGroupService conversationGroupService;
     private final ConversationService conversationService;
     private final CodeMessageGetter codeMessageGetter;
@@ -55,7 +56,7 @@ public class ConversationGroupMembershipHxController {
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
                 .addFragment("templates/components/conversation/panel.html",
                         "components/conversation/panel :: conversation-panel",
-                        Map.of("user", UserInfoResponse.of(memberInfo),
+                        Map.of("user", userService.getUserInfo(memberInfo.id()),
                                 "conversation", conversationService.getAccessibleConversation(groupConversationId, memberInfo.id())))
                 .addFragment("templates/components/common/modalClose.html",
                         "components/common/modalClose :: close",

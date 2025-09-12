@@ -1,8 +1,8 @@
 package com.chat.server.domain.repository.user;
 
-import com.chat.server.domain.vo.UserId;
 import com.chat.server.domain.dto.UserDto;
 import com.chat.server.domain.entity.user.UserFriend;
+import com.chat.server.domain.vo.UserId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +19,8 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
                         friendUser.id,
                         friendUser.accountId,
                         friendUser.username,
+                        friendUser.profileImageUrl,
+                        friendUser.statusMessage,
                         CASE WHEN (userFriend.id IS NOT NULL) THEN true ELSE false END
             )
             FROM UserFriend userFriend
@@ -33,6 +35,8 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
                     friendUser.id,
                     friendUser.accountId,
                     friendUser.username,
+                    friendUser.profileImageUrl,
+                    friendUser.statusMessage,
                     CASE WHEN userFriend.id IS NOT NULL THEN true ELSE false END
                 )
             FROM User friendUser

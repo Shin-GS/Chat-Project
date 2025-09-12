@@ -26,13 +26,24 @@
             th:attr="hx-post='/hx/conversations/one-to-one/' + ${friend.id} + '/join'"
             hx-swap="none">
 
-            <!-- left: avatar badge -->
-            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 bg-gray-50 text-gray-700 text-sm font-semibold shrink-0">
-                <!-- Initial from name -->
-                <span th:text="${#strings.substring(friend.name, 0, 1)}">F</span>
-            </span>
+            <!-- left: avatar (image if exists; fallback to initial badge) -->
+            <div class="shrink-0">
+                <!-- Show profile image when exists -->
+                <img th:if="${friend.profileImageUrl != null and !#strings.isEmpty(friend.profileImageUrl)}"
+                     th:src="${friend.profileImageUrl}"
+                     alt="User avatar"
+                     loading="lazy"
+                     decoding="async"
+                     class="w-9 h-9 rounded-full object-cover border border-gray-200"/>
 
-            <!-- middle: name + helper line -->
+                <!-- Fallback: initial badge when no profile image -->
+                <span th:if="${friend.profileImageUrl == null or #strings.isEmpty(friend.profileImageUrl)}"
+                      class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 bg-gray-50 text-gray-700 text-sm font-semibold">
+                    <span th:text="${#strings.substring(friend.name, 0, 1)}">F</span>
+                </span>
+            </div>
+
+            <!-- middle: name + status/helper line -->
             <div class="flex-1 min-w-0">
                 <!-- friend name -->
                 <div class="flex items-center gap-2">
@@ -41,8 +52,17 @@
                         Chat With Friend
                     </span>
                 </div>
-                <!-- subtle helper (one line) -->
-                <div class="text-xs text-gray-500 truncate leading-snug"
+
+                <!-- Status message if present -->
+                <div th:if="${friend.statusMessage != null and !#strings.isEmpty(friend.statusMessage)}"
+                     class="text-xs text-gray-600 truncate leading-snug"
+                     th:text="${friend.statusMessage}">
+                    Status message goes here...
+                </div>
+
+                <!-- Helper line if no status message (different color) -->
+                <div th:if="${friend.statusMessage == null or #strings.isEmpty(friend.statusMessage)}"
+                     class="text-xs text-blue-500 truncate leading-snug"
                      th:text="#{ui.friend_list.helper}">
                     Tap to start a 1:1 chat
                 </div>

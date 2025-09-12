@@ -9,7 +9,7 @@ import com.chat.server.service.conversation.ConversationOneToOneService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
-import com.chat.server.service.user.response.UserInfoResponse;
+import com.chat.server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/one-to-one")
 public class ConversationOneToOneHxController {
+    private final UserService userService;
     private final ConversationOneToOneService conversationOneToOneService;
     private final ConversationService conversationService;
     private final CodeMessageGetter codeMessageGetter;
@@ -45,7 +46,7 @@ public class ConversationOneToOneHxController {
                         Map.of("conversations", conversationService.findConversations(memberInfo.id())))
                 .addFragment("templates/components/conversation/panel.html",
                         "components/conversation/panel :: conversation-panel",
-                        Map.of("user", UserInfoResponse.of(memberInfo),
+                        Map.of("user", userService.getUserInfo(memberInfo.id()),
                                 "conversation", conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
                 .build();
     }
