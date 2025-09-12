@@ -20,6 +20,7 @@ public class Constants {
     public static final int CONVERSATION_TITLE_MAX_LENGTH = 128;
     public static final int CONVERSATION_MESSAGE_MAX_LENGTH = 4000;
     public static final int CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH = 512;
+    public static final int CONVERSATION_IMAGE_MAX_LENGTH = 512;
 
     // JWT
     public static final String JWT_TOKEN_TYPE = "tokenType";

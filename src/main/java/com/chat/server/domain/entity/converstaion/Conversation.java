@@ -37,6 +37,9 @@ public class Conversation extends BaseTimeEntity {
     @Column(name = "TITLE", length = Constants.CONVERSATION_TITLE_MAX_LENGTH)
     private String title;
 
+    @Column(name = "IMAGE_URL", length = Constants.CONVERSATION_IMAGE_MAX_LENGTH)
+    private String imageUrl;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "CREATED_USER_ID", nullable = false))
     private UserId createdUserId;

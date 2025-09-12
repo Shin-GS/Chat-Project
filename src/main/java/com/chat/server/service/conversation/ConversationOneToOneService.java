@@ -18,4 +18,7 @@ public interface ConversationOneToOneService {
 
     String getOneToOneTitle(ConversationId conversationId,
                             UserId userId);
+
+    String getOneToOneProfileImageUrl(ConversationId conversationId,
+                                      UserId userId);
 }

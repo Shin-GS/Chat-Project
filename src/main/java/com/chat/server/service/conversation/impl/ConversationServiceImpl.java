@@ -74,12 +74,14 @@ public class ConversationServiceImpl implements ConversationService {
         if (conversation.getType() == ConversationType.ONE_TO_ONE) {
             return ConversationInfoAndMessageResponse.of(conversation,
                     conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId),
+                    conversationOneToOneService.getOneToOneProfileImageUrl(conversation.getConversationId(), userId),
                     lastMessage,
                     isReadMessage(participant, lastConversationMessage));
         }
 
         return ConversationInfoAndMessageResponse.of(conversation,
                 conversationGroupService.getGroupTitle(conversation.getConversationId()),
+                conversation.getImageUrl(),
                 lastMessage,
                 isReadMessage(participant, lastConversationMessage));
     }

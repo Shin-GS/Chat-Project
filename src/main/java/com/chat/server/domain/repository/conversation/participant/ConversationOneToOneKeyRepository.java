@@ -31,4 +31,14 @@ public interface ConversationOneToOneKeyRepository extends JpaRepository<Convers
             """)
     Optional<Long> findOtherUserId(@Param("conversationId") ConversationId conversationId,
                                    @Param("userId") UserId userId);
+
+    @Query("""
+                SELECT conversationUser.profileImageUrl
+                FROM ConversationOneToOneKey oneToOneKey, User conversationUser
+                    WHERE oneToOneKey.conversationId.value = :#{#conversationId.value}
+                    AND ((:#{#userId.value} = oneToOneKey.smallUserId.value AND conversationUser.id = oneToOneKey.largeUserId.value)
+                        OR (:#{#userId.value} = oneToOneKey.largeUserId.value AND conversationUser.id = oneToOneKey.smallUserId.value))
+            """)
+    Optional<String> findOtherProfileImageUrl(@Param("conversationId") ConversationId conversationId,
+                                              @Param("userId") UserId userId);
 }

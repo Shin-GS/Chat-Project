@@ -125,4 +125,12 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         return conversationOneToOneKeyRepository.findOtherUsername(conversationId, userId)
                 .orElse("Deleted user");
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getOneToOneProfileImageUrl(ConversationId conversationId,
+                                             UserId userId) {
+        return conversationOneToOneKeyRepository.findOtherProfileImageUrl(conversationId, userId)
+                .orElse(null);
+    }
 }
