@@ -21,6 +21,8 @@ app:
   audit:
     zone: Asia/Seoul # UTC 또는 Asia/Seoul
     temporal-type: local # instant | offset | local
+  upload:
+    base-url: http://localhost:8080/files
 
 token:
   secret-key: "Yt@3kL#9zP!qR1uS^dM7vWxE@zB5hNpT"
