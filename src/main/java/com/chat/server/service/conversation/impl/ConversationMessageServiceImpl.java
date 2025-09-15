@@ -13,9 +13,9 @@ import com.chat.server.domain.repository.conversation.participant.ConversationPa
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
-import com.chat.server.event.ConversationMessageEvent;
-import com.chat.server.event.RefreshConversationUiEvent;
-import com.chat.server.event.SystemMessageEvent;
+import com.chat.server.event.message.ConversationMessageEvent;
+import com.chat.server.event.message.RefreshConversationUiEvent;
+import com.chat.server.event.message.SystemMessageEvent;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;

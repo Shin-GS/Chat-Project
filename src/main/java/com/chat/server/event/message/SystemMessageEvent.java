@@ -1,4 +1,4 @@
-package com.chat.server.event;
+package com.chat.server.event.message;
 
 import com.chat.server.domain.vo.ConversationId;
 
