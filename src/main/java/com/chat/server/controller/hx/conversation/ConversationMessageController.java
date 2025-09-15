@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -38,13 +40,12 @@ public class ConversationMessageController {
                 messageId,
                 PageRequest.of(0, limit));
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/message/before.html",
-                        "components/conversation/message/before",
-                        Map.of("hasNext", !messages.isEmpty(),
-                                "conversationId", conversationId,
-                                "firstMessageId", messages.isEmpty() ? 0L : messages.stream().findFirst().map(ConversationMessageResponse::id).orElse(0L),
-                                "messages", messages)
-                )
+                .addFragment(CONVERSATION_MESSAGE_BEFORE_PATH,
+                        CONVERSATION_MESSAGE_BEFORE_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_BEFORE_HAS_NEXT, !messages.isEmpty(),
+                                CONVERSATION_MESSAGE_BEFORE_CONVERSATION_ID, conversationId,
+                                CONVERSATION_MESSAGE_BEFORE_FIRST_MESSAGE_ID, messages.isEmpty() ? 0L : messages.stream().findFirst().map(ConversationMessageResponse::id).orElse(0L),
+                                CONVERSATION_MESSAGE_BEFORE_MESSAGE_LIST, messages))
                 .build();
     }
 
@@ -55,15 +56,15 @@ public class ConversationMessageController {
         conversationMessageService.readMessage(memberInfo.id(), conversationId);
         ConversationInfoAndMessageResponse conversation = conversationService.findConversation(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/read.html",
-                        "components/conversation/read :: title",
-                        Map.of("conversation", conversation))
-                .addFragment("templates/components/conversation/read.html",
-                        "components/conversation/read :: read-check",
-                        Map.of("conversation", conversation))
-                .addFragment("templates/components/conversation/read.html",
-                        "components/conversation/read :: unread-dot",
-                        Map.of("conversation", conversation))
+                .addFragment(CONVERSATION_MESSAGE_READ_PATH,
+                        CONVERSATION_MESSAGE_READ_TITLE_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_READ_CONVERSATION, conversation))
+                .addFragment(CONVERSATION_MESSAGE_READ_PATH,
+                        CONVERSATION_MESSAGE_READ_READ_CHECK_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_READ_CONVERSATION, conversation))
+                .addFragment(CONVERSATION_MESSAGE_READ_PATH,
+                        CONVERSATION_MESSAGE_READ_UN_READ_DOT,
+                        Map.of(CONVERSATION_MESSAGE_READ_CONVERSATION, conversation))
                 .build();
     }
 }

@@ -77,11 +77,20 @@ public class FragmentConstants {
     public static final String CONVERSATION_FRIEND_SEARCH_MODAL_RESULT_FRAGMENT = "components/conversation/friend/search/result :: friend-list";
     public static final String CONVERSATION_FRIEND_SEARCH_MODAL_RESULT_USER_LIST = "searchUsers";
 
-    public static final String CONVERSATION_FRIEND_LIST_PATH ="templates/components/conversation/friend/list.html";
+    public static final String CONVERSATION_FRIEND_LIST_PATH = "templates/components/conversation/friend/list.html";
     public static final String CONVERSATION_FRIEND_LIST_FRAGMENT = "components/conversation/friend/list :: friend-list";
     public static final String CONVERSATION_FRIEND_LIST_FRIEND_LIST = "friends";
 
+    public static final String CONVERSATION_MESSAGE_BEFORE_PATH = "templates/components/conversation/message/before.html";
+    public static final String CONVERSATION_MESSAGE_BEFORE_FRAGMENT = "components/conversation/message/before";
+    public static final String CONVERSATION_MESSAGE_BEFORE_HAS_NEXT = "hasNext";
+    public static final String CONVERSATION_MESSAGE_BEFORE_CONVERSATION_ID = "conversationId";
+    public static final String CONVERSATION_MESSAGE_BEFORE_FIRST_MESSAGE_ID = "firstMessageId";
+    public static final String CONVERSATION_MESSAGE_BEFORE_MESSAGE_LIST = "messages";
 
-
-
+    public static final String CONVERSATION_MESSAGE_READ_PATH = "templates/components/conversation/read.html";
+    public static final String CONVERSATION_MESSAGE_READ_TITLE_FRAGMENT = "components/conversation/read :: title";
+    public static final String CONVERSATION_MESSAGE_READ_READ_CHECK_FRAGMENT = "components/conversation/read :: read-check";
+    public static final String CONVERSATION_MESSAGE_READ_UN_READ_DOT = "components/conversation/read :: unread-dot";
+    public static final String CONVERSATION_MESSAGE_READ_CONVERSATION = "conversation";
 }
