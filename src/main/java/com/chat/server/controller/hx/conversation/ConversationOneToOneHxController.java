@@ -2,7 +2,6 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
@@ -23,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -39,17 +40,17 @@ public class ConversationOneToOneHxController {
                                    @JwtMember JwtMemberInfo memberInfo) {
         ConversationId oneToOneConversationId = conversationOneToOneService.join(memberInfo.id(), friendUserId);
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_ONE_TO_ONE_JOINED)))
-                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
-                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
-                .addFragment(FragmentConstants.CONVERSATION_PANEL_PATH,
-                        FragmentConstants.CONVERSATION_PANEL_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
-                                FragmentConstants.CONVERSATION_PANEL_CONVERSATION_INFO, conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_ONE_TO_ONE_JOINED)))
+                .addFragment(CONVERSATION_LIST_PATH,
+                        CONVERSATION_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
+                .addFragment(CONVERSATION_PANEL_PATH,
+                        CONVERSATION_PANEL_FRAGMENT,
+                        Map.of(CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                CONVERSATION_PANEL_CONVERSATION_INFO, conversationService.getAccessibleConversation(oneToOneConversationId, memberInfo.id())))
                 .build();
     }
 }

@@ -2,7 +2,6 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationGroupService;
@@ -20,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -34,9 +35,9 @@ public class ConversationHxController {
     @GetMapping("/menu")
     public List<ModelAndView> menu(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.CONVERSATION_USER_MENU_PATH,
-                        FragmentConstants.CONVERSATION_USER_MENU_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_USER_MENU_USER_INFO, userService.getUserInfo(memberInfo.id())))
+                .addFragment(CONVERSATION_USER_MENU_PATH,
+                        CONVERSATION_USER_MENU_FRAGMENT,
+                        Map.of(CONVERSATION_USER_MENU_USER_INFO, userService.getUserInfo(memberInfo.id())))
                 .build();
     }
 
@@ -44,9 +45,9 @@ public class ConversationHxController {
     @GetMapping
     public List<ModelAndView> myConversations(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
-                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
+                .addFragment(CONVERSATION_LIST_PATH,
+                        CONVERSATION_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
                 .build();
     }
 
@@ -56,10 +57,10 @@ public class ConversationHxController {
                                     @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.CONVERSATION_PANEL_PATH,
-                        FragmentConstants.CONVERSATION_PANEL_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
-                                FragmentConstants.CONVERSATION_PANEL_CONVERSATION_INFO, conversation))
+                .addFragment(CONVERSATION_PANEL_PATH,
+                        CONVERSATION_PANEL_FRAGMENT,
+                        Map.of(CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                CONVERSATION_PANEL_CONVERSATION_INFO, conversation))
                 .build();
     }
 
@@ -69,13 +70,13 @@ public class ConversationHxController {
                                            @JwtMember JwtMemberInfo memberInfo) {
         ConversationInfoResponse conversation = conversationService.getAccessibleConversation(conversationId, memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.CONVERSATION_PARTICIPANT_LIST_PATH,
-                        FragmentConstants.CONVERSATION_PARTICIPANT_LIST_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_ID, conversationId,
-                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_TYPE, conversation.type(),
-                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_USER_INFO, userService.getUserInfo(memberInfo.id()),
-                                FragmentConstants.CONVERSATION_PARTICIPANT_PARTICIPANT_ROLE, conversationGroupService.getRole(conversationId, memberInfo.id()),
-                                FragmentConstants.CONVERSATION_PARTICIPANT_CONVERSATION_PARTICIPANT_LIST, conversationService.findParticipants(conversationId, memberInfo.id())))
+                .addFragment(CONVERSATION_PARTICIPANT_LIST_PATH,
+                        CONVERSATION_PARTICIPANT_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_PARTICIPANT_CONVERSATION_ID, conversationId,
+                                CONVERSATION_PARTICIPANT_CONVERSATION_TYPE, conversation.type(),
+                                CONVERSATION_PARTICIPANT_CONVERSATION_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                CONVERSATION_PARTICIPANT_PARTICIPANT_ROLE, conversationGroupService.getRole(conversationId, memberInfo.id()),
+                                CONVERSATION_PARTICIPANT_CONVERSATION_PARTICIPANT_LIST, conversationService.findParticipants(conversationId, memberInfo.id())))
                 .build();
     }
 
@@ -85,17 +86,17 @@ public class ConversationHxController {
                                     @JwtMember JwtMemberInfo memberInfo) {
         conversationService.leave(memberInfo.id(), conversationId);
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_LEFT)))
-                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
-                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
-                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
-                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_CONVERSATION_PANEL)
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_LEFT)))
+                .addFragment(CONVERSATION_LIST_PATH,
+                        CONVERSATION_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_CONVERSATION_PANEL)
                 .build();
     }
 }

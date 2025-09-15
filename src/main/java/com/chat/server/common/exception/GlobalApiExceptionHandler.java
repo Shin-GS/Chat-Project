@@ -2,7 +2,6 @@ package com.chat.server.common.exception;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.CustomResponseBuilder;
 import com.chat.server.common.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+
+import static com.chat.server.common.constant.FragmentConstants.*;
 
 @Slf4j
 @Order(1)
@@ -51,9 +52,9 @@ public class GlobalApiExceptionHandler {
     }
 
     private ModelAndView toastFragmentView(String message) {
-        ModelAndView mv = new ModelAndView(FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT);
-        mv.addObject(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_ERROR);
-        mv.addObject(FragmentConstants.COMMON_TOAST_MESSAGE, message);
+        ModelAndView mv = new ModelAndView(COMMON_TOAST_MESSAGE_FRAGMENT);
+        mv.addObject(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_ERROR);
+        mv.addObject(COMMON_TOAST_MESSAGE, message);
         return mv;
     }
 }

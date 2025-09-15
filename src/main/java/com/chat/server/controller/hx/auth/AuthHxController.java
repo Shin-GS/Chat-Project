@@ -3,7 +3,6 @@ package com.chat.server.controller.hx.auth;
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
 import com.chat.server.common.constant.Constants;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.service.auth.AuthService;
 import com.chat.server.service.auth.request.LoginRequest;
@@ -22,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Auth")
 @Controller
 @RequestMapping("/hx/auth")
@@ -37,10 +38,10 @@ public class AuthHxController {
         authService.createUser(request, response);
         response.setHeader(Constants.HX_REDIRECT, "/");
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_CREATED)))
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_CREATED)))
                 .build();
     }
 
@@ -51,10 +52,10 @@ public class AuthHxController {
         authService.login(request, response);
         response.setHeader(Constants.HX_REDIRECT, "/");
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_IN)))
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_IN)))
                 .build();
     }
 
@@ -64,10 +65,10 @@ public class AuthHxController {
         authService.logout(response);
         response.setHeader(Constants.HX_RELOAD, "true");
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_OUT)))
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_LOGGED_OUT)))
                 .build();
     }
 }
