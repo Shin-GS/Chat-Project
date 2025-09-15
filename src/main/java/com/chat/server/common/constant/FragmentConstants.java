@@ -93,4 +93,13 @@ public class FragmentConstants {
     public static final String CONVERSATION_MESSAGE_READ_READ_CHECK_FRAGMENT = "components/conversation/read :: read-check";
     public static final String CONVERSATION_MESSAGE_READ_UN_READ_DOT = "components/conversation/read :: unread-dot";
     public static final String CONVERSATION_MESSAGE_READ_CONVERSATION = "conversation";
+
+    public static final String CONVERSATION_SETTING_MODAL_PATH = "templates/components/conversation/setting/modal.html";
+    public static final String CONVERSATION_SETTING_MODAL_FRAGMENT = "components/conversation/setting/modal :: setting-modal";
+    public static final String CONVERSATION_SETTING_MODAL_PROFILE ="profile";
+
+    public static final String CONVERSATION_SETTING_PROFILE_IMAGE_PATH = "templates/components/conversation/setting/profile/image.html";
+    public static final String CONVERSATION_SETTING_PROFILE_IMAGE_UPLOAD_FRAGMENT = "components/conversation/setting/profile/image :: profile-image-upload";
+    public static final String CONVERSATION_SETTING_PROFILE_IMAGE_URL_FRAGMENT ="components/conversation/setting/profile/image :: profile-image-url";
+    public static final String CONVERSATION_SETTING_PROFILE_IMAGE_URL = "profileImageUrl";
 }

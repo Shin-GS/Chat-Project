@@ -2,7 +2,6 @@ package com.chat.server.controller.hx.conversation;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
@@ -22,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -35,9 +36,9 @@ public class ConversationSettingHxController {
     public List<ModelAndView> searchSimilarUsernamesModal(@JwtMember JwtMemberInfo memberInfo) {
         UserProfileResponse userProfile = userService.getUserProfile(memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/setting/modal.html",
-                        "components/conversation/setting/modal :: setting-modal",
-                        Map.of("profile", userProfile))
+                .addFragment(CONVERSATION_SETTING_MODAL_PATH,
+                        CONVERSATION_SETTING_MODAL_FRAGMENT,
+                        Map.of(CONVERSATION_SETTING_MODAL_PROFILE, userProfile))
                 .build();
     }
 
@@ -48,20 +49,20 @@ public class ConversationSettingHxController {
         userService.updateProfile(memberInfo.id(), request.username(), request.profileImageUrl(), request.statusMessage());
         UserProfileResponse userProfile = userService.getUserProfile(memberInfo.id());
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_PROFILE_UPDATED)))
-                .addFragment("templates/components/conversation/setting/modal.html",
-                        "components/conversation/setting/modal :: setting-modal",
-                        Map.of("profile", userProfile))
-                .addFragment("templates/components/conversation/menu.html",
-                        "components/conversation/menu :: user-menu",
-                        Map.of("user", userService.getUserInfo(memberInfo.id())))
-                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
-                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.USER_PROFILE_UPDATED)))
+                .addFragment(CONVERSATION_SETTING_MODAL_PATH,
+                        CONVERSATION_SETTING_MODAL_FRAGMENT,
+                        Map.of(CONVERSATION_SETTING_MODAL_PROFILE, userProfile))
+                .addFragment(CONVERSATION_USER_MENU_PATH,
+                        CONVERSATION_USER_MENU_FRAGMENT,
+                        Map.of(CONVERSATION_USER_MENU_USER_INFO, userService.getUserInfo(memberInfo.id())))
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .build();
     }
 
@@ -71,12 +72,12 @@ public class ConversationSettingHxController {
                                                  @JwtMember JwtMemberInfo memberInfo) {
         String profileImageUrl = userService.uploadProfileImage(memberInfo.id(), file);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/setting/profile/image.html",
-                        "components/conversation/setting/profile/image :: profile-image-upload",
-                        Map.of("profileImageUrl", profileImageUrl))
-                .addFragment("templates/components/conversation/setting/profile/image.html",
-                        "components/conversation/setting/profile/image :: profile-image-url",
-                        Map.of("profileImageUrl", profileImageUrl))
+                .addFragment(CONVERSATION_SETTING_PROFILE_IMAGE_PATH,
+                        CONVERSATION_SETTING_PROFILE_IMAGE_UPLOAD_FRAGMENT,
+                        Map.of(CONVERSATION_SETTING_PROFILE_IMAGE_URL, profileImageUrl))
+                .addFragment(CONVERSATION_SETTING_PROFILE_IMAGE_PATH,
+                        CONVERSATION_SETTING_PROFILE_IMAGE_URL_FRAGMENT,
+                        Map.of(CONVERSATION_SETTING_PROFILE_IMAGE_URL, profileImageUrl))
                 .build();
     }
 
@@ -84,10 +85,10 @@ public class ConversationSettingHxController {
     @DeleteMapping("/profile/upload")
     public List<ModelAndView> deleteProfileImage() {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/setting/profile/image.html",
-                        "components/conversation/setting/profile/image :: profile-image-upload")
-                .addFragment("templates/components/conversation/setting/profile/image.html",
-                        "components/conversation/setting/profile/image :: profile-image-url")
+                .addFragment(CONVERSATION_SETTING_PROFILE_IMAGE_PATH,
+                        CONVERSATION_SETTING_PROFILE_IMAGE_UPLOAD_FRAGMENT)
+                .addFragment(CONVERSATION_SETTING_PROFILE_IMAGE_PATH,
+                        CONVERSATION_SETTING_PROFILE_IMAGE_URL_FRAGMENT)
                 .build();
     }
 }
