@@ -2,7 +2,6 @@ package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.FragmentConstants;
 import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationFriendService;
@@ -25,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +41,8 @@ public class ConversationGroupManageHxController {
     @GetMapping("/modal")
     public List<ModelAndView> createGroupModal() {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/create/modal.html",
-                        "components/conversation/group/create/modal :: create-modal")
+                .addFragment(CONVERSATION_GROUP_CREATE_MODAL_PATH,
+                        CONVERSATION_GROUP_CREATE_MODAL_FRAGMENT)
                 .build();
     }
 
@@ -49,9 +50,9 @@ public class ConversationGroupManageHxController {
     @GetMapping("/modal/friends")
     public List<ModelAndView> createGroupModalFriends(@JwtMember JwtMemberInfo memberInfo) {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/create/friend/list.html",
-                        "components/conversation/group/create/friend/list :: create-group-friend-list",
-                        Map.of("friends", conversationFriendService.findFriends(memberInfo.id())))
+                .addFragment(CONVERSATION_GROUP_CREATE_FRIEND_LIST_PATH,
+                        CONVERSATION_GROUP_CREATE_FRIEND_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_CREATE_FRIEND_LIST_FRIEND, conversationFriendService.findFriends(memberInfo.id())))
                 .build();
     }
 
@@ -61,12 +62,12 @@ public class ConversationGroupManageHxController {
                                           @JwtMember JwtMemberInfo memberInfo) {
         String imageUrl = conversationService.uploadImage(memberInfo.id(), file);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/create/image.html",
-                        "components/conversation/group/create/image :: conversation-image-upload",
-                        Map.of("imageUrl", imageUrl))
-                .addFragment("templates/components/conversation/group/create/image.html",
-                        "components/conversation/group/create/image :: conversation-image-url",
-                        Map.of("imageUrl", imageUrl))
+                .addFragment(CONVERSATION_GROUP_CREATE_IMAGE_PATH,
+                        CONVERSATION_GROUP_CREATE_IMAGE_UPLOAD_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_CREATE_IMAGE_IMAGE_URL, imageUrl))
+                .addFragment(CONVERSATION_GROUP_CREATE_IMAGE_PATH,
+                        CONVERSATION_GROUP_CREATE_IMAGE_URL_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_CREATE_IMAGE_IMAGE_URL, imageUrl))
                 .build();
     }
 
@@ -74,10 +75,10 @@ public class ConversationGroupManageHxController {
     @DeleteMapping("/modal/image")
     public List<ModelAndView> deleteImage() {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/create/image.html",
-                        "components/conversation/group/create/image :: conversation-image-upload")
-                .addFragment("templates/components/conversation/group/create/image.html",
-                        "components/conversation/group/create/image :: conversation-image-url")
+                .addFragment(CONVERSATION_GROUP_CREATE_IMAGE_PATH,
+                        CONVERSATION_GROUP_CREATE_IMAGE_UPLOAD_FRAGMENT)
+                .addFragment(CONVERSATION_GROUP_CREATE_IMAGE_PATH,
+                        CONVERSATION_GROUP_CREATE_IMAGE_URL_FRAGMENT)
                 .build();
     }
 
@@ -94,21 +95,21 @@ public class ConversationGroupManageHxController {
                 Boolean.TRUE.equals(request.hidden())
         );
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_CREATED)))
-                .addFragment(FragmentConstants.CONVERSATION_LIST_PATH,
-                        FragmentConstants.CONVERSATION_LIST_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
-                .addFragment(FragmentConstants.CONVERSATION_PANEL_PATH,
-                        FragmentConstants.CONVERSATION_PANEL_FRAGMENT,
-                        Map.of(FragmentConstants.CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
-                                FragmentConstants.CONVERSATION_PANEL_CONVERSATION_INFO, conversationService.getAccessibleConversation(conversationId, memberInfo.id())))
-                .addFragment(FragmentConstants.COMMON_MODAL_CLOSE_PATH,
-                        FragmentConstants.COMMON_MODAL_CLOSE_FRAGMENT,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_ID,
-                        FragmentConstants.COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_CREATED)))
+                .addFragment(CONVERSATION_LIST_PATH,
+                        CONVERSATION_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_LIST_CONVERSATION_LIST, conversationService.findConversations(memberInfo.id())))
+                .addFragment(CONVERSATION_PANEL_PATH,
+                        CONVERSATION_PANEL_FRAGMENT,
+                        Map.of(CONVERSATION_PANEL_USER_INFO, userService.getUserInfo(memberInfo.id()),
+                                CONVERSATION_PANEL_CONVERSATION_INFO, conversationService.getAccessibleConversation(conversationId, memberInfo.id())))
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .build();
     }
 

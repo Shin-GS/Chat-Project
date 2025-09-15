@@ -21,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Map;
 
+import static com.chat.server.common.constant.FragmentConstants.*;
+
 @Tag(name = "Conversation Page")
 @RestController
 @RequiredArgsConstructor
@@ -32,8 +34,8 @@ public class ConversationGroupSearchHxController {
     @GetMapping("/search/modal")
     public List<ModelAndView> searchGroupModal() {
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/search/modal.html",
-                        "components/conversation/group/search/modal :: search-modal")
+                .addFragment(CONVERSATION_GROUP_SEARCH_MODAL_PATH,
+                        CONVERSATION_GROUP_SEARCH_MODAL_FRAGMENT)
                 .build();
     }
 
@@ -51,11 +53,11 @@ public class ConversationGroupSearchHxController {
                 .toUriString();
 
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/search/result.html",
-                        "components/conversation/group/search/result :: conversation-group-list",
-                        Map.of("conversations", customPageResponse.content(),
-                                "hrefBase", hrefBase,
-                                "page", customPageResponse))
+                .addFragment(CONVERSATION_GROUP_SEARCH_RESULT_PATH,
+                        CONVERSATION_GROUP_SEARCH_RESULT_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_SEARCH_RESULT_CONVERSATION_LIST, customPageResponse.content(),
+                                CONVERSATION_GROUP_SEARCH_RESULT_HREF_BASE, hrefBase,
+                                CONVERSATION_GROUP_SEARCH_RESULT_PAGE, customPageResponse))
                 .build();
     }
 }

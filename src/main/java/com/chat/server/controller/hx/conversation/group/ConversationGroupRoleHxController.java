@@ -2,9 +2,8 @@ package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.SuccessCode;
-import com.chat.server.common.constant.FragmentConstants;
-import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
+import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationGroupService;
@@ -18,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.chat.server.common.constant.FragmentConstants.*;
 
 @Tag(name = "Conversation Page")
 @RestController
@@ -33,11 +34,11 @@ public class ConversationGroupRoleHxController {
                                               @PathVariable("userId") UserId userId) {
         ConversationUserRole nowRole = conversationGroupService.getRole(conversationId, userId);
         return new ModelAndViewBuilder()
-                .addFragment("templates/components/conversation/group/role/modal.html",
-                        "components/conversation/group/role/modal :: role-modal",
-                        Map.of("conversationId", conversationId,
-                                "userId", userId,
-                                "nowRole", nowRole))
+                .addFragment(CONVERSATION_GROUP_ROLE_MODAL_PATH,
+                        CONVERSATION_GROUP_ROLE_MODAL_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_ROLE_MODAL_CONVERSATION_D, conversationId,
+                                CONVERSATION_GROUP_ROLE_MODAL_USER_ID, userId,
+                                CONVERSATION_GROUP_ROLE_MODAL_NOW_ROLE, nowRole))
                 .build();
     }
 
@@ -49,10 +50,10 @@ public class ConversationGroupRoleHxController {
                                          @JwtMember JwtMemberInfo memberInfo) {
         conversationGroupService.changeRole(memberInfo.id(), conversationId, userId, role);
         return new ModelAndViewBuilder()
-                .addFragment(FragmentConstants.COMMON_TOAST_PATH,
-                        FragmentConstants.COMMON_TOAST_MESSAGE_FRAGMENT,
-                        Map.of(FragmentConstants.COMMON_TOAST_TYPE, FragmentConstants.COMMON_TOAST_TYPE_SUCCESS,
-                                FragmentConstants.COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_ROLE_UPDATED)))
+                .addFragment(COMMON_TOAST_PATH,
+                        COMMON_TOAST_MESSAGE_FRAGMENT,
+                        Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
+                                COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.CONVERSATION_GROUP_ROLE_UPDATED)))
                 .build();
     }
 }
