@@ -81,7 +81,8 @@ public class ConversationServiceImpl implements ConversationService {
         };
 
         if (conversation.getType() == ConversationType.ONE_TO_ONE) {
-            return ConversationInfoAndMessageResponse.of(conversation,
+            return ConversationInfoAndMessageResponse.ofOneToOne(conversation,
+                    conversationOneToOneService.getOtherUserId(userId, conversation.getConversationId()),
                     conversationOneToOneService.getOneToOneTitle(conversation.getConversationId(), userId),
                     conversationOneToOneService.getOneToOneProfileImageUrl(conversation.getConversationId(), userId),
                     lastMessage,

@@ -29,46 +29,64 @@
 
             <!-- LEFT: avatar image if exists; otherwise type badge -->
             <div class="shrink-0 self-start sm:self-center">
-                <!-- Show conversation image when available -->
-                <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
-                     th:src="${conversation.imageUrl}"
-                     alt="Conversation avatar"
-                     loading="lazy"
-                     decoding="async"
-                     class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
+                <!-- ONE_TO_ONE: avatar is clickable -> open friend profile modal -->
+                <div th:if="${conversation.type.name() == 'ONE_TO_ONE'}"
+                     class="cursor-pointer"
+                     th:attr="hx-get='/hx/conversations/friends/' + ${conversation.friendUserId} + '/profile/modal'"
+                     hx-swap="none"
+                     onclick="event.stopPropagation()">
+                    <!-- Show conversation image when available -->
+                    <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
+                         th:src="${conversation.imageUrl}"
+                         alt="Conversation avatar"
+                         loading="lazy"
+                         decoding="async"
+                         class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
 
-                <!-- Fallback: type badge when no image -->
-                <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
-                      class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0"
-                      th:classappend="${
-                        conversation.type.name() == 'ONE_TO_ONE' ? ' bg-blue-50 text-blue-700 border-blue-200' :
-                        (conversation.type.name() == 'GROUP' ? ' bg-purple-50 text-purple-700 border-purple-200' : ' bg-gray-100 text-gray-700 border-gray-200')
-                      }">
-                    <!-- ONE_TO_ONE -->
-                    <svg th:if="${conversation.type.name() == 'ONE_TO_ONE'}"
-                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke-width="2" stroke="currentColor"
-                         class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.75H4.5v-.75z"/>
-                    </svg>
-                    <!-- GROUP -->
-                    <svg th:if="${conversation.type.name() == 'GROUP'}"
-                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke-width="2" stroke="currentColor"
-                         class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378m12 0v-.378a4.5 4.5 0 014.5-4.5h-3a4.5 4.5 0 014.5 4.5v.378m0 0V21m0-1.872V21m-6-8.25a3 3 0 100-6 3 3 0 000 6zm12 0a3 3 0 100-6 3 3 0 000 6z"/>
-                    </svg>
-                    <!-- OTHER -->
-                    <svg th:if="${conversation.type.name() != 'ONE_TO_ONE' and conversation.type.name() != 'GROUP'}"
-                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke-width="2" stroke="currentColor"
-                         class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M7.5 8.25h9m-9 3h9m-9 3h6M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.223-.923L3 20.25l1.223-4.223A8.964 8.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                </span>
+                    <!-- Fallback: user badge when no image -->
+                    <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
+                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-blue-50 text-blue-700 border-blue-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.75H4.5v-.75z"/>
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- NON ONE_TO_ONE (e.g., GROUP, OTHER): keep default (not clickable for profile) -->
+                <div th:if="${conversation.type.name() != 'ONE_TO_ONE'}">
+                    <!-- Show conversation image when available -->
+                    <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
+                         th:src="${conversation.imageUrl}"
+                         alt="Conversation avatar"
+                         loading="lazy"
+                         decoding="async"
+                         class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
+
+                    <!-- Fallback: type badge when no image -->
+                    <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
+                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0"
+                          th:classappend="${
+                            conversation.type.name() == 'GROUP' ? ' bg-purple-50 text-purple-700 border-purple-200' :
+                            ' bg-gray-100 text-gray-700 border-gray-200'
+                          }">
+                        <!-- GROUP -->
+                        <svg th:if="${conversation.type.name() == 'GROUP'}"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378m12 0v-.378a4.5 4.5 0 014.5-4.5h-3a4.5 4.5 0 014.5 4.5v.378m0 0V21m0-1.872V21m-6-8.25a3 3 0 100-6 3 3 0 000 6zm12 0a3 3 0 100-6 3 3 0 000 6z"/>
+                        </svg>
+                        <!-- OTHER -->
+                        <svg th:if="${conversation.type.name() != 'GROUP'}"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M7.5 8.25h9m-9 3h9m-9 3h6M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.223-.923L3 20.25l1.223-4.223A8.964 8.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </span>
+                </div>
             </div>
 
             <!-- RIGHT: 2-row layout -->
