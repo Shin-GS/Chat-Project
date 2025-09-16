@@ -81,4 +81,9 @@ public class Constants {
     public static final String UPLOAD_CONVERSATION_IMAGE_SUB_DIR = "/user/conversation/%s";
     public static final Set<String> UPLOAD_CONVERSATION_IMAGE_ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
     public static final long UPLOAD_CONVERSATION_IMAGE_MAX_BYTES = 2L * 1024 * 1024; // 2MB
+
+    // order
+    public static final String ORDER_USER_ID = "userId";
+    public static final String ORDER_USER_FRIEND_ID = "userFriendId";
+    public static final String ORDER_USER_NAME = "username";
 }

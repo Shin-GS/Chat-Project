@@ -14,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.chat.server.common.constant.Constants.ORDER_USER_ID;
+import static com.chat.server.common.constant.Constants.ORDER_USER_NAME;
+import static org.hibernate.query.SortDirection.ASCENDING;
+import static org.hibernate.query.SortDirection.DESCENDING;
+
 @Service
 @RequiredArgsConstructor
 public class ConversationFriendServiceImpl implements ConversationFriendService {
@@ -26,7 +31,7 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        return userFriendRepository.findAllByUserIdOrderByName(userId).stream()
+        return userFriendRepository.findAllByUserId(userId, ORDER_USER_NAME, ASCENDING).stream()
                 .map(UserInfoResponse::of)
                 .toList();
     }
@@ -69,7 +74,7 @@ public class ConversationFriendServiceImpl implements ConversationFriendService 
             return new ArrayList<>();
         }
 
-        return userFriendRepository.findSimilarNamesExcludingExactMatch(keyword, userId).stream()
+        return userFriendRepository.findSimilarNamesExcludingExactMatch(keyword, userId, ORDER_USER_ID, DESCENDING).stream()
                 .map(UserInfoResponse::of)
                 .toList();
     }

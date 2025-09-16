@@ -1,19 +1,12 @@
-package com.chat.server.domain.repository.user;
+package com.chat.server.domain.repository.user.query;
 
 import com.chat.server.domain.dto.UserDto;
-import com.chat.server.domain.entity.user.UserFriend;
-import com.chat.server.domain.repository.user.query.UserFriendQueryRepository;
 import com.chat.server.domain.vo.UserId;
 import org.hibernate.query.SortDirection;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface UserFriendRepository extends JpaRepository<UserFriend, Long>, UserFriendQueryRepository {
-    boolean existsByUserIdAndFriendUserId(UserId userId, UserId friendUserId);
-
+public interface UserFriendQueryRepository {
     List<UserDto> findAllByUserId(UserId userId,
                                   String order,
                                   SortDirection direction);
@@ -22,6 +15,4 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long>, U
                                                       UserId userId,
                                                       String order,
                                                       SortDirection direction);
-
-    void deleteByUserIdAndFriendUserId(UserId userId, UserId friendUserId);
 }
