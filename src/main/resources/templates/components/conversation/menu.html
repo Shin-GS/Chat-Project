@@ -11,7 +11,10 @@
         <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
         <div class="flex items-center gap-2 min-w-0">
             <!-- Avatar: show image if profileImageUrl exists; otherwise show gradient initial badge -->
-            <div class="shrink-0">
+            <div class="shrink-0"
+                 th:attr="hx-get='/hx/conversations/friends/' + ${user.id} + '/profile/modal'"
+                 hx-swap="none"
+                 onclick="event.stopPropagation()">
                 <!-- Image avatar -->
                 <img th:if="${user.profileImageUrl != null and !#strings.isEmpty(user.profileImageUrl)}"
                      th:src="${user.profileImageUrl}"
