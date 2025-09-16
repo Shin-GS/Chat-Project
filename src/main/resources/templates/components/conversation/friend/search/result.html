@@ -23,6 +23,7 @@
             <button type="button"
                     class="w-full flex justify-between items-center bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-md transition-colors"
                     th:attr="hx-post='/hx/conversations/friends/' + ${searchUser.id}"
+                    th:attrappend="hx-confirm=#{confirm.add_friend}"
                     hx-swap="none">
                 <!-- left: avatar + name/account -->
                 <div class="flex items-center gap-2 min-w-0">
