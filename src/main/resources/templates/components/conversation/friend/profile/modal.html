@@ -71,16 +71,19 @@
                         </div>
 
                         <div th:if="${friendUser.id != userId and isFriend}" class="w-full">
-                            <button type="button" disabled
-                                    class="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-md cursor-not-allowed"
-                                    aria-label="Friend">
+                            <button type="button"
+                                    class="w-full inline-flex items-center justify-center gap-2 border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400/40"
+                                    th:attr="hx-delete='/hx/conversations/friends/' + ${friendUser.id}"
+                                    th:attrappend="hx-confirm=#{confirm.delete_friend}"
+                                    hx-swap="none"
+                                    aria-label="Delete Friend">
                                 <!-- Icon: check-circle -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span class="text-sm font-semibold">Friend</span>
+                                <span class="text-sm font-semibold">Delete Friend</span>
                             </button>
                         </div>
 
@@ -88,6 +91,7 @@
                             <button type="button"
                                     class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     th:attr="hx-post='/hx/conversations/friends/' + ${friendUser.id}"
+                                    th:attrappend="hx-confirm=#{confirm.add_friend}"
                                     hx-swap="none"
                                     aria-label="Add Friend">
                                 <!-- Icon: user-plus -->
