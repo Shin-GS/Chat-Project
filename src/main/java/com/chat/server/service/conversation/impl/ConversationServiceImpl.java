@@ -30,6 +30,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import static com.chat.server.common.constant.Constants.ORDER_CONVERSATION_ACTIVITY_AT;
+import static org.hibernate.query.SortDirection.DESCENDING;
+
 @Service
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements ConversationService {
@@ -47,7 +50,7 @@ public class ConversationServiceImpl implements ConversationService {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
-        return conversationRepository.findAllByUserIdOrderLastActivityAt(userId).stream()
+        return conversationRepository.findAllBy(userId, ORDER_CONVERSATION_ACTIVITY_AT, DESCENDING).stream()
                 .map(conversation -> convertConversationInfoAndMessageResponse(userId, conversation))
                 .toList();
     }

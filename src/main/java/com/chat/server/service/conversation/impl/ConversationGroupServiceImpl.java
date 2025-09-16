@@ -172,6 +172,10 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
             return CustomPageResponse.emptyPage(pageable);
         }
 
+        if (!conversationRepository.existsJoinAbleGroups(userId, keyword)) {
+            return CustomPageResponse.emptyPage(pageable);
+        }
+
         Page<ConversationDto> dtoPage = conversationRepository.searchJoinAbleGroups(userId, keyword, pageable);
         return CustomPageResponse.fromPage(dtoPage, ConversationInfoResponse::of);
     }

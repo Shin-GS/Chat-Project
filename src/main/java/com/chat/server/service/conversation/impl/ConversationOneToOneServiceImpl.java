@@ -51,7 +51,7 @@ public class ConversationOneToOneServiceImpl implements ConversationOneToOneServ
         UserId smallUserId = UserId.of(Math.min(requestUser.getId(), targetUser.getId()));
         UserId largeUserId = UserId.of(Math.max(requestUser.getId(), targetUser.getId()));
 
-        Optional<Conversation> OptionalConversation = conversationRepository.findOneToOneConversationByPair(smallUserId, largeUserId);
+        Optional<Conversation> OptionalConversation = conversationRepository.findOneToOneConversation(smallUserId, largeUserId);
 
         // conversation exists
         if (OptionalConversation.isPresent()) {

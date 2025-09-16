@@ -86,4 +86,6 @@ public class Constants {
     public static final String ORDER_USER_ID = "userId";
     public static final String ORDER_USER_FRIEND_ID = "userFriendId";
     public static final String ORDER_USER_NAME = "username";
+    public static final String ORDER_CONVERSATION_ID = "conversationId";
+    public static final String ORDER_CONVERSATION_ACTIVITY_AT = "conversationActivityAt";
 }
