@@ -7,44 +7,51 @@
      id="modal-container"
      hx-swap-oob="true">
     <div class="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl relative px-6 py-8 sm:px-8 sm:py-10">
-            <button onclick="document.getElementById('modal-container').innerHTML=''"
-                    class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors"
-                    th:attr="aria-label=#{aria.close}"
-                    aria-label="Close">
-                &times;
-            </button>
+        <!-- Fixed-size modal card -->
+        <div class="bg-white w-full max-w-md h-[32rem] max-h-[85vh] rounded-xl shadow-2xl relative
+                    flex flex-col overflow-hidden">
 
-            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6"
-                th:text="#{ui.friend_search.title}">Search Friends</h2>
-
-            <form class="space-y-4"
-                  hx-get="/hx/conversations/friends/search"
-                  hx-trigger="keyup changed delay:300ms"
-                  hx-swap="none">
-                <div>
-                    <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1"
-                           th:text="#{ui.friend_search.label.name}">Name</label>
-                    <input type="text"
-                           class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                           id="search-input"
-                           name="keyword"
-                           th:placeholder="#{placeholder.friend_search.keyword}"
-                           placeholder="Search by name"
-                           autocomplete="off"/>
-                </div>
-            </form>
-
-            <ul id="search-friend-list"
-                class="mt-4 space-y-2 max-h-64 overflow-y-auto pr-1">
-            </ul>
-
-            <div class="text-right mt-6">
-                <button type="button"
-                        class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors"
-                        onclick="document.getElementById('modal-container').innerHTML=''"
-                        th:text="#{button.close}">Close</button>
+            <!-- Header (non-scroll) -->
+            <div class="px-6 pt-8 sm:px-8 sm:pt-10 pb-4">
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800"
+                    th:text="#{ui.friend_search.title}">Search Friends</h2>
             </div>
+
+            <!-- Scrollable content -->
+            <div class="flex-1 overflow-y-auto px-6 sm:px-8">
+                <form class="space-y-4"
+                      hx-get="/hx/conversations/friends/search"
+                      hx-trigger="keyup changed delay:300ms"
+                      hx-swap="none">
+                    <div>
+                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1"
+                               th:text="#{ui.friend_search.label.name}">Name</label>
+                        <input type="text"
+                               id="search-input"
+                               name="keyword"
+                               autocomplete="off"
+                               th:placeholder="#{placeholder.friend_search.keyword}"
+                               placeholder="Search by name"
+                               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+                    </div>
+                </form>
+
+                <ul id="search-friend-list"
+                    class="mt-4 space-y-2 pr-1">
+                    <!-- results injected here -->
+                </ul>
+            </div>
+
+            <!-- Footer (fixed bottom, non-scroll) -->
+            <div class="px-6 sm:px-8 py-4">
+                <div class="text-right">
+                    <button type="button"
+                            class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors"
+                            onclick="document.getElementById('modal-container').innerHTML=''"
+                            th:text="#{button.close}">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

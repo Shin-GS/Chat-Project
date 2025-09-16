@@ -17,23 +17,69 @@
     <li th:each="searchUser : ${searchUsers}"
         class="py-2 flex items-center justify-between">
         <!--/*@thymesVar id="searchUser" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
-        <div th:if="${!searchUser.friend}"
-             class="w-full">
+
+        <!-- Not a friend yet -->
+        <div th:if="${!searchUser.friend}" class="w-full">
             <button type="button"
                     class="w-full flex justify-between items-center bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-md transition-colors"
                     th:attr="hx-post='/hx/conversations/friends/' + ${searchUser.id}"
                     hx-swap="none">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
-                <span class="ml-3 text-sm font-semibold"
-                      th:text="#{button.add_friend}">+ Add</span>
+                <!-- left: avatar + name/account -->
+                <div class="flex items-center gap-2 min-w-0">
+                    <!-- avatar image -->
+                    <img th:if="${searchUser.profileImageUrl != null and !#strings.isEmpty(searchUser.profileImageUrl)}"
+                         th:src="${searchUser.profileImageUrl}"
+                         alt="User avatar"
+                         loading="lazy"
+                         decoding="async"
+                         class="w-8 h-8 rounded-full object-cover border border-blue-200"/>
+
+                    <!-- fallback initial badge -->
+                    <div th:if="${searchUser.profileImageUrl == null or #strings.isEmpty(searchUser.profileImageUrl)}"
+                         class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-semibold border border-blue-200">
+                        <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(searchUser.name, 'U'), 0, 1))}">U</span>
+                    </div>
+
+                    <!-- name [masked account] -->
+                    <span class="truncate"
+                          th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|">
+                        Name[account]
+                    </span>
+                </div>
+
+                <!-- right: CTA -->
+                <span class="ml-3 text-sm font-semibold">+ Add</span>
             </button>
         </div>
 
-        <div th:if="${searchUser.friend}"
-             class="w-full">
+        <!-- Already a friend -->
+        <div th:if="${searchUser.friend}" class="w-full">
             <button type="button" disabled
                     class="w-full flex justify-between items-center bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed">
-                <span th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|"></span>
+                <!-- left: avatar + name/account -->
+                <div class="flex items-center gap-2 min-w-0">
+                    <!-- avatar image -->
+                    <img th:if="${searchUser.profileImageUrl != null and !#strings.isEmpty(searchUser.profileImageUrl)}"
+                         th:src="${searchUser.profileImageUrl}"
+                         alt="User avatar"
+                         loading="lazy"
+                         decoding="async"
+                         class="w-8 h-8 rounded-full object-cover border border-gray-300"/>
+
+                    <!-- fallback initial badge -->
+                    <div th:if="${searchUser.profileImageUrl == null or #strings.isEmpty(searchUser.profileImageUrl)}"
+                         class="w-8 h-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center text-xs font-semibold border border-gray-300">
+                        <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(searchUser.name, 'U'), 0, 1))}">U</span>
+                    </div>
+
+                    <!-- name [masked account] -->
+                    <span class="truncate"
+                          th:text="|${searchUser.name}[${T(com.chat.server.common.util.MaskingUtil).mask(searchUser.accountId)}]|">
+                        Name[account]
+                    </span>
+                </div>
+
+                <!-- right: state label -->
                 <span class="ml-3 text-sm font-semibold"
                       th:text="|(${#messages.msg('label.friend')})|">(Friend)</span>
             </button>
