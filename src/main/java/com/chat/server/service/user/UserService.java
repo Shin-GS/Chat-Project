@@ -17,4 +17,7 @@ public interface UserService {
 
     String uploadProfileImage(UserId userId,
                               MultipartFile file);
+
+    boolean isFriend(UserId userId,
+                     UserId friendId);
 }

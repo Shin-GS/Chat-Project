@@ -7,6 +7,7 @@ import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.ConversationFriendService;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
+import com.chat.server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import static com.chat.server.common.constant.FragmentConstants.*;
 @RequiredArgsConstructor
 @RequestMapping("/hx/conversations/friends")
 public class ConversationFriendHxController {
+    private final UserService userService;
     private final ConversationFriendService conversationFriendService;
     private final CodeMessageGetter codeMessageGetter;
 
@@ -53,6 +55,19 @@ public class ConversationFriendHxController {
                 .addFragment(CONVERSATION_FRIEND_LIST_PATH,
                         CONVERSATION_FRIEND_LIST_FRAGMENT,
                         Map.of(CONVERSATION_FRIEND_LIST_FRIEND_LIST, conversationFriendService.findFriends(memberInfo.id())))
+                .build();
+    }
+
+    @Operation(summary = "친구 프로필 모달")
+    @GetMapping("/{friendUserId}/profile/modal")
+    public List<ModelAndView> friendProfile(@PathVariable("friendUserId") UserId friendUserId,
+                                            @JwtMember JwtMemberInfo memberInfo) {
+        return new ModelAndViewBuilder()
+                .addFragment(CONVERSATION_FRIEND_PROFILE_MODAL_PATH,
+                        CONVERSATION_FRIEND_PROFILE_MODAL_FRAGMENT,
+                        Map.of(CONVERSATION_FRIEND_PROFILE_MODAL_MY_USER_ID, memberInfo.id(),
+                                CONVERSATION_FRIEND_PROFILE_MODAL_FRIEND_USER_INFO, userService.getUserProfile(friendUserId),
+                                CONVERSATION_FRIEND_PROFILE_MODAL_IS_FRIEND, userService.isFriend(memberInfo.id(), friendUserId)))
                 .build();
     }
 

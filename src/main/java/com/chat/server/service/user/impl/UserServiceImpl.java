@@ -5,6 +5,7 @@ import com.chat.server.common.constant.Constants;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.common.util.Base64Util;
 import com.chat.server.domain.entity.user.User;
+import com.chat.server.domain.repository.user.UserFriendRepository;
 import com.chat.server.domain.repository.user.UserRepository;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.CommonFileUploadService;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CommonFileUploadService commonFileUploadService;
+    private final UserFriendRepository userFriendRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -63,5 +65,16 @@ public class UserServiceImpl implements UserService {
                 filename,
                 Constants.UPLOAD_USER_PROFILE_IMAGE_ALLOWED_EXT,
                 Constants.UPLOAD_USER_PROFILE_IMAGE_MAX_BYTES);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isFriend(UserId userId,
+                            UserId friendId) {
+        if(userId == null || friendId == null) {
+            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
+        }
+
+        return userFriendRepository.existsByUserIdAndFriendUserId(userId, friendId);
     }
 }
