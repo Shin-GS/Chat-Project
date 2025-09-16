@@ -81,6 +81,10 @@ public class ConversationFriendHxController {
                         COMMON_TOAST_MESSAGE_FRAGMENT,
                         Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
                                 COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.FRIEND_ADDED)))
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .addFragment(CONVERSATION_FRIEND_LIST_PATH,
                         CONVERSATION_FRIEND_LIST_FRAGMENT,
                         Map.of(CONVERSATION_FRIEND_LIST_FRIEND_LIST, conversationFriendService.findFriends(memberInfo.id())))
@@ -97,6 +101,10 @@ public class ConversationFriendHxController {
                         COMMON_TOAST_MESSAGE_FRAGMENT,
                         Map.of(COMMON_TOAST_TYPE, COMMON_TOAST_TYPE_SUCCESS,
                                 COMMON_TOAST_MESSAGE, codeMessageGetter.getMessage(SuccessCode.FRIEND_DELETED)))
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .addFragment(CONVERSATION_FRIEND_LIST_PATH,
                         CONVERSATION_FRIEND_LIST_FRAGMENT,
                         Map.of(CONVERSATION_FRIEND_LIST_FRIEND_LIST, conversationFriendService.findFriends(memberInfo.id())))
