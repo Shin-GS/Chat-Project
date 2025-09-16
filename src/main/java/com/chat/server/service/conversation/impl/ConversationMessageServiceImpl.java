@@ -118,7 +118,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     @Override
     @Transactional(readOnly = true)
     public Long findRecentlyMessageId(ConversationId conversationId) {
-        return conversationMessageRepository.findMaxMessageIdByConversation(conversationId);
+        return conversationMessageRepository.findMaxMessageIdByConversationId(conversationId);
     }
 
     @Transactional
@@ -134,7 +134,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         }
 
         ConversationParticipant participant = optionalParticipant.get();
-        conversationMessageRepository.findMaxMessageByConversation(conversationId)
+        conversationMessageRepository.findMaxMessageByConversationId(conversationId)
                 .ifPresent(participant::readMessage);
     }
 }

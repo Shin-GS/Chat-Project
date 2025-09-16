@@ -72,7 +72,7 @@ public class ConversationServiceImpl implements ConversationService {
                                                                                          Conversation conversation) {
         ConversationParticipant participant = conversationParticipantRepository.findByConversationIdAndUserId(conversation.getConversationId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_JOINED));
-        ConversationMessage lastConversationMessage = conversationMessageRepository.findMaxMessageByConversation(conversation.getConversationId())
+        ConversationMessage lastConversationMessage = conversationMessageRepository.findMaxMessageByConversationId(conversation.getConversationId())
                 .orElse(null);
         String lastMessage = lastConversationMessage == null ? "" : switch (lastConversationMessage.getType()) {
             case TEXT, SYSTEM -> lastConversationMessage.getMessage();
