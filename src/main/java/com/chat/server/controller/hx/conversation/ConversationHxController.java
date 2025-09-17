@@ -97,6 +97,10 @@ public class ConversationHxController {
                         COMMON_MODAL_CLOSE_FRAGMENT,
                         COMMON_MODAL_CLOSE_TARGET_ID,
                         COMMON_MODAL_CLOSE_TARGET_CONVERSATION_PANEL)
+                .addFragment(COMMON_MODAL_CLOSE_PATH,
+                        COMMON_MODAL_CLOSE_FRAGMENT,
+                        COMMON_MODAL_CLOSE_TARGET_ID,
+                        COMMON_MODAL_CLOSE_TARGET_MODAL_CONTAINER)
                 .build();
     }
 }

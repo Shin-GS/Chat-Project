@@ -54,8 +54,8 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
         ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
         conversation.updateActivity();
-
-        readMessage(sender.getUserId(), conversation.getConversationId());
+        conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
+                .ifPresent(participant -> readMessage(participant.getUserId(), conversation.getConversationId())); // 메시지를 보냈으나 나간 케이스도 존재함
 
         applicationEventPublisher.publishEvent(ConversationMessageEvent.of(
                 savedMessage.getConversationId(),
@@ -80,7 +80,8 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
         ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message));
-        readMessage(sender.getUserId(), conversation.getConversationId());
+        conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
+                .ifPresent(participant -> readMessage(participant.getUserId(), conversation.getConversationId())); // 메시지를 보냈으나 나간 케이스도 존재함
 
         applicationEventPublisher.publishEvent(
                 SystemMessageEvent.of(
