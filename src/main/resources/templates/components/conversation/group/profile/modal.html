@@ -12,12 +12,14 @@
                 <button
                         onclick="document.getElementById('modal-container').innerHTML=''"
                         class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors"
-                        aria-label="Close">
-                    &times;
+                        aria-label="Close"
+                        th:attr="aria-label=#{aria.close}">
+                    &times; <!-- Close icon -->
                 </button>
 
                 <!-- Title -->
-                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6">Group Profile</h2>
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6"
+                    th:text="#{ui.group_profile.title}">Group Profile</h2>
 
                 <!--/*@thymesVar id="groupInfo" type="com.chat.server.service.conversation.response.ConversationGroupProfileResponse"*/-->
                 <!--/*@thymesVar id="isJoined" type="java.lang.Boolean"*/-->
@@ -30,11 +32,13 @@
                         <img th:if="${groupInfo.profileImageUrl != null and !#strings.isEmpty(groupInfo.profileImageUrl)}"
                              th:src="${groupInfo.profileImageUrl}"
                              alt="Group avatar"
+                             th:attr="alt=#{aria.group.avatar}"
                              class="h-24 w-24 rounded-full object-cover ring-2 ring-gray-200"/>
 
                         <!-- Fallback badge -->
                         <span th:if="${groupInfo.profileImageUrl == null or #strings.isEmpty(groupInfo.profileImageUrl)}"
-                              class="inline-flex items-center justify-center h-24 w-24 rounded-full ring-2 ring-purple-200 bg-purple-50 text-purple-700">
+                              class="inline-flex items-center justify-center h-24 w-24 rounded-full ring-2 ring-purple-200 bg-purple-50 text-purple-700"
+                              aria-hidden="true">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24" fill="none"
                                stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,7 +50,7 @@
                     <!-- Group title -->
                     <div class="mt-4 text-center">
                         <p class="text-lg sm:text-xl font-semibold text-gray-900"
-                           th:text="${#strings.defaultString(groupInfo.title, 'Untitled Group')}">Untitled Group</p>
+                           th:text="${groupInfo.title} ?: #{ui.group_join.room.untitled}">Untitled group</p>
                     </div>
                 </div>
 
@@ -57,16 +61,17 @@
                         <div th:if="${!isJoined}" class="w-full">
                             <button type="button"
                                     class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${groupInfo.id.value()})},aria-label=#{aria.group.join}"
+                                    th:attr="hx-get=@{/hx/conversations/groups/{id}/join(id=${groupInfo.id.value})}"
+                                    th:attrappend="aria-label=#{aria.group.join}"
                                     hx-swap="none"
-                                    aria-label="Join Group">
+                                    aria-label="Join this group">
                                 <!-- Icon: user-group with plus -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M16 11V7m2 2h-4M8 11a3 3 0 110-6 3 3 0 010 6zM2 20v-.5A6.5 6.5 0 018.5 13h0A6.5 6.5 0 0115 19.5V20"/>
                                 </svg>
-                                <span class="text-sm font-semibold">Join Group</span>
+                                <span class="text-sm font-semibold" th:text="#{button.join}">Join</span>
                             </button>
                         </div>
 
@@ -75,16 +80,16 @@
                             <button type="button"
                                     class="w-full inline-flex items-center justify-center gap-2 border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400/40"
                                     th:attr="hx-post='/hx/conversations/' + ${groupInfo.id} + '/leave'"
-                                    th:attrappend="hx-confirm=#{confirm.leave_conversation}"
+                                    th:attrappend="hx-confirm=#{confirm.leave_conversation}, aria-label=#{aria.group.leave}"
                                     hx-swap="none"
-                                    aria-label="Leave Group">
+                                    aria-label="Leave this group">
                                 <!-- Icon: door exit -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 17l5-5-5-5M10 12h10M15 21H7a2 2 0 01-2-2V5a2 2 0 012-2h8"/>
+                                          d="M15 17l5-5-5-5M10 12h10M15 21H7a 2 2 0 01-2-2V5a2 2 0 012-2h8"/>
                                 </svg>
-                                <span class="text-sm font-semibold">Leave Group</span>
+                                <span class="text-sm font-semibold" th:text="#{button.leave}">Leave</span>
                             </button>
                         </div>
                     </div>
@@ -94,7 +99,8 @@
                 <div class="pt-6 flex items-center justify-end gap-3">
                     <button type="button"
                             class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onclick="document.getElementById('modal-container').innerHTML=''">
+                            onclick="document.getElementById('modal-container').innerHTML=''"
+                            th:text="#{button.close}">
                         Close
                     </button>
                 </div>

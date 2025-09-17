@@ -12,12 +12,14 @@
                 <button
                         onclick="document.getElementById('modal-container').innerHTML=''"
                         class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors"
-                        aria-label="Close">
-                    &times;
+                        aria-label="Close"
+                        th:attr="aria-label=#{aria.common.close}">
+                    &times; <!-- Close icon -->
                 </button>
 
                 <!-- Title -->
-                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6">Profile</h2>
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6"
+                    th:text="#{modal.title.profile}">Profile</h2>
 
                 <!--/*@thymesVar id="friendUser" type="com.chat.server.service.user.response.UserProfileResponse"*/-->
                 <!--/*@thymesVar id="userId" type="com.chat.server.domain.vo.UserId"*/-->
@@ -28,27 +30,29 @@
                         <img th:if="${friendUser.profileImageUrl != null and !#strings.isEmpty(friendUser.profileImageUrl)}"
                              th:src="${friendUser.profileImageUrl}"
                              alt="Profile photo"
+                             th:attr="alt=#{aria.profile.photo}"
                              class="h-24 w-24 rounded-full object-cover ring-2 ring-gray-200"/>
                         <!-- Fallback avatar -->
                         <div th:if="${friendUser.profileImageUrl == null or #strings.isEmpty(friendUser.profileImageUrl)}"
                              class="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center ring-2 ring-gray-200">
-                            <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(friendUser?.name, 'U'), 0, 1))}">U</span>
+                            <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(friendUser?.name, #{user.unknown}), 0, 1))}">U</span>
                         </div>
                     </div>
 
                     <!-- Name -->
                     <div class="mt-4 text-center">
                         <p class="text-lg sm:text-xl font-semibold text-gray-900"
-                           th:text="${friendUser.name?:'Unknown User'}">Unknown User</p>
+                           th:text="${friendUser.name ?: #{user.unknown}}">Unknown User</p>
                     </div>
                 </div>
 
-                <!-- Status Message (fixed min-height to stabilize layout) -->
+                <!-- Status Message -->
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1"
+                           th:text="#{label.status}">Status</label>
                     <div class="w-full border border-gray-200 rounded-md px-3 py-3 text-sm sm:text-base bg-gray-50 min-h-[4.5rem]">
                         <span class="text-gray-800 whitespace-pre-wrap"
-                              th:text="${#strings.isEmpty(friendUser.statusMessage) ? 'No status message.' : friendUser.statusMessage}">
+                              th:text="${#strings.isEmpty(friendUser.statusMessage) ? #{status.empty} : friendUser.statusMessage}">
                             No status message.
                         </span>
                     </div>
@@ -56,25 +60,29 @@
 
                 <div class="mt-4">
                     <div class="w-full min-h-12 flex items-center">
+                        <!-- Case: This is the current user -->
                         <div th:if="${friendUser.id == userId}" class="w-full">
                             <button type="button" disabled
                                     class="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed"
-                                    aria-label="This is you">
+                                    aria-label="This is you"
+                                    th:attr="aria-label=#{button.this_is_you}">
                                 <!-- Icon: user -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M5.121 17.804A9 9 0 1118.88 6.197M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
-                                <span class="text-sm font-semibold">This is you</span>
+                                <span class="text-sm font-semibold"
+                                      th:text="#{button.this_is_you}">This is you</span>
                             </button>
                         </div>
 
+                        <!-- Case: Already friend -->
                         <div th:if="${friendUser.id != userId and isFriend}" class="w-full">
                             <button type="button"
                                     class="w-full inline-flex items-center justify-center gap-2 border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400/40"
                                     th:attr="hx-delete='/hx/conversations/friends/' + ${friendUser.id}"
-                                    th:attrappend="hx-confirm=#{confirm.delete_friend}"
+                                    th:attrappend="hx-confirm=#{confirm.delete_friend}, aria-label=#{button.delete_friend}"
                                     hx-swap="none"
                                     aria-label="Delete Friend">
                                 <!-- Icon: check-circle -->
@@ -83,15 +91,17 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span class="text-sm font-semibold">Delete Friend</span>
+                                <span class="text-sm font-semibold"
+                                      th:text="#{button.delete_friend}">Delete Friend</span>
                             </button>
                         </div>
 
+                        <!-- Case: Not a friend -->
                         <div th:if="${friendUser.id != userId and !isFriend}" class="w-full">
                             <button type="button"
                                     class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     th:attr="hx-post='/hx/conversations/friends/' + ${friendUser.id}"
-                                    th:attrappend="hx-confirm=#{confirm.add_friend}"
+                                    th:attrappend="hx-confirm=#{confirm.add_friend}, aria-label=#{button.add_friend}"
                                     hx-swap="none"
                                     aria-label="Add Friend">
                                 <!-- Icon: user-plus -->
@@ -100,7 +110,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M18 9v6m3-3h-6M10 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0v1H3v-1z"/>
                                 </svg>
-                                <span class="text-sm font-semibold">Add Friend</span>
+                                <span class="text-sm font-semibold"
+                                      th:text="#{button.add_friend}">Add Friend</span>
                             </button>
                         </div>
                     </div>
@@ -110,7 +121,8 @@
                 <div class="pt-6 flex items-center justify-end gap-3">
                     <button type="button"
                             class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onclick="document.getElementById('modal-container').innerHTML=''">
+                            onclick="document.getElementById('modal-container').innerHTML=''"
+                            th:text="#{action.close}">
                         Close
                     </button>
                 </div>

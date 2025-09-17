@@ -40,13 +40,15 @@
                     <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
                          th:src="${conversation.imageUrl}"
                          alt="Conversation avatar"
+                         th:attr="alt=#{aria.user.avatar}"
                          loading="lazy"
                          decoding="async"
                          class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
 
                     <!-- Fallback: user badge when no image -->
                     <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
-                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-blue-50 text-blue-700 border-blue-200">
+                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-blue-50 text-blue-700 border-blue-200"
+                          aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -65,13 +67,15 @@
                     <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
                          th:src="${conversation.imageUrl}"
                          alt="Group avatar"
+                         th:attr="alt=#{aria.group.avatar}"
                          loading="lazy"
                          decoding="async"
                          class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
 
                     <!-- Fallback: group badge when no image -->
                     <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
-                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-purple-50 text-purple-700 border-purple-200">
+                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-purple-50 text-purple-700 border-purple-200"
+                          aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -86,13 +90,15 @@
                     <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
                          th:src="${conversation.imageUrl}"
                          alt="Conversation avatar"
+                         th:attr="alt=#{aria.conversation.avatar}"
                          loading="lazy"
                          decoding="async"
                          class="w-7 h-7 rounded-full object-cover border border-gray-200"/>
 
                     <!-- Fallback: type badge when no image -->
                     <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
-                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-gray-100 text-gray-700 border-gray-200">
+                          class="inline-flex items-center justify-center rounded-full w-7 h-7 border shrink-0 bg-gray-100 text-gray-700 border-gray-200"
+                          aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"

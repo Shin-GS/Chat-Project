@@ -10,7 +10,7 @@
     <div class="flex items-center justify-between gap-2 px-2 py-2 rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm">
         <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
         <div class="flex items-center gap-2 min-w-0">
-            <!-- Avatar: show image if profileImageUrl exists; otherwise show gradient initial badge -->
+            <!-- Avatar: show image if profileImageUrl exists; otherwise gradient initial badge -->
             <div class="shrink-0"
                  th:attr="hx-get='/hx/conversations/friends/' + ${user.id} + '/profile/modal'"
                  hx-swap="none"
@@ -19,6 +19,7 @@
                 <img th:if="${user.profileImageUrl != null and !#strings.isEmpty(user.profileImageUrl)}"
                      th:src="${user.profileImageUrl}"
                      alt="User avatar"
+                     th:attr="alt=#{aria.user.avatar}"
                      loading="lazy"
                      decoding="async"
                      class="w-8 h-8 rounded-full object-cover border border-gray-200"/>
@@ -29,7 +30,7 @@
                 </div>
             </div>
             <span class="text-sm font-medium text-gray-900 truncate"
-                  th:text="${user.name}">
+                  th:text="${#strings.defaultString(user?.name, #{ui.user_menu.username_placeholder})}">
                 [[#{ui.user_menu.username_placeholder}]]
             </span>
         </div>
@@ -46,7 +47,7 @@
                      class="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
-                    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .33 1.7 1.7 0 0 0-.7 1.37V21a2 2 0 1 1-4 0v-.06a1.7 1.7 0 0 0-.7-1.37 1.7 1.7 0 0 0-1-.33 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.33-1 1.7 1.7 0 0 0-1.37-.7H3a2 2 0 1 1 0-4h.06a1.7 1.7 0 0 0 1.37-.7 1.7 1.7 0 0 0 .33-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.2 2.75l.06.06c.5.5 1.2.64 1.88.34.34-.14.7-.21 1.06-.21s.72.07 1.06.21c.68.3 1.38.16 1.88-.34l.06-.06A2 2 0 1 1 18.37 5.6l-.06.06c-.5.5-.64 1.2-.34 1.88.14.34.21.7.21 1.06s-.07.72-.21 1.06c-.3.68-.16 1.38.34 1.88l.06.06c.34.34.53.8.53 1.27Z"></path>
+                    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .33 1.7 1.7 0 0 0-.7 1.37V21a2 2 0 1 1-4 0v-.06a1.7 1.7 0 0 0-.7-1.37 1.7 1.7 0 0 0-1-.33 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.33-1 1.7 1.7 0 0 0-1.37-.7H3a2 2 0 1 1-0-4h.06a1.7 1.7 0 0 0 1.37-.7 1.7 1.7 0 0 0 .33-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.2 2.75l.06.06c.5.5 1.2.64 1.88.34.34-.14.7-.21 1.06-.21s.72.07 1.06.21c.68.3 1.38.16 1.88-.34l.06-.06A2 2 0 1 1 18.37 5.6l-.06.06c-.5.5-.64 1.2-.34 1.88.14.34.21.7.21 1.06s-.07.72-.21 1.06c-.3.68-.16 1.38.34 1.88l.06.06c.34.34.53.8.53 1.27Z"></path>
                 </svg>
             </button>
 

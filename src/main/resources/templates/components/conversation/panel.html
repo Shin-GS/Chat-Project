@@ -20,7 +20,7 @@
         <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3 shrink-0">
             <h2 id="conversation-title"
                 class="text-lg sm:text-xl font-semibold text-gray-900 truncate"
-                th:text="${conversation.title}">Conversation</h2>
+                th:text="${conversation.title} ?: #{ui.conversation_list.untitled}">Conversation</h2>
             <button id="conversation-leave-button"
                     th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave',
                              hx-confirm=#{confirm.leave_conversation},
