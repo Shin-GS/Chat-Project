@@ -30,7 +30,7 @@
                 </div>
             </div>
             <span class="text-sm font-medium text-gray-900 truncate"
-                  th:text="${#strings.defaultString(user?.name, #{ui.user_menu.username_placeholder})}">
+                  th:text="${#strings.defaultString(user?.name, #messages.msg('ui.user_menu.username_placeholder'))}">
                 [[#{ui.user_menu.username_placeholder}]]
             </span>
         </div>

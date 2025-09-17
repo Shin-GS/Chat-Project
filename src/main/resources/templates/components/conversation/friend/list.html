@@ -43,7 +43,12 @@
                 <!-- Fallback: initial badge when no profile image -->
                 <span th:if="${friend.profileImageUrl == null or #strings.isEmpty(friend.profileImageUrl)}"
                       class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 bg-gray-50 text-gray-700 text-sm font-semibold">
-                    <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(friend.name, #{user.unknown}), 0, 1))}">F</span>
+                    <span th:with="
+                              _name=${#strings.isEmpty(#strings.trim(friend?.name))
+                                       ? #messages.msg('user.unknown')
+                                       : friend.name},
+                              _first=${#strings.substring(_name, 0, 1)}"
+                          th:text="${#strings.toUpperCase(_first)}">F</span>
                 </span>
             </div>
 
@@ -51,7 +56,7 @@
             <div class="flex-1 min-w-0">
                 <!-- friend name -->
                 <div class="flex items-center gap-2">
-                    <span th:text="${#strings.defaultString(friend.name, #{user.unknown})}"
+                    <span th:text="${#strings.defaultString(friend?.name, #messages.msg('user.unknown'))}"
                           class="truncate font-semibold text-gray-900 group-hover:text-gray-900">
                         Chat With Friend
                     </span>

@@ -35,14 +35,23 @@
                         <!-- Fallback avatar -->
                         <div th:if="${friendUser.profileImageUrl == null or #strings.isEmpty(friendUser.profileImageUrl)}"
                              class="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center ring-2 ring-gray-200">
-                            <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(friendUser?.name, #{user.unknown}), 0, 1))}">U</span>
+                            <span th:with="
+                                    _name=${#strings.isEmpty(#strings.trim(friendUser?.name))
+                                             ? #messages.msg('user.unknown')
+                                             : friendUser.name},
+                                    _first=${#strings.substring(_name, 0, 1)}"
+                                  th:text="${#strings.toUpperCase(_first)}">U</span>
                         </div>
                     </div>
 
                     <!-- Name -->
                     <div class="mt-4 text-center">
                         <p class="text-lg sm:text-xl font-semibold text-gray-900"
-                           th:text="${friendUser.name ?: #{user.unknown}}">Unknown User</p>
+                           th:text="${#strings.isEmpty(#strings.trim(friendUser?.name))
+                                 ? #messages.msg('user.unknown')
+                                 : friendUser.name}">
+                            Unknown User
+                        </p>
                     </div>
                 </div>
 
@@ -52,7 +61,9 @@
                            th:text="#{label.status}">Status</label>
                     <div class="w-full border border-gray-200 rounded-md px-3 py-3 text-sm sm:text-base bg-gray-50 min-h-[4.5rem]">
                         <span class="text-gray-800 whitespace-pre-wrap"
-                              th:text="${#strings.isEmpty(friendUser.statusMessage) ? #{status.empty} : friendUser.statusMessage}">
+                              th:text="${#strings.isEmpty(friendUser.statusMessage)
+                                        ? #messages.msg('status.empty')
+                                        : friendUser.statusMessage}">
                             No status message.
                         </span>
                     </div>

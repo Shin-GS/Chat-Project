@@ -20,11 +20,8 @@
 
         <!-- Not a friend yet -->
         <div th:if="${!searchUser.friend}" class="w-full">
-            <button type="button"
-                    class="w-full flex justify-between items-center bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-md transition-colors"
-                    th:attr="hx-post='/hx/conversations/friends/' + ${searchUser.id}"
-                    th:attrappend="hx-confirm=#{confirm.add_friend}"
-                    hx-swap="none">
+            <div type="button"
+                    class="w-full flex justify-between items-center bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-md transition-colors">
                 <!-- left: avatar + name/account -->
                 <div class="flex items-center gap-2 min-w-0">
                     <!-- avatar clickable area -->
@@ -44,7 +41,12 @@
                         <!-- fallback initial badge -->
                         <div th:if="${searchUser.profileImageUrl == null or #strings.isEmpty(searchUser.profileImageUrl)}"
                              class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-semibold border border-blue-200">
-                            <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(searchUser.name, #{user.unknown}), 0, 1))}">U</span>
+                            <span th:with="
+                                      _name=${#strings.isEmpty(#strings.trim(searchUser?.name))
+                                               ? #messages.msg('user.unknown')
+                                               : searchUser.name},
+                                      _first=${#strings.substring(_name, 0, 1)}"
+                                  th:text="${#strings.toUpperCase(_first)}">U</span>
                         </div>
                     </div>
 
@@ -56,14 +58,17 @@
                 </div>
 
                 <!-- right: CTA -->
-                <span class="ml-3 text-sm font-semibold" th:text="#{button.add_friend}">+ Add</span>
-            </button>
+                <span class="ml-3 text-sm font-semibold"
+                      th:text="#{button.add_friend}"
+                      th:attr="hx-post='/hx/conversations/friends/' + ${searchUser.id}"
+                      th:attrappend="hx-confirm=#{confirm.add_friend}"
+                      hx-swap="none">+ Add</span>
+            </div>
         </div>
 
         <!-- Already a friend -->
         <div th:if="${searchUser.friend}" class="w-full">
-            <button type="button" disabled
-                    class="w-full flex justify-between items-center bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed">
+            <div class="w-full flex justify-between items-center bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-md cursor-not-allowed">
                 <!-- left: avatar + name/account -->
                 <div class="flex items-center gap-2 min-w-0">
                     <!-- avatar clickable area -->
@@ -83,7 +88,12 @@
                         <!-- fallback initial badge -->
                         <div th:if="${searchUser.profileImageUrl == null or #strings.isEmpty(searchUser.profileImageUrl)}"
                              class="w-8 h-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center text-xs font-semibold border border-gray-300">
-                            <span th:text="${#strings.toUpperCase(#strings.substring(#strings.defaultString(searchUser.name, #{user.unknown}), 0, 1))}">U</span>
+                              <span th:with="
+                                       _name=${#strings.isEmpty(#strings.trim(searchUser?.name))
+                                                ? #messages.msg('user.unknown')
+                                                : searchUser.name},
+                                       _first=${#strings.substring(_name, 0, 1)}"
+                                    th:text="${#strings.toUpperCase(_first)}">U</span>
                         </div>
                     </div>
 
@@ -97,7 +107,7 @@
                 <!-- right: state label -->
                 <span class="ml-3 text-sm font-semibold"
                       th:text="|(${#messages.msg('label.friend')})|">(Friend)</span>
-            </button>
+            </div>
         </div>
     </li>
 </ul>
