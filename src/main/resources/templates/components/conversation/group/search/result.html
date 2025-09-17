@@ -35,7 +35,8 @@
                     <!-- fallback badge -->
                     <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
                           class="inline-flex items-center justify-center rounded-full w-8 h-8 border border-purple-200 bg-purple-50 text-purple-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378M21 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-1.5M8.25 8.25a3 3 0 116 0 3 3 0 01-6 0zM18 8.25a3 3 0 11-6 0"/>
                         </svg>
@@ -46,8 +47,21 @@
                 <div class="min-w-0">
                     <span class="block font-semibold text-gray-900 truncate"
                           th:text="${conversation.title}">Group title</span>
+
+                    <!-- last activity -->
                     <span class="block text-xs text-gray-500 mt-0.5"
                           th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
+
+                    <!-- code badge -->
+                    <span th:if="${conversation.hasCode}"
+                          class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16.5 9.4V5.25m0 0H12.6m3.9 0L10.5 11.25M7.5 14.6v4.15m0 0h3.9m-3.9 0L13.5 12.75"/>
+                            </svg>
+                            <span th:text="#{ui.group_search.label.has_code}">Has Code</span>
+                    </span>
                 </div>
             </div>
 
