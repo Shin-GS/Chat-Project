@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:lang="${#locale.toLanguageTag()}">
+<body>
+<div th:fragment="group-profile-modal"
+     id="modal-container"
+     hx-swap-oob="true">
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <!-- Keep the same outer size regardless of content presence -->
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl relative">
+            <div class="px-6 py-7 sm:px-8 sm:py-8 max-h-[85vh] overflow-y-auto">
+                <!-- Close button -->
+                <button
+                        onclick="document.getElementById('modal-container').innerHTML=''"
+                        class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors"
+                        aria-label="Close">
+                    &times;
+                </button>
+
+                <!-- Title -->
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-6">Group Profile</h2>
+
+                <!--/*@thymesVar id="groupInfo" type="com.chat.server.service.conversation.response.ConversationGroupProfileResponse"*/-->
+                <!--/*@thymesVar id="isJoined" type="java.lang.Boolean"*/-->
+
+                <!-- Avatar + Title -->
+                <div class="w-full flex flex-col items-center mb-6">
+                    <!-- Avatar -->
+                    <div class="relative">
+                        <!-- Image -->
+                        <img th:if="${groupInfo.profileImageUrl != null and !#strings.isEmpty(groupInfo.profileImageUrl)}"
+                             th:src="${groupInfo.profileImageUrl}"
+                             alt="Group avatar"
+                             class="h-24 w-24 rounded-full object-cover ring-2 ring-gray-200"/>
+
+                        <!-- Fallback badge -->
+                        <span th:if="${groupInfo.profileImageUrl == null or #strings.isEmpty(groupInfo.profileImageUrl)}"
+                              class="inline-flex items-center justify-center h-24 w-24 rounded-full ring-2 ring-purple-200 bg-purple-50 text-purple-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378M21 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-1.5M8.25 8.25a3 3 0 116 0 3 3 0 01-6 0zM18 8.25a3 3 0 11-6 0"/>
+                          </svg>
+                        </span>
+                    </div>
+
+                    <!-- Group title -->
+                    <div class="mt-4 text-center">
+                        <p class="text-lg sm:text-xl font-semibold text-gray-900"
+                           th:text="${#strings.defaultString(groupInfo.title, 'Untitled Group')}">Untitled Group</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-4">
+                    <div class="w-full min-h-12 flex items-center">
+                        <!-- Not joined: Join button -->
+                        <div th:if="${!isJoined}" class="w-full">
+                            <button type="button"
+                                    class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    th:attr="hx-post='/hx/conversations/groups/' + ${groupInfo.id} + '/join'"
+                                    hx-swap="none"
+                                    aria-label="Join Group">
+                                <!-- Icon: user-group with plus -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M16 11V7m2 2h-4M8 11a3 3 0 110-6 3 3 0 010 6zM2 20v-.5A6.5 6.5 0 018.5 13h0A6.5 6.5 0 0115 19.5V20"/>
+                                </svg>
+                                <span class="text-sm font-semibold">Join Group</span>
+                            </button>
+                        </div>
+
+                        <!-- Joined: Leave button -->
+                        <div th:if="${isJoined}" class="w-full">
+                            <button type="button"
+                                    class="w-full inline-flex items-center justify-center gap-2 border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-400/40"
+                                    th:attr="hx-post='/hx/conversations/' + ${groupInfo.id} + '/leave'"
+                                    hx-swap="none"
+                                    aria-label="Leave Group">
+                                <!-- Icon: door exit -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 17l5-5-5-5M10 12h10M15 21H7a2 2 0 01-2-2V5a2 2 0 012-2h8"/>
+                                </svg>
+                                <span class="text-sm font-semibold">Leave Group</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="pt-6 flex items-center justify-end gap-3">
+                    <button type="button"
+                            class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onclick="document.getElementById('modal-container').innerHTML=''">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

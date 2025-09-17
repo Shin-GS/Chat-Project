@@ -4,6 +4,7 @@ import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.common.response.CustomPageResponse;
+import com.chat.server.service.conversation.response.ConversationGroupProfileResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -40,4 +41,9 @@ public interface ConversationGroupService {
 
     ConversationUserRole getRole(ConversationId conversationId,
                                  UserId userId);
+
+    boolean isJoined(ConversationId conversationId,
+                     UserId userId);
+
+    ConversationGroupProfileResponse getGroupProfile(ConversationId conversationId);
 }

@@ -70,6 +70,11 @@ public class FragmentConstants {
     public static final String CONVERSATION_GROUP_SEARCH_RESULT_HREF_BASE = "hrefBase";
     public static final String CONVERSATION_GROUP_SEARCH_RESULT_PAGE = "page";
 
+    public static final String CONVERSATION_GROUP_PROFILE_MODAL_PATH = "templates/components/conversation/group/profile/modal.html";
+    public static final String CONVERSATION_GROUP_PROFILE_MODAL_FRAGMENT = "components/conversation/group/profile/modal :: group-profile-modal";
+    public static final String CONVERSATION_GROUP_PROFILE_MODAL_CONVERSATION_GROUP_INFO = "groupInfo";
+    public static final String CONVERSATION_GROUP_PROFILE_MODAL_IS_JOINED = "isJoined";
+
     public static final String CONVERSATION_FRIEND_SEARCH_MODAL_PATH = "templates/components/conversation/friend/search/modal.html";
     public static final String CONVERSATION_FRIEND_SEARCH_MODAL_FRAGMENT = "components/conversation/friend/search/modal :: search-modal";
 

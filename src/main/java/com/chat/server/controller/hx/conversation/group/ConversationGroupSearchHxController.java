@@ -1,6 +1,7 @@
 package com.chat.server.controller.hx.conversation.group;
 
 import com.chat.server.common.response.ModelAndViewBuilder;
+import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.common.request.CustomPageRequest;
 import com.chat.server.service.common.request.CustomPageRequestDefault;
 import com.chat.server.service.common.response.CustomPageResponse;
@@ -11,10 +12,7 @@ import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +27,18 @@ import static com.chat.server.common.constant.FragmentConstants.*;
 @RequestMapping("/hx/conversations/groups")
 public class ConversationGroupSearchHxController {
     private final ConversationGroupService conversationGroupService;
+
+    @Operation(summary = "그룹 프로필 모달")
+    @GetMapping("/{conversationId}/profile/modal")
+    public List<ModelAndView> friendProfile(@PathVariable("conversationId") ConversationId conversationId,
+                                            @JwtMember JwtMemberInfo memberInfo) {
+        return new ModelAndViewBuilder()
+                .addFragment(CONVERSATION_GROUP_PROFILE_MODAL_PATH,
+                        CONVERSATION_GROUP_PROFILE_MODAL_FRAGMENT,
+                        Map.of(CONVERSATION_GROUP_PROFILE_MODAL_CONVERSATION_GROUP_INFO, conversationGroupService.getGroupProfile(conversationId),
+                                CONVERSATION_GROUP_PROFILE_MODAL_IS_JOINED, conversationGroupService.isJoined(conversationId, memberInfo.id())))
+                .build();
+    }
 
     @Operation(summary = "그룹 대화방 검색 모달")
     @GetMapping("/search/modal")

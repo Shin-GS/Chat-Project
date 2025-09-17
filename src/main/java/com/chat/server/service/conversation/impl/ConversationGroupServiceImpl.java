@@ -16,6 +16,7 @@ import com.chat.server.service.common.response.CustomPageResponse;
 import com.chat.server.service.conversation.ConversationGroupService;
 import com.chat.server.service.conversation.ConversationHistoryService;
 import com.chat.server.service.conversation.ConversationMessageService;
+import com.chat.server.service.conversation.response.ConversationGroupProfileResponse;
 import com.chat.server.service.conversation.response.ConversationInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -260,5 +261,19 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         return conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
                 .map(ConversationParticipant::getRole)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_PARTICIPANT_NOT_EXISTS));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isJoined(ConversationId conversationId,
+                            UserId userId) {
+        return conversationParticipantRepository.existsByConversationIdAndUserId(conversationId, userId);
+    }
+
+    @Override
+    public ConversationGroupProfileResponse getGroupProfile(ConversationId conversationId) {
+        return conversationRepository.findById(conversationId.value())
+                .map(ConversationGroupProfileResponse::of)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
     }
 }
