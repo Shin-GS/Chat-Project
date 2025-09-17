@@ -17,12 +17,41 @@
         <!--/*@thymesVar id="conversation" type="com.chat.server.service.conversation.response.ConversationInfoResponse"*/-->
         <li th:each="conversation : ${conversations}"
             class="py-3 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
-            <div class="min-w-0 flex-1">
-                <span class="block font-semibold text-gray-900 truncate"
-                      th:text="${conversation.title}">Group title</span>
-                <span class="block text-xs text-gray-500 mt-0.5"
-                      th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
+
+            <!-- LEFT: avatar (image if exists; fallback group badge) + title/date -->
+            <div class="min-w-0 flex-1 flex items-center gap-2">
+                <!-- avatar clickable area (open group profile modal) -->
+                <div class="shrink-0 cursor-pointer"
+                     th:attr="hx-get='/hx/conversations/groups/' + ${conversation.id.value()} + '/profile/modal'"
+                     hx-swap="none"
+                     onclick="event.stopPropagation()">
+                    <!-- image -->
+                    <img th:if="${conversation.imageUrl != null and !#strings.isEmpty(conversation.imageUrl)}"
+                         th:src="${conversation.imageUrl}"
+                         alt="Group avatar"
+                         loading="lazy"
+                         decoding="async"
+                         class="w-8 h-8 rounded-full object-cover border border-purple-200"/>
+                    <!-- fallback badge -->
+                    <span th:if="${conversation.imageUrl == null or #strings.isEmpty(conversation.imageUrl)}"
+                          class="inline-flex items-center justify-center rounded-full w-8 h-8 border border-purple-200 bg-purple-50 text-purple-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-3a4.5 4.5 0 00-4.5 4.5v.378M21 19.128v-.378a4.5 4.5 0 00-4.5-4.5h-1.5M8.25 8.25a3 3 0 116 0 3 3 0 01-6 0zM18 8.25a3 3 0 11-6 0"/>
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- text: title + last activity -->
+                <div class="min-w-0">
+                    <span class="block font-semibold text-gray-900 truncate"
+                          th:text="${conversation.title}">Group title</span>
+                    <span class="block text-xs text-gray-500 mt-0.5"
+                          th:text="${#temporals.format(conversation.lastActivityAt, 'yyyy-MM-dd')}">2024-01-01</span>
+                </div>
             </div>
+
+            <!-- RIGHT: join button -->
             <div class="shrink-0">
                 <button class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow transition-colors"
                         type="button"

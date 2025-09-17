@@ -87,6 +87,7 @@ public class ConversationQueryRepositoryImpl implements ConversationQueryReposit
                         new CaseBuilder()
                                 .when(conversation.title.isNull()).then("Untitled group")
                                 .otherwise(conversation.title),
+                        conversation.imageUrl,
                         numberTemplate(Integer.class, "length(trim(coalesce({0}, '')))", conversation.joinCode).gt(0),
                         conversation.lastActivityAt))
                 .from(conversation)

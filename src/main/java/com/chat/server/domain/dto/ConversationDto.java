@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record ConversationDto(Long id,
                               ConversationType type,
                               String title,
+                              String imageUrl,
                               boolean hasCode,
                               LocalDateTime lastActivityAt) {
 }
