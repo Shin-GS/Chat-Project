@@ -6,6 +6,7 @@ const globalSubscriptions = new Map();      // e.g. key: 'ui'
 const conversationSubscriptions = new Map(); // keys: 'messages', 'system'
 
 let reconnectTimer = null; // backoff timer
+const PUB_ENDPOINT = "/pub/conversations/message";
 
 // --- Helpers ---------------------------------------------------------------
 // Unsubscribe ONLY per-conversation subscriptions (keep global alive)
@@ -216,19 +217,71 @@ function refreshUI(frame) {
     });
 }
 
-// --- Send message (unchanged) ---------------------------------------------
+// --- Common send (TEXT / STICKER) -----------------------------------------
+function sendConversationPayload(payload) {
+    if (!currentConversationId) return;
+
+    // Always include conversationId; server expects VO mapper or plain id as configured
+    if (!('conversationId' in payload)) {
+        payload.conversationId = currentConversationId;
+    }
+
+    ensureConnected(() => {
+        if (!stompClient || !stompClient.connected) return;
+        stompClient.send(PUB_ENDPOINT, {}, JSON.stringify(payload));
+    });
+}
+
+// --- Send TEXT -------------------------------------------------------------
 function sendMessage() {
     const input = document.getElementById('conversation-input');
     const text = input?.value?.trim();
 
-    if (!text || !stompClient || !stompClient.connected || !currentConversationId) {
-        return;
-    }
+    if (!text) return;
 
-    stompClient.send("/pub/conversations/message", {}, JSON.stringify({
+    sendConversationPayload({
         conversationId: currentConversationId,
-        message: text
-    }));
+        type: "TEXT",
+        message: text,
+        stickerId: null
+    });
 
     input.value = '';
+}
+
+// --- Send STICKER ----------------------------------------------------------
+function sendSticker(stickerId) {
+    if (!stickerId || !currentConversationId) return;
+
+    // Ensure numeric
+    const idNum = typeof stickerId === 'string' ? parseInt(stickerId, 10) : stickerId;
+    if (!Number.isFinite(idNum)) return;
+
+    sendConversationPayload({
+        conversationId: currentConversationId,
+        type: "STICKER",
+        message: null,
+        stickerId: idNum
+    });
+}
+
+// --- Sticker click delegation (works with HTMX OOB updates) ---------------
+document.addEventListener('click', function (evt) {
+    const btn = evt.target.closest('#conversation-sticker-grid button');
+    if (!btn) return;
+
+    const li = btn.closest('li[data-sticker-id]');
+    const stickerId = li?.dataset?.stickerId;
+    if (!stickerId) return;
+
+    // Optimistic UI could be added here if desired
+    sendSticker(stickerId);
+    emptyStickerPanel();
+});
+
+// --- Empty sticker panel content (remove children only) --------------------
+function emptyStickerPanel() {
+    const panel = document.getElementById('conversation-sticker-panel');
+    if (!panel) return;
+    panel.replaceChildren();
 }

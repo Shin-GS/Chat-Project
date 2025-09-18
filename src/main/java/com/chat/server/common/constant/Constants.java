@@ -18,6 +18,7 @@ public class Constants {
     // CONVERSATION
     public static final int CONVERSATION_TITLE_MIN_LENGTH = 1;
     public static final int CONVERSATION_TITLE_MAX_LENGTH = 128;
+    public static final int CONVERSATION_TYPE_MAX_LENGTH = 20;
     public static final int CONVERSATION_MESSAGE_MAX_LENGTH = 4000;
     public static final int CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH = 512;
     public static final int CONVERSATION_IMAGE_MAX_LENGTH = 512;

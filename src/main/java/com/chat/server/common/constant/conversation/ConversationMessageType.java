@@ -9,6 +9,7 @@ public enum ConversationMessageType {
     TEXT("Text Message"),
     IMAGE("Image Message"),
     FILE("File Message"),
+    STICKER("Sticker Message"),
     SYSTEM("System Message(join/leave, notice, etc)");
 
     private final String description;

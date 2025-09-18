@@ -6,6 +6,7 @@ import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.entity.converstaion.Conversation;
 import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.entity.converstaion.participant.ConversationParticipant;
+import com.chat.server.domain.entity.converstaion.sticker.Sticker;
 import com.chat.server.domain.entity.user.User;
 import com.chat.server.domain.repository.conversation.ConversationRepository;
 import com.chat.server.domain.repository.conversation.message.ConversationMessageRepository;
@@ -17,6 +18,7 @@ import com.chat.server.event.message.ConversationMessageEvent;
 import com.chat.server.event.message.RefreshConversationUiEvent;
 import com.chat.server.event.message.SystemMessageEvent;
 import com.chat.server.service.conversation.ConversationMessageService;
+import com.chat.server.service.conversation.ConversationStickerService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -38,13 +40,20 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     private final ConversationMessageRepository conversationMessageRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final ConversationStickerService conversationStickerService;
 
     @Override
     @Transactional
     public void handleMessage(UserId userId,
                               ConversationId conversationId,
-                              String message) {
-        if (userId == null || conversationId == null || message == null) {
+                              ConversationMessageType type,
+                              String message,
+                              Long stickerId) {
+        if (userId == null
+                || conversationId == null
+                || type == null
+                || (type == ConversationMessageType.TEXT && message == null)
+                || (type == ConversationMessageType.STICKER && stickerId == null)) {
             throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
         }
 
@@ -52,7 +61,17 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.TEXT, message));
+
+        // Save Message
+        ConversationMessage savedMessage = switch (type) {
+            case TEXT -> conversationMessageRepository.save(ConversationMessage.ofText(sender, conversation, message));
+            case STICKER -> {
+                Sticker sticker = conversationStickerService.getStickerById(stickerId);
+                yield conversationMessageRepository.save(ConversationMessage.ofSticker(sender, conversation, sticker));
+            }
+            default -> throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        };
+
         conversation.updateActivity();
         conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
                 .ifPresent(participant -> readMessage(participant.getUserId(), conversation.getConversationId())); // 메시지를 보냈으나 나간 케이스도 존재함
@@ -79,7 +98,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXISTS));
         Conversation conversation = conversationRepository.findById(conversationId.value())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONVERSATION_NOT_EXISTS));
-        ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.of(sender, conversation, ConversationMessageType.SYSTEM, message));
+        ConversationMessage savedMessage = conversationMessageRepository.save(ConversationMessage.ofSystem(sender, conversation, message));
         conversationParticipantRepository.findByConversationIdAndUserId(conversationId, userId)
                 .ifPresent(participant -> readMessage(participant.getUserId(), conversation.getConversationId())); // 메시지를 보냈으나 나간 케이스도 존재함
 

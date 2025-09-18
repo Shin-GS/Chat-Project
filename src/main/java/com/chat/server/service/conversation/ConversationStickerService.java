@@ -1,5 +1,6 @@
 package com.chat.server.service.conversation;
 
+import com.chat.server.domain.entity.converstaion.sticker.Sticker;
 import com.chat.server.service.conversation.response.ConversationStickerPackResponse;
 import com.chat.server.service.conversation.response.ConversationStickerPackStickerResponse;
 
@@ -13,4 +14,6 @@ public interface ConversationStickerService {
     List<ConversationStickerPackStickerResponse> findStickersByPackId(Long packId);
 
     Long findFirstStickerPackId();
+
+    Sticker getStickerById(Long id);
 }

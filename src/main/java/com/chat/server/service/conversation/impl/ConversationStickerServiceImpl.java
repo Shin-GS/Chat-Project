@@ -2,6 +2,7 @@ package com.chat.server.service.conversation.impl;
 
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.exception.CustomException;
+import com.chat.server.domain.entity.converstaion.sticker.Sticker;
 import com.chat.server.domain.entity.converstaion.sticker.StickerPack;
 import com.chat.server.domain.repository.conversation.sticker.StickerPackRepository;
 import com.chat.server.domain.repository.conversation.sticker.StickerRepository;
@@ -54,6 +55,13 @@ public class ConversationStickerServiceImpl implements ConversationStickerServic
     public Long findFirstStickerPackId() {
         return stickerPackRepository.findFirstByOrderByIdAsc()
                 .map(StickerPack::getId)
+                .orElseThrow(() -> new CustomException(ErrorCode.STICKER_NOT_EXISTS));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Sticker getStickerById(Long id) {
+        return stickerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.STICKER_NOT_EXISTS));
     }
 }

@@ -76,6 +76,7 @@ public class ConversationServiceImpl implements ConversationService {
                 .orElse(null);
         String lastMessage = lastConversationMessage == null ? "" : switch (lastConversationMessage.getType()) {
             case TEXT, SYSTEM -> lastConversationMessage.getMessage();
+            case STICKER -> "Sent a sticker message";
             case IMAGE -> "Sent a photo";
             case FILE -> "Sent a file";
         };
