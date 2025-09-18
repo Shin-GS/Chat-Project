@@ -22,6 +22,13 @@ public class Constants {
     public static final int CONVERSATION_MEMBERSHIP_REASON_MAX_LENGTH = 512;
     public static final int CONVERSATION_IMAGE_MAX_LENGTH = 512;
 
+    // STICKER
+    public static final int STICKER_CATEGORY_NAME_MAX_LENGTH = 128;
+    public static final int STICKER_NAME_MAX_LENGTH = 128;
+    public static final int STICKER_CODE_MAX_LENGTH = 128;
+    public static final int STICKER_IMAGE_MAX_LENGTH = 512;
+    public static final int STICKER_ALT_TEXT_MAX_LENGTH = 256;
+
     // JWT
     public static final String JWT_TOKEN_TYPE = "tokenType";
     public static final String TOKEN_TYPE_ACCESS_TOKEN = "accessToken";
