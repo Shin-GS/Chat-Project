@@ -72,11 +72,22 @@ public class ConversationMessageController {
 
     @Operation(summary = "메시지 스티커 팩 리스트 조회")
     @GetMapping("/messages/stickers")
-    public List<ModelAndView> stickers() {
+    public List<ModelAndView> stickerPacks() {
         return new ModelAndViewBuilder()
-                .addFragment(CONVERSATION_MESSAGE_STICKER_PATH,
-                        CONVERSATION_MESSAGE_STICKER_FRAGMENT,
-                        Map.of(CONVERSATION_MESSAGE_STICKER_PACKS, conversationStickerService.findStickerPacks()))
+                .addFragment(CONVERSATION_MESSAGE_STICKER_LIST_PATH,
+                        CONVERSATION_MESSAGE_STICKER_LIST_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_STICKER_LIST_PACKS, conversationStickerService.findPacks()))
+                .build();
+    }
+
+    @Operation(summary = "메시지 스티커 팩 항목 리스트 조회")
+    @GetMapping("/messages/stickers/{packId}")
+    public List<ModelAndView> stickers(@PathVariable("packId") Long packId) {
+        return new ModelAndViewBuilder()
+                .addFragment(CONVERSATION_MESSAGE_STICKER_GRID_PATH,
+                        CONVERSATION_MESSAGE_STICKER_GRID_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_STICKER_GRID_PACK, conversationStickerService.findPackById(packId),
+                                CONVERSATION_MESSAGE_STICKER_GRID_STICKER_LIST, conversationStickerService.findStickersByPackId(packId)))
                 .build();
     }
 }

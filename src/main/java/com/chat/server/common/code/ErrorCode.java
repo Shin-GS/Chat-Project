@@ -53,7 +53,11 @@ public enum ErrorCode implements Code {
     FILE_EXTENSION_MISSING(HttpStatus.BAD_REQUEST),
     FILE_EXTENSION_NOT_ALLOWED(HttpStatus.BAD_REQUEST),
     FILE_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
-    UPLOAD_DIR_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR);
+    UPLOAD_DIR_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // Sticker
+    STICKER_NOT_EXISTS(HttpStatus.BAD_REQUEST),
+    ;
 
     private final HttpStatus httpStatus;
 }
