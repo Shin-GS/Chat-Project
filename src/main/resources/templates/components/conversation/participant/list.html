@@ -10,41 +10,118 @@
          class="mt-2">
     <th:block th:if="${type != null && type == T(com.chat.server.common.constant.conversation.ConversationType).GROUP}">
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
+
+        <!-- Header with toggle -->
         <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm sm:text-base font-semibold text-gray-900"
-                th:text="#{ui.participants.title}">
-                Participants
-            </h3>
-            <span class="text-xs sm:text-sm text-gray-500"
-                  th:text="#{ui.participants.count(${#lists.size(participants)})}">
-                0 members
-            </span>
+            <div class="flex items-center gap-2">
+                <h3 class="text-sm sm:text-base font-semibold text-gray-900"
+                    th:text="#{ui.participants.title}">
+                    Participants
+                </h3>
+                <span class="text-xs sm:text-sm text-gray-500"
+                      th:text="#{ui.participants.count(${#lists.size(participants)})}">
+                  0 members
+                </span>
+            </div>
+
+            <!-- Toggle button (initially collapsed) -->
+            <button type="button"
+                    data-role="participant-toggle"
+                    class="inline-flex items-center justify-center text-xs sm:text-sm
+                     bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md px-2.5 py-1 transition"
+                    aria-controls="participants-panel"
+                    aria-expanded="false"
+                    title="Show participants">
+                Show
+            </button>
         </div>
 
-        <ul class="divide-y divide-gray-200 border border-gray-200 rounded-lg bg-white/80 max-h-64 overflow-y-auto">
-            <li th:each="participant : ${participants}"
-                class="px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between gap-3">
-                <span class="font-medium text-gray-800 truncate"
-                      th:title="${#messages.msgOrNull('conversation.user.role.' + participant.role.name() + '.description') ?: participant.role.getDescription()}"
-                      th:text="|${participant.name}[${#messages.msgOrNull('conversation.user.role.' + participant.role.name()) ?: participant.role.name()}]|">
-                  Name[MEMBER]
-                </span>
+        <!-- Collapsible panel (starts hidden). Scrollable when open -->
+        <div id="participants-panel"
+             data-role="participant-panel"
+             class="hidden border border-gray-200 rounded-lg bg-white/80 p-2 max-h-64 overflow-y-auto">
+            <!-- Compact responsive grid -->
+            <ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                <li th:each="participant : ${participants}">
+                    <!-- Card -->
+                    <div class="group relative flex flex-col items-center text-center gap-1.5
+                      p-2 rounded-xl border border-gray-200 bg-white hover:shadow-sm transition">
 
-                <!--/*@thymesVar id="nowRole" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
-                <!--/*@thymesVar id="conversationId" type="com.chat.server.domain.vo.ConversationId"*/-->
-                <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
-                <div th:if="${nowRole == T(com.chat.server.common.constant.conversation.ConversationUserRole).SUPER_ADMIN && user.id != participant.userId}">
-                    <button type="button"
-                            th:attr="hx-get=@{|/hx/conversations/groups/role/${conversationId}/${participant.userId}/modal|},
-                                     aria-label=#{aria.participants.change_role_for(${participant.name})}"
-                            hx-swap="none"
-                            class="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1 transition-colors"
-                            th:text="#{button.change_role}">
-                        Change Role
-                    </button>
-                </div>
-            </li>
-        </ul>
+                        <!-- Avatar (initial) -->
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-200 text-gray-700
+                        text-sm font-semibold flex items-center justify-center select-none">
+                            <span th:text="${#strings.substring(participant.name,0,1)}">A</span>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="w-full px-1">
+                          <span class="block text-xs sm:text-sm font-medium text-gray-900 truncate"
+                                th:title="${participant.name}"
+                                th:text="${participant.name}">
+                            Display Name
+                          </span>
+                        </div>
+
+                        <!-- Role badge -->
+                        <span class="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full
+                         bg-gray-100 text-gray-700"
+                              th:title="${#messages.msgOrNull('conversation.user.role.' + participant.role.name() + '.description') ?: participant.role.getDescription()}"
+                              th:text="${#messages.msgOrNull('conversation.user.role.' + participant.role.name()) ?: participant.role.name()}">
+                            MEMBER
+                        </span>
+
+                        <!-- Admin-only action (hover) -->
+                        <!--/*@thymesVar id="nowRole" type="com.chat.server.common.constant.conversation.ConversationUserRole"*/-->
+                        <!--/*@thymesVar id="conversationId" type="com.chat.server.domain.vo.ConversationId"*/-->
+                        <!--/*@thymesVar id="user" type="com.chat.server.service.user.response.UserInfoResponse"*/-->
+                        <div th:if="${nowRole == T(com.chat.server.common.constant.conversation.ConversationUserRole).SUPER_ADMIN && user.id != participant.userId}"
+                             class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
+                            <button type="button"
+                                    th:attr="hx-get=@{|/hx/conversations/groups/role/${conversationId}/${participant.userId}/modal|}, aria-label=#{aria.participants.change_role_for(${participant.name})}"
+                                    hx-swap="none"
+                                    class="text-[10px] sm:text-xs bg-white/90 hover:bg-white text-gray-700 border border-gray-300 rounded-md px-2 py-0.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Change
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Local toggle script (scoped to this fragment) -->
+        <script>
+            (function () {
+                // Scope to this fragment root
+                const root = document.getElementById('conversation-participant-list');
+                if (!root) return;
+
+                const toggle = root.querySelector('[data-role="participant-toggle"]');
+                const panel = root.querySelector('[data-role="participant-panel"]');
+                if (!toggle || !panel) return;
+
+                function render() {
+                    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                    if (expanded) {
+                        panel.classList.remove('hidden');
+                        toggle.textContent = 'Hide';
+                        toggle.title = 'Hide participants';
+                    } else {
+                        panel.classList.add('hidden');
+                        toggle.textContent = 'Show';
+                        toggle.title = 'Show participants';
+                    }
+                }
+
+                toggle.addEventListener('click', function () {
+                    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                    toggle.setAttribute('aria-expanded', String(!expanded));
+                    render();
+                });
+
+                // Initial state (collapsed)
+                render();
+            })();
+        </script>
     </th:block>
 </section>
 </body>
