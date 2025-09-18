@@ -1,6 +1,7 @@
 package com.chat.server.service.conversation;
 
 import com.chat.server.common.constant.conversation.ConversationMessageType;
+import com.chat.server.domain.entity.converstaion.message.ConversationMessage;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.domain.vo.UserId;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
@@ -29,4 +30,7 @@ public interface ConversationMessageService {
 
     void readMessage(UserId userId,
                      ConversationId conversationId);
+
+    ConversationMessageResponse convertMessageResponse(ConversationMessage message,
+                                                       UserId userId);
 }

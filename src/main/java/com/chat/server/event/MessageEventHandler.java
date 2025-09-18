@@ -6,6 +6,7 @@ import com.chat.server.domain.repository.conversation.message.ConversationMessag
 import com.chat.server.event.message.ConversationMessageEvent;
 import com.chat.server.event.message.RefreshConversationUiEvent;
 import com.chat.server.event.message.SystemMessageEvent;
+import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class MessageEventHandler {
     private final ConversationMessageRepository conversationMessageRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final SpringTemplateEngine templateEngine;
+    private final ConversationMessageService conversationMessageService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleSystemMessageEvent(SystemMessageEvent event) {
@@ -75,8 +77,8 @@ public class MessageEventHandler {
         }
 
         ConversationMessage conversationMessage = optionalMessage.get();
-        String senderHtml = renderChatMessageFragment(ConversationMessageResponse.ofSender(conversationMessage));
-        String receiverHtml = renderChatMessageFragment(ConversationMessageResponse.ofReceiver(conversationMessage));
+        String senderHtml = renderChatMessageFragment(conversationMessageService.convertMessageResponse(conversationMessage, event.fromUserId()));
+        String receiverHtml = renderChatMessageFragment(conversationMessageService.convertMessageResponse(conversationMessage, null));
         List<String> refreshIds = List.of("refresh-conversation-list", "conversation-" + conversationMessage.getConversationId() + "-read");
         Map<String, Object> headers = Map.of(
                 "content-type", "text/html; charset=UTF-8",

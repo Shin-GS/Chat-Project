@@ -61,6 +61,10 @@ public class ConversationStickerServiceImpl implements ConversationStickerServic
     @Override
     @Transactional(readOnly = true)
     public Sticker getStickerById(Long id) {
+        if(id == null) {
+            throw new CustomException(ErrorCode.STICKER_NOT_EXISTS);
+        }
+
         return stickerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.STICKER_NOT_EXISTS));
     }

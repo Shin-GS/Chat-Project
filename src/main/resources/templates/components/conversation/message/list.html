@@ -3,17 +3,16 @@
       lang="en"
       th:lang="${#locale.toLanguageTag()}">
 <!--/*@thymesVar id="messages" type="java.util.List<com.chat.server.service.conversation.response.ConversationMessageResponse>"*/-->
-
 <ul class="space-y-2">
     <!-- loop messages -->
     <li th:each="message, iter : ${messages}">
-        <!-- System message (centered, subtle) -->
+        <!-- SYSTEM message (centered, subtle) -->
         <p th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
            class="text-center text-gray-500 text-xs italic my-2 px-3">
-            <span th:text="${message.message}">[[#{ui.conversation.system_message}]]</span>
+            <span th:text="${message.message}">System message</span>
         </p>
 
-        <!-- User messages -->
+        <!-- USER messages (TEXT or STICKER) -->
         <div th:if="${message.type != T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
              class="flex items-end gap-2"
              th:classappend="${message.mine} ? ' justify-end' : ''">
@@ -26,40 +25,58 @@
                 </div>
             </div>
 
-            <!-- Bubble + time wrapper -->
+            <!-- Bubble/Image + time wrapper -->
             <div class="flex items-end gap-1 max-w-[75%]"
                  th:classappend="${message.mine} ? ' flex-row-reverse text-right' : ' text-left'">
 
-                <!-- Message bubble -->
                 <div th:classappend="${message.mine} ? ' bg-blue-500 text-white' : ' bg-gray-100 text-gray-900'"
                      class="relative rounded-2xl px-3 py-2 leading-relaxed break-words">
                     <!-- sender name (others only) -->
                     <div th:if="${!message.mine}" class="text-[11px] text-gray-500 mb-0.5"
                          th:text="${message.from}">
-                        [[#{ui.conversation.sender}]]
+                        Sender
                     </div>
-                    <div th:text="${message.message}">[[#{ui.conversation.message_placeholder}]]</div>
+
+                    <!-- TEXT bubble -->
+                    <div th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).TEXT}"
+                         th:text="${message.message}">Message text
+                    </div>
+
+                    <div th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).STICKER}">
+                        <div th:if="${!#strings.isEmpty(message.imageUrl)}"
+                             class="w-full h-full relative flex items-center justify-center">
+                            <img th:src="${message.imageUrl}"
+                                 th:alt="${message.message ?: 'sticker'}"
+                                 class="w-full h-full object-contain select-none"
+                                 loading="lazy"
+                                 decoding="async"/>
+                        </div>
+
+                        <div th:if="${#strings.isEmpty(message.imageUrl)}"
+                             class="w-full h-full px-2 text-center text-xs text-gray-500 break-words flex items-center justify-center">
+                            <span th:text="${message.message ?: 'sticker'}">sticker</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Sent time -->
                 <span class="text-[10px] sm:text-[11px] text-gray-400 whitespace-nowrap select-none"
                       th:with="
-                     now=${#temporals.createNow()},
-                     target=${message.createdAt},
-                     isToday=${#temporals.day(now) == #temporals.day(target) and #temporals.month(now) == #temporals.month(target) and #temporals.year(now) == #temporals.year(target)},
-                     yesterday=${now.minusDays(1)},
-                     isYesterday=${#temporals.day(yesterday) == #temporals.day(target) and #temporals.month(yesterday) == #temporals.month(target) and #temporals.year(yesterday) == #temporals.year(target)},
-                     sameYear=${#temporals.year(now) == #temporals.year(target)}
-                  ">
+                         now=${#temporals.createNow()},
+                         target=${message.createdAt},
+                         isToday=${#temporals.day(now) == #temporals.day(target) and #temporals.month(now) == #temporals.month(target) and #temporals.year(now) == #temporals.year(target)},
+                         yesterday=${now.minusDays(1)},
+                         isYesterday=${#temporals.day(yesterday) == #temporals.day(target) and #temporals.month(yesterday) == #temporals.month(target) and #temporals.year(yesterday) == #temporals.year(target)},
+                         sameYear=${#temporals.year(now) == #temporals.year(target)}
+                      ">
                     <!-- today: HH:mm -->
                     <span th:if="${isToday}"
                           th:text="${#temporals.format(target, 'HH:mm')}">14:35</span>
 
                     <!-- yesterday: 'Yesterday HH:mm' -->
                     <span th:if="${!isToday and isYesterday}"
-                          th:text="${#messages.msg('ui.conversation.yesterday') + ' ' + #temporals.format(target, 'HH:mm')}">
-                        Yesterday 14:35
-                    </span>
+                        th:text="${#messages.msg('ui.conversation.yesterday') + ' ' + #temporals.format(target, 'HH:mm')}">
+                        Yesterday 14:35</span>
 
                     <!-- same year (not today/yesterday): M/d HH:mm -->
                     <span th:if="${!isToday and !isYesterday and sameYear}"

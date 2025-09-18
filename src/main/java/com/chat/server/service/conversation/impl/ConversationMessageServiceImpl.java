@@ -131,7 +131,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         ConversationParticipant participant = optionalParticipant.get();
         return conversationMessageRepository.findBeforeMessages(conversationId, messageId, participant.getJoinMessageId(), pageable).stream()
                 .sorted(Comparator.comparing(ConversationMessage::getId))
-                .map(chat -> ConversationMessageResponse.of(chat, userId))
+                .map(chat -> convertMessageResponse(chat, userId))
                 .toList();
     }
 
@@ -156,5 +156,21 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
         ConversationParticipant participant = optionalParticipant.get();
         conversationMessageRepository.findMaxMessageByConversationId(conversationId)
                 .ifPresent(participant::readMessage);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConversationMessageResponse convertMessageResponse(ConversationMessage message,
+                                                               UserId userId) {
+        boolean isSender = message.getSenderUserId() == userId;
+        return switch (message.getType()) {
+            case TEXT -> ConversationMessageResponse.ofText(message, isSender);
+            case SYSTEM -> ConversationMessageResponse.ofSystem(message);
+            case STICKER -> {
+                Sticker sticker = conversationStickerService.getStickerById(message.getStickerId());
+                yield ConversationMessageResponse.ofSticker(message, sticker, isSender);
+            }
+            default -> throw new CustomException(ErrorCode.CONVERSATION_REQUEST_INVALID);
+        };
     }
 }
