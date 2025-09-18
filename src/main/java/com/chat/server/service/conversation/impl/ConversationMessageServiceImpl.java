@@ -161,8 +161,8 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     @Override
     @Transactional(readOnly = true)
     public ConversationMessageResponse convertMessageResponse(ConversationMessage message,
-                                                               UserId userId) {
-        boolean isSender = message.getSenderUserId() == userId;
+                                                              UserId userId) {
+        boolean isSender = message.getSenderUserId().equals(userId);
         return switch (message.getType()) {
             case TEXT -> ConversationMessageResponse.ofText(message, isSender);
             case SYSTEM -> ConversationMessageResponse.ofSystem(message);
