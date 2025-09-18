@@ -42,7 +42,9 @@
                            hx-target='this',
                            hx-swap='none'"
                             title="Open this pack">
-                        <span th:text="${pack.name() ?: pack.category()}">Pack</span>
+                        <span th:text="${(pack.name() ?: pack.category()) + ' (' + pack.count() + ')'}">
+                          Pack (0)
+                        </span>
                     </button>
                 </li>
                 <li th:if="${!iter.last}" class="px-1 select-none text-gray-300">|</li>
@@ -70,11 +72,11 @@
             tabs.forEach(function (t) {
                 t.addEventListener('click', function () {
                     tabs.forEach(function (x) {
-                        x.classList.remove('text-blue-700','font-semibold');
+                        x.classList.remove('text-blue-700', 'font-semibold');
                         x.removeAttribute('aria-current');
                     });
-                    t.classList.add('text-blue-700','font-semibold');
-                    t.setAttribute('aria-current','page');
+                    t.classList.add('text-blue-700', 'font-semibold');
+                    t.setAttribute('aria-current', 'page');
                 });
             });
         })();
