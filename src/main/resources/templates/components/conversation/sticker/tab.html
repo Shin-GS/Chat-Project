@@ -9,40 +9,48 @@
 
     <!-- Header -->
     <div class="flex items-center justify-between mb-2">
-        <h3 class="text-sm font-semibold text-gray-900">Sticker Packs</h3>
+        <h3 class="text-sm font-semibold text-gray-900"
+            th:text="#{ui.sticker_packs.title}">
+            Sticker Packs
+        </h3>
         <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-500" th:text="${#lists.size(packs)} + ' packs'">0 packs</span>
+            <span class="text-xs text-gray-500"
+                  th:text="#{ui.sticker_packs.count(${#lists.size(packs)})}">
+                0 packs
+            </span>
             <button type="button"
                     class="text-xs text-gray-600 hover:text-red-600 focus:outline-none"
                     onclick="document.getElementById('conversation-sticker-panel').classList.add('hidden')"
-                    aria-label="Close sticker panel">
+                    th:attr="aria-label=#{aria.sticker_packs.close}"
+                    th:text="#{button.close}">
                 Close
             </button>
         </div>
     </div>
 
     <!-- Horizontal pipe-separated tabs -->
-    <nav class="w-full overflow-x-auto whitespace-nowrap" aria-label="Sticker packs">
-        <ul id="sticker-pack-tabs"
-            class="flex items-center text-sm text-gray-700">
-            <li th:if="${#lists.isEmpty(packs)}" class="px-2 py-1 text-gray-500">
+    <nav class="w-full overflow-x-auto whitespace-nowrap"
+         th:attr="aria-label=#{aria.sticker_packs}">
+        <ul id="sticker-pack-tabs" class="flex items-center text-sm text-gray-700">
+            <li th:if="${#lists.isEmpty(packs)}" class="px-2 py-1 text-gray-500"
+                th:text="#{ui.sticker_packs.empty}">
                 No sticker packs available
             </li>
 
             <!-- Render tabs with pipe separators -->
-            <th:block th:each="pack, iter : ${packs}">
+            <th:block th:each="pack, iter : ${packs}" th:with="packName=${pack.name() ?: pack.category()}">
                 <li class="inline-flex">
                     <button type="button"
                             class="px-3 py-2 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded pack-tab"
                             th:classappend="${iter.index == 0} ? ' text-blue-700 font-semibold' : ''"
                             th:attr="data-pack-id=${pack.id()},
-                               data-pack-name=${pack.name() ?: pack.category()},
-                               aria-current=${iter.index == 0} ? 'page' : null,
-                               hx-get=@{|/hx/conversations/messages/stickers/${pack.id()}|},
-                               hx-target='this',
-                               hx-swap='none'"
-                            title="Open this pack">
-                        <span th:text="${(pack.name() ?: pack.category()) + ' (' + pack.count() + ')'}">
+                                     data-pack-name=${packName},
+                                     aria-current=${iter.index == 0} ? 'page' : null,
+                                     hx-get=@{|/hx/conversations/messages/stickers/${pack.id()}|},
+                                     hx-target='this',
+                                     hx-swap='none',
+                                     title=#{ui.sticker_pack.open_title}">
+                        <span th:text="#{ui.sticker_pack.name_with_count(${packName}, ${pack.count()})}">
                           Pack (0)
                         </span>
                     </button>

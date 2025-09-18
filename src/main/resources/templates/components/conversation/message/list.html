@@ -9,7 +9,7 @@
         <!-- SYSTEM message (centered, subtle) -->
         <p th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).SYSTEM}"
            class="text-center text-gray-500 text-xs italic my-2 px-3">
-            <span th:text="${message.message}">System message</span>
+            <span th:text="${message.message}">[[#{ui.conversation.system_message}]]</span>
         </p>
 
         <!-- USER messages (TEXT or STICKER) -->
@@ -20,7 +20,9 @@
             <!-- Left avatar for others -->
             <div th:if="${!message.mine}" class="shrink-0">
                 <!-- simple initial avatar -->
-                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 text-xs font-medium flex items-center justify-center select-none">
+                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 text-xs font-medium flex items-center justify-center select-none"
+                     role="img"
+                     th:attr="aria-label=|#{aria.user.avatar}: ${message.from}|">
                     <span th:text="${#strings.substring(message.from,0,1)}">A</span>
                 </div>
             </div>
@@ -34,19 +36,21 @@
                     <!-- sender name (others only) -->
                     <div th:if="${!message.mine}" class="text-[11px] text-gray-500 mb-0.5"
                          th:text="${message.from}">
-                        Sender
+                        [[#{ui.conversation.sender}]]
                     </div>
 
                     <!-- TEXT bubble -->
                     <div th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).TEXT}"
-                         th:text="${message.message}">Message text
+                         th:text="${message.message}">
+                        [[#{ui.conversation.message_placeholder}]]
                     </div>
 
+                    <!-- STICKER bubble -->
                     <div th:if="${message.type == T(com.chat.server.common.constant.conversation.ConversationMessageType).STICKER}">
                         <div th:if="${!#strings.isEmpty(message.imageUrl)}"
                              class="w-full h-full relative flex items-center justify-center">
                             <img th:src="${message.imageUrl}"
-                                 th:alt="${message.message ?: 'sticker'}"
+                                 th:alt="${#strings.isEmpty(message.message)} ? #{ui.conversation.sticker} : ${message.message}"
                                  class="w-full h-full object-contain select-none"
                                  loading="lazy"
                                  decoding="async"/>
@@ -54,7 +58,9 @@
 
                         <div th:if="${#strings.isEmpty(message.imageUrl)}"
                              class="w-full h-full px-2 text-center text-xs text-gray-500 break-words flex items-center justify-center">
-                            <span th:text="${message.message ?: 'sticker'}">sticker</span>
+                            <span th:text="${#strings.isEmpty(message.message)} ? #{ui.conversation.sticker} : ${message.message}">
+                                [[#{ui.conversation.sticker}]]
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -75,8 +81,9 @@
 
                     <!-- yesterday: 'Yesterday HH:mm' -->
                     <span th:if="${!isToday and isYesterday}"
-                        th:text="${#messages.msg('ui.conversation.yesterday') + ' ' + #temporals.format(target, 'HH:mm')}">
-                        Yesterday 14:35</span>
+                          th:text="${#messages.msg('ui.conversation.yesterday') + ' ' + #temporals.format(target, 'HH:mm')}">
+                        Yesterday 14:35
+                    </span>
 
                     <!-- same year (not today/yesterday): M/d HH:mm -->
                     <span th:if="${!isToday and !isYesterday and sameYear}"

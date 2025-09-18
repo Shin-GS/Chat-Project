@@ -25,13 +25,12 @@
                 Conversation
             </h2>
             <button id="conversation-leave-button"
+                    type="button"
+                    class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md text-sm transition-colors"
+                    hx-swap="none"
                     th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave',
                              hx-confirm=#{confirm.leave_conversation},
                              title=#{title.leave_chat}"
-                    type="button"
-                    hx-swap="none"
-                    title="Leave this chat"
-                    class="inline-flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md text-sm transition-colors"
                     th:text="#{button.leave}">
                 Leave
             </button>
@@ -74,7 +73,11 @@
                         class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-3 py-2 rounded-md text-sm transition-colors"
                         hx-get="/hx/conversations/messages/stickers"
                         hx-swap="none"
-                        title="Open sticker panel">
+                        aria-expanded="false"
+                        th:attr="title=#{ui.sticker_panel.open_title},
+                                 aria-label=#{aria.sticker_panel.open},
+                                 aria-controls='conversation-sticker-panel'"
+                        th:text="#{ui.sticker_panel.open}">
                     Stickers
                 </button>
 
