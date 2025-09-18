@@ -7,7 +7,7 @@
 <!--/*@thymesVar id="firstMessageId" type="Long"*/-->
 <div th:if="${hasNext}"
      id="conversation-scroll-loader"
-     th:attr="data-hx-get='/hx/conversations/' + ${conversationId} + '/before?messageId=' + ${firstMessageId}"
+     th:attr="data-hx-get='/hx/conversations/' + ${conversationId} + '/messages/before?messageId=' + ${firstMessageId}"
      hx-trigger="revealed"
      hx-target="#conversation-message-list"
      hx-swap="afterbegin"

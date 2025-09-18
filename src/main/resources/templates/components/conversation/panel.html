@@ -13,7 +13,7 @@
     <div hidden="hidden"
          th:id="'conversation-' + ${conversation.id} + '-read'"
          th:attr="hx-trigger='load, refresh:' + ('conversation-' + ${conversation.id} + '-read') + ' from:body',
-              hx-post='/hx/conversations/' + ${conversation.id} + '/read'"
+              hx-post='/hx/conversations/' + ${conversation.id} + '/messages/read'"
          hx-swap="none"></div>
 
     <div class="flex flex-col gap-4 h-full min-h-0">
@@ -44,7 +44,7 @@
 
         <div hidden="hidden"
              id="initial-loader"
-             th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/before'"
+             th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/messages/before'"
              hx-trigger="load"
              hx-target="#conversation-message-list"
              hx-swap="afterbegin"></div>

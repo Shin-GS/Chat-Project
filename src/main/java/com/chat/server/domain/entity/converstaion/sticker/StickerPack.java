@@ -35,4 +35,8 @@ public class StickerPack extends BaseTimeEntity {
     @OneToMany(mappedBy = "pack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortNumber ASC")
     private List<Sticker> stickers = new ArrayList<>();
+
+    public int getStickerCount() {
+        return this.stickers == null ? 0 : this.stickers.size();
+    }
 }

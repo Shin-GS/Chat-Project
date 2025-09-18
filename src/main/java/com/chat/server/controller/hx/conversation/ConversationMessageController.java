@@ -4,8 +4,10 @@ import com.chat.server.common.response.ModelAndViewBuilder;
 import com.chat.server.domain.vo.ConversationId;
 import com.chat.server.service.conversation.ConversationMessageService;
 import com.chat.server.service.conversation.ConversationService;
+import com.chat.server.service.conversation.ConversationStickerService;
 import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
+import com.chat.server.service.conversation.response.ConversationStickerPackResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +29,10 @@ import static com.chat.server.common.constant.FragmentConstants.*;
 public class ConversationMessageController {
     private final ConversationMessageService conversationMessageService;
     private final ConversationService conversationService;
+    private final ConversationStickerService conversationStickerService;
 
     @Operation(summary = "messageId 이전 이전 메시지 리스트 조회")
-    @GetMapping("/{conversationId}/before")
+    @GetMapping("/{conversationId}/messages/before")
     public List<ModelAndView> beforeMessages(@PathVariable("conversationId") ConversationId conversationId,
                                              @RequestParam(name = "size", defaultValue = "15") int limit,
                                              @RequestParam(name = "messageId", required = false) Long messageId,
@@ -50,7 +53,7 @@ public class ConversationMessageController {
     }
 
     @Operation(summary = "메시지 읽음 처리")
-    @PostMapping("/{conversationId}/read")
+    @PostMapping("/{conversationId}/messages/read")
     public List<ModelAndView> read(@PathVariable("conversationId") ConversationId conversationId,
                                    @JwtMember JwtMemberInfo memberInfo) {
         conversationMessageService.readMessage(memberInfo.id(), conversationId);
@@ -65,6 +68,14 @@ public class ConversationMessageController {
                 .addFragment(CONVERSATION_MESSAGE_READ_PATH,
                         CONVERSATION_MESSAGE_READ_UN_READ_DOT,
                         Map.of(CONVERSATION_MESSAGE_READ_CONVERSATION, conversation))
+                .build();
+    }
+
+    @Operation(summary = "메시지 스티커 팩 리스트 조회")
+    @GetMapping("/messages/stickers")
+    public List<ModelAndView> stickers() {
+        List<ConversationStickerPackResponse> allStickerPacks = conversationStickerService.findStickerPacks();
+        return new ModelAndViewBuilder()
                 .build();
     }
 }
