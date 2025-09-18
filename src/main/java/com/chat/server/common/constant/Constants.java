@@ -96,4 +96,10 @@ public class Constants {
     public static final String ORDER_USER_NAME = "username";
     public static final String ORDER_CONVERSATION_ID = "conversationId";
     public static final String ORDER_CONVERSATION_ACTIVITY_AT = "conversationActivityAt";
+
+    // Message
+    public static final String MESSAGE_CONVERSATION_PREVIEW_STICKER = "message.conversation.preview.sticker";
+    public static final String MESSAGE_CONVERSATION_PREVIEW_IMAGE = "message.conversation.preview.image";
+    public static final String MESSAGE_CONVERSATION_PREVIEW_FILE = "message.conversation.preview.file";
+    public static final String MESSAGE_CONVERSATION_GROUP_PARTICIPANT_ROLE_CHANGE = "message.conversation.group.participant.role.change";
 }

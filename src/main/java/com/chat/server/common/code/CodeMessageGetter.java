@@ -30,4 +30,9 @@ public class CodeMessageGetter {
                 messageSource.getMessage("success." + code.name(), args, code.name(), locale) :
                 messageSource.getMessage("error." + code.name(), args, code.name(), locale);
     }
+
+    public String getMessage(String code) {
+        Locale locale = currentLocale();
+        return messageSource.getMessage(code, null, code, locale);
+    }
 }

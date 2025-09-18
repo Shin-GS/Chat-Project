@@ -1,5 +1,6 @@
 package com.chat.server.service.conversation.impl;
 
+import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
 import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationType;
@@ -42,6 +43,7 @@ public class ConversationServiceImpl implements ConversationService {
     private final ConversationGroupService conversationGroupService;
     private final ConversationMessageRepository conversationMessageRepository;
     private final CommonFileUploadService commonFileUploadService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Override
     @Transactional(readOnly = true)
@@ -76,9 +78,9 @@ public class ConversationServiceImpl implements ConversationService {
                 .orElse(null);
         String lastMessage = lastConversationMessage == null ? "" : switch (lastConversationMessage.getType()) {
             case TEXT, SYSTEM -> lastConversationMessage.getMessage();
-            case STICKER -> "Sent a sticker message";
-            case IMAGE -> "Sent a photo";
-            case FILE -> "Sent a file";
+            case STICKER -> codeMessageGetter.getMessage(Constants.MESSAGE_CONVERSATION_PREVIEW_STICKER);
+            case IMAGE -> codeMessageGetter.getMessage(Constants.MESSAGE_CONVERSATION_PREVIEW_IMAGE);
+            case FILE -> codeMessageGetter.getMessage(Constants.MESSAGE_CONVERSATION_PREVIEW_FILE);
         };
 
         if (conversation.getType() == ConversationType.ONE_TO_ONE) {

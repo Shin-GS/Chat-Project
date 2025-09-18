@@ -1,6 +1,8 @@
 package com.chat.server.service.conversation.impl;
 
+import com.chat.server.common.code.CodeMessageGetter;
 import com.chat.server.common.code.ErrorCode;
+import com.chat.server.common.constant.Constants;
 import com.chat.server.common.constant.conversation.ConversationUserRole;
 import com.chat.server.common.exception.CustomException;
 import com.chat.server.domain.dto.ConversationDto;
@@ -41,6 +43,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     private final ConversationParticipantRepository conversationParticipantRepository;
     private final ConversationHistoryService conversationHistoryService;
     private final ConversationMessageService conversationMessageService;
+    private final CodeMessageGetter codeMessageGetter;
 
     @Override
     @Transactional
@@ -246,11 +249,10 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
         ConversationUserRole beforeRole = targetParticipant.getRole();
         targetParticipant.changeRole(role);
         conversationHistoryService.changeRole(targetUser, conversation, beforeRole, role, requestUser);
-
         conversationMessageService.handleSystemMessage(
                 requestUser.getUserId(),
                 conversation.getConversationId(),
-                "%s role changed to %s".formatted(targetUser.getUsername(), role),
+                codeMessageGetter.getMessage(Constants.MESSAGE_CONVERSATION_GROUP_PARTICIPANT_ROLE_CHANGE).formatted(targetUser.getUsername(), role),
                 List.of("refresh-conversation-participant-list"));
     }
 
