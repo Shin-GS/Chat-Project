@@ -284,4 +284,5 @@ function emptyStickerPanel() {
     const panel = document.getElementById('conversation-sticker-panel');
     if (!panel) return;
     panel.replaceChildren();
+    panel.className = '';
 }
