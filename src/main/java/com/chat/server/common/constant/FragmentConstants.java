@@ -105,6 +105,10 @@ public class FragmentConstants {
     public static final String CONVERSATION_MESSAGE_READ_UN_READ_DOT = "components/conversation/read :: unread-dot";
     public static final String CONVERSATION_MESSAGE_READ_CONVERSATION = "conversation";
 
+    public static final String CONVERSATION_MESSAGE_STICKER_PATH = "templates/components/conversation/sticker/list.html";
+    public static final String CONVERSATION_MESSAGE_STICKER_FRAGMENT = "components/conversation/sticker/list :: sticker-pack-tabs";
+    public static final String CONVERSATION_MESSAGE_STICKER_PACKS = "packs";
+
     public static final String CONVERSATION_SETTING_MODAL_PATH = "templates/components/conversation/setting/modal.html";
     public static final String CONVERSATION_SETTING_MODAL_FRAGMENT = "components/conversation/setting/modal :: setting-modal";
     public static final String CONVERSATION_SETTING_MODAL_PROFILE = "profile";

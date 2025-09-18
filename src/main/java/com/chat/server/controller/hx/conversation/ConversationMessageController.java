@@ -7,7 +7,6 @@ import com.chat.server.service.conversation.ConversationService;
 import com.chat.server.service.conversation.ConversationStickerService;
 import com.chat.server.service.conversation.response.ConversationInfoAndMessageResponse;
 import com.chat.server.service.conversation.response.ConversationMessageResponse;
-import com.chat.server.service.conversation.response.ConversationStickerPackResponse;
 import com.chat.server.service.security.JwtMember;
 import com.chat.server.service.security.JwtMemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,8 +73,10 @@ public class ConversationMessageController {
     @Operation(summary = "메시지 스티커 팩 리스트 조회")
     @GetMapping("/messages/stickers")
     public List<ModelAndView> stickers() {
-        List<ConversationStickerPackResponse> allStickerPacks = conversationStickerService.findStickerPacks();
         return new ModelAndViewBuilder()
+                .addFragment(CONVERSATION_MESSAGE_STICKER_PATH,
+                        CONVERSATION_MESSAGE_STICKER_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_STICKER_PACKS, conversationStickerService.findStickerPacks()))
                 .build();
     }
 }

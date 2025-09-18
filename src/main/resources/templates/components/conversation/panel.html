@@ -13,14 +13,17 @@
     <div hidden="hidden"
          th:id="'conversation-' + ${conversation.id} + '-read'"
          th:attr="hx-trigger='load, refresh:' + ('conversation-' + ${conversation.id} + '-read') + ' from:body',
-              hx-post='/hx/conversations/' + ${conversation.id} + '/messages/read'"
+                  hx-post='/hx/conversations/' + ${conversation.id} + '/messages/read'"
          hx-swap="none"></div>
 
     <div class="flex flex-col gap-4 h-full min-h-0">
+        <!-- Top bar -->
         <div class="conversation-topbar flex items-center justify-between gap-3 border-b pb-3 shrink-0">
             <h2 id="conversation-title"
                 class="text-lg sm:text-xl font-semibold text-gray-900 truncate"
-                th:text="${conversation.title} ?: #{ui.conversation_list.untitled}">Conversation</h2>
+                th:text="${conversation.title} ?: #{ui.conversation_list.untitled}">
+                Conversation
+            </h2>
             <button id="conversation-leave-button"
                     th:attr="hx-post='/hx/conversations/' + ${conversation.id} + '/leave',
                              hx-confirm=#{confirm.leave_conversation},
@@ -34,6 +37,7 @@
             </button>
         </div>
 
+        <!-- Participants (container + trigger) -->
         <!--/*@thymesVar id="participants" type="java.util.List<com.chat.server.service.conversation.response.ConversationParticipantInfoResponse>"*/-->
         <section id="conversation-participant-list" class="mt-2 shrink-0"></section>
         <div hidden="hidden"
@@ -42,6 +46,7 @@
              th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/participants'"
              hx-swap="none"></div>
 
+        <!-- Initial history loader -->
         <div hidden="hidden"
              id="initial-loader"
              th:attr="hx-get='/hx/conversations/' + ${conversation.id} + '/messages/before'"
@@ -49,9 +54,11 @@
              hx-target="#conversation-message-list"
              hx-swap="afterbegin"></div>
 
+        <!-- Messages list container -->
         <div id="conversation-message-list"
              class="flex-1 min-h-0 overflow-y-auto border border-gray-200 rounded-lg bg-white p-3"></div>
 
+        <!-- Composer row -->
         <div class="conversation flex items-center gap-2 sm:gap-3 pt-2 shrink-0">
             <label for="conversation-input" class="sr-only"
                    th:text="#{aria.message_input}">Message input</label>
@@ -61,13 +68,26 @@
                    placeholder="Type a message..."
                    class="flex-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button id="conversation-send-button"
-                    type="button"
-                    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md text-sm sm:text-base transition-colors"
-                    th:text="#{button.send}">
-                Send
-            </button>
+            <div class="flex items-center gap-2">
+                <button id="open-sticker-panel-btn"
+                        type="button"
+                        class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-3 py-2 rounded-md text-sm transition-colors"
+                        hx-get="/hx/conversations/messages/stickers"
+                        hx-swap="none"
+                        title="Open sticker panel">
+                    Stickers
+                </button>
+
+                <button id="conversation-send-button"
+                        type="button"
+                        class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md text-sm sm:text-base transition-colors"
+                        th:text="#{button.send}">
+                    Send
+                </button>
+            </div>
         </div>
+
+        <section id="conversation-sticker-panel"></section>
     </div>
 </div>
 </body>
