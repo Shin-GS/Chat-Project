@@ -48,4 +48,12 @@ public class ConversationStickerServiceImpl implements ConversationStickerServic
                 .map(ConversationStickerPackStickerResponse::of)
                 .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long findFirstStickerPackId() {
+        return stickerPackRepository.findFirstByOrderByIdAsc()
+                .map(StickerPack::getId)
+                .orElseThrow(() -> new CustomException(ErrorCode.STICKER_NOT_EXISTS));
+    }
 }

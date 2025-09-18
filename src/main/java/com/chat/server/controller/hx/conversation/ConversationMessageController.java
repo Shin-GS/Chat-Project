@@ -80,6 +80,18 @@ public class ConversationMessageController {
                 .build();
     }
 
+    @Operation(summary = "첫번째 메시지 스티커 팩 항목 리스트 조회")
+    @GetMapping("/messages/stickers/first-order")
+    public List<ModelAndView> stickersFirstPack() {
+        Long packId = conversationStickerService.findFirstStickerPackId();
+        return new ModelAndViewBuilder()
+                .addFragment(CONVERSATION_MESSAGE_STICKER_GRID_PATH,
+                        CONVERSATION_MESSAGE_STICKER_GRID_FRAGMENT,
+                        Map.of(CONVERSATION_MESSAGE_STICKER_GRID_PACK, conversationStickerService.findPackById(packId),
+                                CONVERSATION_MESSAGE_STICKER_GRID_STICKER_LIST, conversationStickerService.findStickersByPackId(packId)))
+                .build();
+    }
+
     @Operation(summary = "메시지 스티커 팩 항목 리스트 조회")
     @GetMapping("/messages/stickers/{packId}")
     public List<ModelAndView> stickers(@PathVariable("packId") Long packId) {

@@ -11,4 +11,6 @@ public interface ConversationStickerService {
     ConversationStickerPackResponse findPackById(Long packId);
 
     List<ConversationStickerPackStickerResponse> findStickersByPackId(Long packId);
+
+    Long findFirstStickerPackId();
 }
