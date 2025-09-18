@@ -36,8 +36,8 @@ public class Sticker extends BaseTimeEntity {
     @Column(name = "STICKER_CODE", length = STICKER_CODE_MAX_LENGTH, nullable = false)
     private String code;
 
-    @Column(name = "IMAGE_PATH", length = STICKER_IMAGE_MAX_LENGTH, nullable = false)
-    private String imagePath;
+    @Column(name = "IMAGE_URL", length = STICKER_IMAGE_MAX_LENGTH, nullable = false)
+    private String imageUrl;
 
     @Column(name = "ALT_TEXT", length = STICKER_ALT_TEXT_MAX_LENGTH)
     private String altText;
