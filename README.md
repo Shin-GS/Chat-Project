@@ -19,42 +19,45 @@ Spring Boot + Thymeleaf + HTMX + WebSocket(STOMP) 기반의 **실시간 채팅 �
 
 ## ✨ 주요 기능
 
-- 회원가입 및 로그인, 로그아웃 🔐  
-  ![signup](./assets/signup.JPG)
-  ![login](./assets/login.JPG)  
-  ![logout](./assets/logout.gif)
+- **User Authentication & Session Management** 🔐
+    - 회원가입, 로그인, 로그아웃 지원
+    - 보안 강화를 위한 Spring Security 기반 인증 처리
+    - 세션 기반 접근 제어 및 권한 관리  
+      ![signup](./assets/signup.JPG)  
+      ![login](./assets/login.JPG)  
+      ![logout](./assets/logout.gif)
 
-- 내 정보 관리
-    - 프로필 이미지, 이름, 상태 메시지 변경 변경
-    - 내 프로필 보기
+- **User Profile Management**
+    - 프로필 이미지, 사용자명, 상태 메시지 수정 기능 제공
+    - 개별 사용자 프로필 조회 가능  
       ![profile](./assets/profile.gif)
 
-- 친구 관리 👥
-    - 친구 프로필 조회
-    - 내 친구 목록 / 대화방 목록 보기  
+- **Friend & Contact Management** 👥
+    - 친구 프로필 상세 조회
+    - 내 친구 목록 및 대화방 목록 관리
+    - 친구 검색, 추가 및 삭제 기능 제공  
       ![myFriend](./assets/myfriend.JPG)  
-      ![myConversation](./assets/myconversation.JPG)
-    - 친구 검색, 추가, 삭제  
+      ![myConversation](./assets/myconversation.JPG)  
       ![friend](./assets/friend.gif)
 
-- 그룹 대화방
-    - 그룹 대화방 생성 + 대화방 입장코드
-    - 그룹 대화방 참여, 나가기
-    - 참여자 역할 변경  
+- **Group Conversation**
+    - 그룹 대화방 생성 및 입장 코드 발급
+    - 그룹 참여 및 탈퇴 기능 제공
+    - 참여자 권한(Role) 변경 가능  
       ![group](./assets/group.gif)
 
-- 채팅 💬
-    - 1:1 및 그룹 채팅  
-      ![chat](./assets/chat.gif)
-    - 메시지 읽음 처리 👀  
-      ![read](./assets/read.gif)
-    - 채팅방 리스트 자동 정렬 및 최신 메시지 반영  
+- **Real-time Messaging** 💬
+    - 1:1 및 그룹 채팅 지원
+    - 메시지 읽음(Read Receipt) 상태 표시 👀
+    - 채팅방 리스트 자동 정렬 및 최신 메시지 실시간 반영  
+      ![chat](./assets/chat.gif)  
+      ![read](./assets/read.gif)  
       ![order](./assets/order.gif)
 
-- 부가 기능
-    - 스티커 전송 😃  
-      ![sticker](./assets/sticker.gif)
-    - 다국어 지원 🌐  
+- **Enhanced User Experience**
+    - 스티커 전송 기능 😃
+    - 다국어(Localization) 지원 🌐  
+      ![sticker](./assets/sticker.gif)  
       ![language](./assets/language.gif)
 
 ---
