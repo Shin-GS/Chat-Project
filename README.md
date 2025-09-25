@@ -24,21 +24,43 @@ Spring Boot + Thymeleaf + HTMX + WebSocket(STOMP) 기반의 **실시간 채팅
 
 ## ✨ 주요 기능
 
--   회원가입 및 로그인 🔐
--   친구 검색, 추가 및 삭제 👥
--   대화방 생성, 참여, 나가기, 회원 역할 변경
--   1:1 및 그룹 채팅 💬
--   메시지 읽음 처리 👀
--   채팅방 리스트 자동 정렬 및 마지막 메시지 반영
--   이모티콘 전송 😃
--   다국어 지원 🌐
+- 회원가입 및 로그인 🔐
+
+![login](./assets/login.JPG)
+
+![signup](./assets/signup.JPG)
+
+- 내 친구목록 / 대화방 목록 보기
+  ![myFriend](./assets/myfriend.JPG)
+  ![myConversation](./assets/myconversation.JPG)
+
+- 친구 검색, 추가 및 삭제 👥
+  ![friend](./assets/friend.gif)
+
+- 그룹 대화방 생성, 참여, 나가기, 회원 역할 변경
+  ![group](./assets/group.gif)
+
+- 1:1 및 그룹 채팅 💬
+  ![chat](./assets/chat.gif)
+
+- 메시지 읽음 처리 👀
+  ![read](./assets/read.gif)
+
+- 채팅방 리스트 자동 정렬 및 마지막 메시지 반영
+  ![order](./assets/order.gif)
+
+- 스티커 전송 😃
+  ![sticker](./assets/sticker.gif)
+
+- 다국어 지원 🌐
+  ![language](./assets/language.gif)
 
 ------------------------------------------------------------------------
 
 ## 🛠️ 기술 스택
 
   --------------------------------------------------------------------------------------------------------------------
-영역        사용 기술
+영역 사용 기술
   ----------- --------------------------------------------------------------------------------------------------------
 Backend     ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?logo=springboot&logoColor=white)
 ![JPA](https://img.shields.io/badge/JPA-59666C?logo=hibernate&logoColor=white)
@@ -144,26 +166,26 @@ public void handleSystemMessageEvent(SystemMessageEvent event) {
 
 ## 🧩 설계적 고민 & 해결 방법
 
--   **템플릿 관리 전략**
-  -   `views`: 페이지 단위 화면
-  -   `components`: HTMX 요청 시 반환되는 UI 조각
-  -   `fragments`: 재사용을 위한 공통 HTML
--   **다중 fragment 응답 처리**
-  -   `ModelAndViewBuilder`를 도입하여, 하나의 요청에 여러 fragment를
-      반환
--   **일관된 UI 동작 처리**
-  -   공통 토스트 알림(`toast-container`)
-  -   리다이렉트(`HX-REDIRECT`) 및 리로드(`HX-RELOAD`) 처리
-  -   사용자 UI 리프레시(`USER_UI_REFRESH_IDS` 헤더)
--   **안전성과 가독성 확보**
-  -   주요 식별자는 값 객체(`UserId`, `ConversationId`)로 정의
-  -   메서드 파라미터는 중요도 순서로 정렬
-  -   코드값은 `enum`, 상수는 `Constants` 클래스에서 관리
-  -   `ExceptionHandler`를 API/HTMX 요청별로 구분 적용
-  -   Thymeleaf 템플릿은 필요한 파라미터를 주석으로 명시하여 IDE 지원
-      강화
--   **국제화(I18n)**
-  -   다국어 메시지 리소스를 관리하여 글로벌 환경에서도 서비스 가능
+- **템플릿 관리 전략**
+- `views`: 페이지 단위 화면
+- `components`: HTMX 요청 시 반환되는 UI 조각
+- `fragments`: 재사용을 위한 공통 HTML
+- **다중 fragment 응답 처리**
+- `ModelAndViewBuilder`를 도입하여, 하나의 요청에 여러 fragment를
+  반환
+- **일관된 UI 동작 처리**
+- 공통 토스트 알림(`toast-container`)
+- 리다이렉트(`HX-REDIRECT`) 및 리로드(`HX-RELOAD`) 처리
+- 사용자 UI 리프레시(`USER_UI_REFRESH_IDS` 헤더)
+- **안전성과 가독성 확보**
+- 주요 식별자는 값 객체(`UserId`, `ConversationId`)로 정의
+- 메서드 파라미터는 중요도 순서로 정렬
+- 코드값은 `enum`, 상수는 `Constants` 클래스에서 관리
+- `ExceptionHandler`를 API/HTMX 요청별로 구분 적용
+- Thymeleaf 템플릿은 필요한 파라미터를 주석으로 명시하여 IDE 지원
+  강화
+- **국제화(I18n)**
+- 다국어 메시지 리소스를 관리하여 글로벌 환경에서도 서비스 가능
 
 ------------------------------------------------------------------------
 
@@ -173,8 +195,8 @@ public void handleSystemMessageEvent(SystemMessageEvent event) {
 gradle bootRun
 ```
 
--   DB: MySQL 실행 필요
--   OpenAPI 문서: `/swagger-ui.html`
+- DB: MySQL 실행 필요
+- OpenAPI 문서: `/swagger-ui.html`
 
 ------------------------------------------------------------------------
 
@@ -186,8 +208,8 @@ MIT
 
 ## 🔍 이 프로젝트에서 중요하게 생각한 점
 
--   "단순히 동작하는 채팅"이 아니라 **유지보수성과 확장성을 고려한
-    구조**
--   최소한의 JS로도 **실시간성 있는 경험**을 줄 수 있는 방법 탐구
--   FE 개발자와 협업을 고려하여 **템플릿 구조를 체계적으로 관리**
--   **이벤트 기반 설계**로 메시지 송수신과 UI 갱신을 깔끔하게 분리
+- "단순히 동작하는 채팅"이 아니라 **유지보수성과 확장성을 고려한
+  구조**
+- 최소한의 JS로도 **실시간성 있는 경험**을 줄 수 있는 방법 탐구
+- FE 개발자와 협업을 고려하여 **템플릿 구조를 체계적으로 관리**
+- **이벤트 기반 설계**로 메시지 송수신과 UI 갱신을 깔끔하게 분리
